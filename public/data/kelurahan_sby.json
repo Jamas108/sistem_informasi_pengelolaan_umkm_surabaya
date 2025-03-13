@@ -1,0 +1,614 @@
+[
+    {
+        "id": "1",
+        "nama": "BALONGSARI"
+    },
+    {
+        "id": "2",
+        "nama": "KARANG PILANG"
+    },
+    {
+        "id": "3",
+        "nama": "KEBRAON"
+    },
+    {
+        "id": "4",
+        "nama": "KEDURUS"
+    },
+    {
+        "id": "5",
+        "nama": "WARU GUNUNG"
+    },
+    {
+        "id": "6",
+        "nama": "SIDOSERMO"
+    },
+    {
+        "id": "7",
+        "nama": "BENDUL MERISI"
+    },
+    {
+        "id": "8",
+        "nama": "MARGOREJO"
+    },
+    {
+        "id": "9",
+        "nama": "JEMUR WONOSARI"
+    },
+    {
+        "id": "10",
+        "nama": "SIWALANKERTO"
+    },
+    {
+        "id": "11",
+        "nama": "KALIRUNGKUT"
+    },
+    {
+        "id": "12",
+        "nama": "RUNGKUT KIDUL"
+    },
+    {
+        "id": "13",
+        "nama": "KEDUNG BARUK"
+    },
+    {
+        "id": "14",
+        "nama": "PENJARINGANSARI"
+    },
+    {
+        "id": "15",
+        "nama": "WONOREJO"
+    },
+    {
+        "id": "16",
+        "nama": "MEDOKAN AYU"
+    },
+    {
+        "id": "17",
+        "nama": "WONOKROMO"
+    },
+    {
+        "id": "18",
+        "nama": "JAGIR"
+    },
+    {
+        "id": "19",
+        "nama": "NGAGEL"
+    },
+    {
+        "id": "20",
+        "nama": "NGAGEL REJO"
+    },
+    {
+        "id": "21",
+        "nama": "DARMO"
+    },
+    {
+        "id": "22",
+        "nama": "SAWUNGGALING"
+    },
+    {
+        "id": "23",
+        "nama": "TEGALSARI"
+    },
+    {
+        "id": "24",
+        "nama": "DR. SOETOMO"
+    },
+    {
+        "id": "25",
+        "nama": "KEDUNGDORO"
+    },
+    {
+        "id": "26",
+        "nama": "KEPUTRAN"
+    },
+    {
+        "id": "27",
+        "nama": "WONOREJO"
+    },
+    {
+        "id": "28",
+        "nama": "PETEMON"
+    },
+    {
+        "id": "29",
+        "nama": "SAWAHAN"
+    },
+    {
+        "id": "30",
+        "nama": "BANYU URIP"
+    },
+    {
+        "id": "31",
+        "nama": "PUTAT JAYA"
+    },
+    {
+        "id": "32",
+        "nama": "KUTISARI"
+    },
+    {
+        "id": "33",
+        "nama": "KENDANGSARI"
+    },
+    {
+        "id": "34",
+        "nama": "TENGGILIS MEJOYO"
+    },
+    {
+        "id": "35",
+        "nama": "PANJANG JIWO"
+    },
+    {
+        "id": "36",
+        "nama": "GUNUNG ANYAR"
+    },
+    {
+        "id": "37",
+        "nama": "RUNGKUT TENGAH"
+    },
+    {
+        "id": "38",
+        "nama": "RUNGKUT MENANGGAL"
+    },
+    {
+        "id": "39",
+        "nama": "GUNUNG ANYAR TAMBAK"
+    },
+    {
+        "id": "40",
+        "nama": "MULYOREJO"
+    },
+    {
+        "id": "41",
+        "nama": "MANYAR SABRANGAN"
+    },
+    {
+        "id": "42",
+        "nama": "KEJAWAN PUTIH TAMBAK"
+    },
+    {
+        "id": "43",
+        "nama": "KALISARI"
+    },
+    {
+        "id": "44",
+        "nama": "DUKUH SUTOREJO"
+    },
+    {
+        "id": "45",
+        "nama": "KALIJUDAN"
+    },
+    {
+        "id": "46",
+        "nama": "SUKOMANUNGGAL"
+    },
+    {
+        "id": "47",
+        "nama": "TANJUNGSARI"
+    },
+    {
+        "id": "48",
+        "nama": "SONOKWIJENAN"
+    },
+    {
+        "id": "49",
+        "nama": "PUTAT GEDE"
+    },
+    {
+        "id": "50",
+        "nama": "SIMOMULYO"
+    },
+    {
+        "id": "51",
+        "nama": "SIMOMULYO BARU"
+    },
+    {
+        "id": "52",
+        "nama": "ASEM ROWO"
+    },
+    {
+        "id": "53",
+        "nama": "GENTING KALIANAK"
+    },
+    {
+        "id": "54",
+        "nama": "TAMBAK SARIOSO"
+    },
+    {
+        "id": "55",
+        "nama": "KEDUNG COWEK"
+    },
+    {
+        "id": "56",
+        "nama": "KENJERAN"
+    },
+    {
+        "id": "57",
+        "nama": "BULAK"
+    },
+    {
+        "id": "58",
+        "nama": "SUKOLILO BARU"
+    },
+    {
+        "id": "59",
+        "nama": "PAKAL"
+    },
+    {
+        "id": "60",
+        "nama": "BABAT JERAWAT"
+    },
+    {
+        "id": "61",
+        "nama": "SUMBER REJO"
+    },
+    {
+        "id": "62",
+        "nama": "BENOWO"
+    },
+    {
+        "id": "63",
+        "nama": "SAMBIKEREP"
+    },
+    {
+        "id": "64",
+        "nama": "MADE"
+    },
+    {
+        "id": "65",
+        "nama": "BERINGIN"
+    },
+    {
+        "id": "66",
+        "nama": "LONTAR"
+    },
+    {
+        "id": "67",
+        "nama": "KUPANG KRAJAN"
+    },
+    {
+        "id": "68",
+        "nama": "PAKIS"
+    },
+    {
+        "id": "69",
+        "nama": "EMBONG KALIASIN"
+    },
+    {
+        "id": "70",
+        "nama": "GENTENG"
+    },
+    {
+        "id": "71",
+        "nama": "KAPASARI"
+    },
+    {
+        "id": "72",
+        "nama": "KETABANG"
+    },
+    {
+        "id": "73",
+        "nama": "PENELEH"
+    },
+    {
+        "id": "74",
+        "nama": "GUBENG"
+    },
+    {
+        "id": "75",
+        "nama": "MOJO"
+    },
+    {
+        "id": "76",
+        "nama": "AIRLANGGA"
+    },
+    {
+        "id": "77",
+        "nama": "KERTAJAYA"
+    },
+    {
+        "id": "78",
+        "nama": "BARATAJAYA"
+    },
+    {
+        "id": "79",
+        "nama": "PUCANG SEWU"
+    },
+    {
+        "id": "80",
+        "nama": "KEPUTIH"
+    },
+    {
+        "id": "81",
+        "nama": "GEBANG PUTIH"
+    },
+    {
+        "id": "82",
+        "nama": "KLAMPIS NGASEM"
+    },
+    {
+        "id": "83",
+        "nama": "MENUR PUMPUNGAN"
+    },
+    {
+        "id": "84",
+        "nama": "NGINDEN JANGKUNGAN"
+    },
+    {
+        "id": "85",
+        "nama": "SEMOLOWARU"
+    },
+    {
+        "id": "86",
+        "nama": "MEDOKAN SEMAMPIR"
+    },
+    {
+        "id": "87",
+        "nama": "TAMBAKSARI"
+    },
+    {
+        "id": "88",
+        "nama": "PLOSO"
+    },
+    {
+        "id": "89",
+        "nama": "GADING"
+    },
+    {
+        "id": "90",
+        "nama": "PACARKEMBANG"
+    },
+    {
+        "id": "91",
+        "nama": "RANGKAH"
+    },
+    {
+        "id": "92",
+        "nama": "PACARKELING"
+    },
+    {
+        "id": "93",
+        "nama": "KAPASMADYA BARU"
+    },
+    {
+        "id": "94",
+        "nama": "DUKUH SETRO"
+    },
+    {
+        "id": "95",
+        "nama": "SIMOKERTO"
+    },
+    {
+        "id": "96",
+        "nama": "KAPASAN"
+    },
+    {
+        "id": "97",
+        "nama": "SIDODADI"
+    },
+    {
+        "id": "98",
+        "nama": "SIMOLAWANG"
+    },
+    {
+        "id": "99",
+        "nama": "TAMBAKREJO"
+    },
+    {
+        "id": "100",
+        "nama": "BONGKARAN"
+    },
+    {
+        "id": "101",
+        "nama": "NYAMPLUNGAN"
+    },
+    {
+        "id": "102",
+        "nama": "KREMBANGAN UTARA"
+    },
+    {
+        "id": "103",
+        "nama": "TANJUNG PERAK"
+    },
+    {
+        "id": "104",
+        "nama": "ALUN - ALUN CONTONG"
+    },
+    {
+        "id": "105",
+        "nama": "BUBUTAN"
+    },
+    {
+        "id": "106",
+        "nama": "GUNDIH"
+    },
+    {
+        "id": "107",
+        "nama": "JEPARA"
+    },
+    {
+        "id": "108",
+        "nama": "TEMBOK DUKUH"
+    },
+    {
+        "id": "109",
+        "nama": "TANDES"
+    },
+    {
+        "id": "110",
+        "nama": "KARANG POH"
+    },
+    {
+        "id": "111",
+        "nama": "MANUKAN KULON"
+    },
+    {
+        "id": "112",
+        "nama": "MANUKAN WETAN"
+    },
+    {
+        "id": "113",
+        "nama": "BANJAR SUGIHAN"
+    },
+    {
+        "id": "114",
+        "nama": "KREMBANGAN SELATAN"
+    },
+    {
+        "id": "115",
+        "nama": "KEMAYORAN"
+    },
+    {
+        "id": "116",
+        "nama": "PERAK BARAT"
+    },
+    {
+        "id": "117",
+        "nama": "DUPAK"
+    },
+    {
+        "id": "118",
+        "nama": "MOROKREMBANGAN"
+    },
+    {
+        "id": "119",
+        "nama": "AMPEL"
+    },
+    {
+        "id": "120",
+        "nama": "PEGIRIAN"
+    },
+    {
+        "id": "121",
+        "nama": "WONOKUSUMO"
+    },
+    {
+        "id": "122",
+        "nama": "UJUNG"
+    },
+    {
+        "id": "123",
+        "nama": "SIDOTOPO"
+    },
+    {
+        "id": "124",
+        "nama": "TANAH KALI KEDINDING"
+    },
+    {
+        "id": "125",
+        "nama": "SIDOTOPO WETAN"
+    },
+    {
+        "id": "126",
+        "nama": "BULAK BANTENG"
+    },
+    {
+        "id": "127",
+        "nama": "TAMBAK WEDI"
+    },
+    {
+        "id": "128",
+        "nama": "BANGKINGAN"
+    },
+    {
+        "id": "129",
+        "nama": "JERUK"
+    },
+    {
+        "id": "130",
+        "nama": "LAKARSANTRI"
+    },
+    {
+        "id": "131",
+        "nama": "LIDAH KULON"
+    },
+    {
+        "id": "132",
+        "nama": "LIDAH WETAN"
+    },
+    {
+        "id": "133",
+        "nama": "SUMURWELUT"
+    },
+    {
+        "id": "134",
+        "nama": "KANDANGAN"
+    },
+    {
+        "id": "135",
+        "nama": "SEMEMI"
+    },
+    {
+        "id": "136",
+        "nama": "TAMBAK OSO WILANGUN"
+    },
+    {
+        "id": "137",
+        "nama": "ROMOKALISARI"
+    },
+    {
+        "id": "138",
+        "nama": "WIYUNG"
+    },
+    {
+        "id": "139",
+        "nama": "JAJAR TUNGGAL"
+    },
+    {
+        "id": "140",
+        "nama": "BABATAN"
+    },
+    {
+        "id": "141",
+        "nama": "BALAS KLUMPRIK"
+    },
+    {
+        "id": "142",
+        "nama": "DUKUH PAKIS"
+    },
+    {
+        "id": "143",
+        "nama": "DUKUH KUPANG"
+    },
+    {
+        "id": "144",
+        "nama": "GUNUNG SARI"
+    },
+    {
+        "id": "145",
+        "nama": "PRADAH KALIKENDAL"
+    },
+    {
+        "id": "146",
+        "nama": "GAYUNGAN"
+    },
+    {
+        "id": "147",
+        "nama": "MENANGGAL"
+    },
+    {
+        "id": "148",
+        "nama": "DUKUH MENANGGAL"
+    },
+    {
+        "id": "149",
+        "nama": "KETINTANG"
+    },
+    {
+        "id": "150",
+        "nama": "JAMBANGAN"
+    },
+    {
+        "id": "151",
+        "nama": "KARAH"
+    },
+    {
+        "id": "152",
+        "nama": "KEBONSARI"
+    },
+    {
+        "id": "153",
+        "nama": "PAGESANGAN"
+    }
+]

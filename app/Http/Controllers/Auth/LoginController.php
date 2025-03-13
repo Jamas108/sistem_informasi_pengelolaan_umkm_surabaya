@@ -12,11 +12,23 @@ class LoginController extends Controller
     use AuthenticatesUsers;
 
     /**
-     * Kemana pengguna akan diarahkan setelah login
-     *
-     * @var string
+     * Override default redirect setelah login.
      */
-    protected $redirectTo = '/home';
+    protected function redirectPath()
+    {
+        $user = Auth::user();
+
+        switch ($user->role) {
+            case 'adminkantor':
+                return '/dashboard/admin-kantor';
+            case 'adminlapangan':
+                return '/dashboard/admin-lapangan';
+            case 'pelakuumkm':
+                return '/dashboard/pelaku-umkm';
+            default:
+                return '/home'; // Default jika role tidak dikenali
+        }
+    }
 
     /**
      * Buat instance controller baru.
@@ -57,7 +69,7 @@ class LoginController extends Controller
 
         // Coba login dengan kredensial yang diberikan
         if (Auth::attempt($credentials, $request->remember)) {
-            return redirect()->intended($this->redirectPath());
+            return redirect()->intended($this->redirectPath()); // Arahkan sesuai peran
         }
 
         // Jika login gagal, kembali ke halaman login dengan error

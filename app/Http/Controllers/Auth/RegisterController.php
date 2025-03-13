@@ -9,13 +9,28 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
 {
     use RegistersUsers;
 
-    protected $redirectTo = '/home';
+    protected function redirectTo()
+    {
+        $user = Auth::user();
+
+        switch ($user->role) {
+            case 'adminkantor':
+                return '/dashboard/admin-kantor';
+            case 'adminlapangan':
+                return '/dashboard/admin-lapangan';
+            case 'pelakuumkm':
+                return '/dashboard/pelaku-umkm';
+            default:
+                return '/home'; // Default jika role tidak dikenali
+        }
+    }
 
     public function __construct()
     {
@@ -61,7 +76,7 @@ class RegisterController extends Controller
             $user = User::create([
                 'username' => $data['username'],
                 'password' => Hash::make($data['password']),
-                'role' => 'user', // Role default sebagai user
+                'role' => 'pelakuumkm', // Role default sebagai user
             ]);
 
             // Simpan ke tabel pelaku_umkm dengan FK users_id

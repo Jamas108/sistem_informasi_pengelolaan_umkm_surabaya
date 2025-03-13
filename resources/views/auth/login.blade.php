@@ -47,15 +47,6 @@
                                 @enderror
                             </div>
 
-                            <!-- Remember Me Checkbox -->
-                            <div class="mb-3 form-check">
-                                <input class="form-check-input" type="checkbox" name="remember" id="remember"
-                                    {{ old('remember') ? 'checked' : '' }}>
-                                <label class="form-check-label" for="remember">
-                                    {{ __('Remember Me') }}
-                                </label>
-                            </div>
-
                             <!-- Buttons -->
                             <div class="d-flex justify-content-between">
                                 <button type="submit" class="btn btn-danger">
@@ -66,6 +57,12 @@
                                 </a>
                             </div>
                         </form>
+                        <!-- Link Pendaftaran -->
+                        <div class="text-center mt-4">
+                            <p class="small text-gray-600">Belum punya akun?
+                                <a href="{{ route('register') }}" class="text-primary font-weight-bold">Daftar sekarang</a>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
