@@ -75,6 +75,7 @@ class RegisterController extends Controller
             // Simpan ke tabel users
             $user = User::create([
                 'username' => $data['username'],
+                'NIK' => $data['nik'],
                 'password' => Hash::make($data['password']),
                 'role' => 'pelakuumkm', // Role default sebagai user
             ]);

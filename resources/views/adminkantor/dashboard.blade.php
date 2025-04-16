@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+
     @include('layouts.sidebar')
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">

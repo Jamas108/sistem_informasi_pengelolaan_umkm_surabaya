@@ -5,19 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Intervensi extends Model
+class Omset extends Model
 {
     use HasFactory;
-    protected $table = 'intervensi'; // Deklarasi nama tabel secara eksplisit
+
+     protected $table = 'omset'; // Deklarasi nama tabel secara eksplisit
 
 
     protected $fillable = [
-        'users_id',
         'umkm_id',
-        'nama_kegiatan',
-        'tgl_intervensi',
-        'jenis_intervensi',
-        'omset',
+        'jangka_waktu',
+        'total_omset',
+        'keterangan',
 
     ];
     public function dataUmkm()

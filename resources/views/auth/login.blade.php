@@ -25,10 +25,10 @@
 
                             <!-- Username Field -->
                             <div class="mb-3">
-                                <input id="username" type="text"
-                                    class="form-control @error('username') is-invalid @enderror" name="username"
-                                    placeholder="Username" value="{{ old('username') }}" required autofocus>
-                                @error('username')
+                                <input id="nik" type="text"
+                                    class="form-control @error('nik') is-invalid @enderror" name="nik"
+                                    placeholder="Masukan Nik" value="{{ old('nik') }}" required autofocus>
+                                @error('nik')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

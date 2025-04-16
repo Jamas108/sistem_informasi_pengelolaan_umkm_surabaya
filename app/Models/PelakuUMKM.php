@@ -23,18 +23,28 @@ class PelakuUmkm extends Model
         'jenis_kelamin',
         'status_hubungan_keluarga',
         'status_perkawinan',
-        'alamat',
         'kelurahan',
         'rt',
         'rw',
         'alamat_sesuai_ktp',
         'no_telp',
         'pendidikan_terakhir',
+        'status_keaktifan',
 
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'users_id');
+    }
+
+    public function dataUmkm()
+    {
+        return $this->hasMany(Umkm::class, 'pelaku_umkm_id');
+    }
+    
+    public function omset()
+    {
+        return $this->hasMany(Omset::class, 'umkm_id');
     }
 }

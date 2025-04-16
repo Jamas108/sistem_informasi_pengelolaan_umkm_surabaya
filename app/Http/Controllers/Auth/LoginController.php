@@ -55,7 +55,7 @@ class LoginController extends Controller
     {
         // Validasi input dari form login
         $request->validate([
-            'username' => 'required|string|exists:users,username', // Pastikan username ada di tabel users
+            'nik' => 'required|string|exists:users,nik', // Pastikan username ada di tabel users
             'password' => 'required|string',
         ], [
             'username.exists' => 'Username tidak ditemukan, silakan periksa kembali.',
@@ -63,7 +63,7 @@ class LoginController extends Controller
 
         // Data login
         $credentials = [
-            'username' => $request->username,
+            'nik' => $request->nik,
             'password' => $request->password,
         ];
 
