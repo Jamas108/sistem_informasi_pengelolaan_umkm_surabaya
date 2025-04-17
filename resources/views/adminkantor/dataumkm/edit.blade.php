@@ -516,6 +516,7 @@
                                                                         <th width="15%">Jangka Waktu</th>
                                                                         <th width="20%">Nilai Omset</th>
                                                                         <th width="15%">Keterangan</th>
+
                                                                         <th class="text-center" width="10%">Aksi</th>
                                                                     </tr>
                                                                 </thead>

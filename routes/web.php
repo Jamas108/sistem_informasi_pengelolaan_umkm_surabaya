@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataUmkmController;
 use App\Http\Controllers\ManajemenUserController;
+use App\Http\Controllers\OmsetController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -40,7 +41,10 @@ Route::post('/check-nik', [App\Http\Controllers\DataUmkmController::class, 'chec
 
 // Omset routes
 // In your routes file (web.php or api.php)
-Route::post('/dataumkm/omset/save/{id}', [DataUmkmController::class, 'saveOmset']);
-Route::get('/dataumkm/omset/list/{id}', [DataUmkmController::class, 'getOmsetList']);
+Route::post('/dataumkm/omset/save/{id}', [OmsetController::class, 'saveOmset']);
+Route::get('/dataumkm/omset/list/{id}', 'App\Http\Controllers\OmsetController@getOmsetList');
+Route::get('/dataumkm/omset/{id}', 'App\Http\Controllers\OmsetController@getOmset');
+Route::put('/dataumkm/omset/{id}', 'App\Http\Controllers\OmsetController@updateOmset');
+Route::delete('/dataumkm/omset/{id}', 'App\Http\Controllers\OmsetController@deleteOmset');
 
 // Routes to add in your web.php file

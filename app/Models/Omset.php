@@ -21,6 +21,6 @@ class Omset extends Model
     ];
     public function dataUmkm()
     {
-        return $this->hasMany(Umkm::class, 'pelaku_umkm_id');
+        return $this->belongsTo(Umkm::class, 'umkm_id', 'id');
     }
 }
