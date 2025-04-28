@@ -1,11 +1,60 @@
 @extends('layouts.app')
+
+@push('styles')
+    <style>
+        .card-header {
+            background: linear-gradient(to right, #4e73e0, #224abe);
+            color: white;
+        }
+        .table-hover tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.1);
+            cursor: pointer;
+        }
+        .btn-action {
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 0.35rem 0.5rem;
+        }
+    </style>
+@endpush
+
 @push('scripts')
     <script type="module">
         $(document).ready(function() {
-            $('#dataumkmtable').DataTable();
+            $('#dataumkmtable').DataTable({
+                responsive: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ entri",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                    infoFiltered: "(disaring dari _MAX_ total entri)",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Selanjutnya",
+                        previous: "Sebelumnya"
+                    }
+                },
+                columnDefs: [
+                    { 
+                        targets: [-1], 
+                        orderable: false 
+                    }
+                ]
+            });
+
+            // Konfirmasi penghapusan
+            $(document).on('submit', 'form.delete-form', function(e) {
+                return confirm('Apakah Anda yakin ingin menghapus data UMKM ini?');
+            });
         });
     </script>
 @endpush
+
 @section('content')
     @include('layouts.sidebar')
     <div id="content-wrapper" class="d-flex flex-column">
@@ -14,33 +63,52 @@
             <div class="container-fluid">
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Data UMKM</h1>
-                    {{-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                            class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> --}}
+                    <h1 class="h3 mb-0 text-gray-800">
+                        <i class="fas fa-store-alt mr-2 text-primary"></i>Data UMKM
+                    </h1>
+                    <div class="btn-group" role="group" aria-label="Data Actions">
+                        <a href="#" class="btn btn-success btn-icon-split">
+                            <span class="icon text-white-50">
+                                <i class="fas fa-file-export"></i>
+                            </span>
+                            <span class="text">Export Data</span>
+                        </a>
+                        <a href="{{ route('dataumkm.create') }}" class="btn btn-primary btn-icon-split ml-2">
+                            <span class="icon text-white-50">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                            <span class="text">Tambah Data</span>
+                        </a>
+                    </div>
                 </div>
 
-                <div class="container-fluid pt-2 px-2">
-                    <div class="bg-white justify-content-between rounded shadow p-4">
-                        <div class="justify-content-between d-sm-flex ">
-                            <a href="#" class="d-none d-sm-inline-block btn btn-md shadow-sm"
-                                style="color: black; background-color: #00FF09"> Export Data All</a>
-                            <a href="{{ route('dataumkm.create') }}" class="d-none d-sm-inline-block btn btn-md shadow-sm"
-                                style="color: rgb(255, 255, 255); background-color: #1C486F"> Tambah Data</a>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold">Daftar UMKM Terdaftar</h6>
+                        <div class="dropdown no-arrow">
+                            <a href="#" class="dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-white"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                <a class="dropdown-item" href="{{ route('dataumkm.create') }}">Tambah Data Baru</a>
+                                <a class="dropdown-item" href="#">Cetak Laporan</a>
+                            </div>
                         </div>
-                        <div class="table-responsive p-3 rounded-3">
-                            <table class="table table-bordered table-hover table-striped mb-0 bg-white datatable"
-                                id="dataumkmtable">
-                                <thead>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-striped" id="dataumkmtable">
+                                <thead class="thead-light">
                                     <tr>
-                                        <th>No.</th>
+                                        <th class="text-center">No</th>
                                         <th>NIK Pemilik</th>
                                         <th>Nama Pemilik</th>
                                         <th>Nama Usaha</th>
                                         <th>Jenis Produk</th>
                                         <th>Klasifikasi</th>
                                         <th>Alamat</th>
-                                        <th>Kondisi</th>
-                                        <th>Aksi</th>
+                                        <th>Status</th>
+                                        <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -53,25 +121,32 @@
                                         <td>{{ $dataumkm->jenis_produk }}</td>
                                         <td>{{ $dataumkm->klasifikasi_kinerja_usaha }}</td>
                                         <td>{{ $dataumkm->alamat }}</td>
-                                        <td>{{ $dataumkm->status }}</td>
                                         <td>
-                                            <div class="btn-group" role="group">
-                                                <a href="{{ route('dataumkm.show', $dataumkm->pelakuUmkm->id) }}" class="btn btn-sm btn-info">
+                                            @switch($dataumkm->status)
+                                                @case('AKTIF')
+                                                    <span class="badge badge-success status-badge">AKTIF</span>
+                                                    @break
+                                                @case('TIDAK AKTIF')
+                                                    <span class="badge badge-danger status-badge">TIDAK AKTIF</span>
+                                                    @break
+                                                @default
+                                                    <span class="badge badge-secondary status-badge">{{ $dataumkm->status }}</span>
+                                            @endswitch
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group btn-group-sm text-center" role="group">
+                                                <a href="{{ route('dataumkm.show', $dataumkm->pelakuUmkm->id) }}" 
+                                                   class="btn btn-sm btn-info btn-action mr-2" 
+                                                   title="Lihat Detail">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('dataumkm.edit', $dataumkm->pelakuUmkm->id) }}" class="btn btn-sm btn-warning">
+                                                <a href="{{ route('dataumkm.edit', $dataumkm->pelakuUmkm->id) }}" 
+                                                   class="btn btn-sm btn-warning btn-action" 
+                                                   title="Edit Data">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form action="{{ route('dataumkm.destroy', $dataumkm->pelakuUmkm->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
                                             </div>
                                         </td>
-
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -79,50 +154,16 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-
-
 
         <!-- Footer -->
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Your Website 2021</span>
+                    <span>© {{ date('Y') }} UMKM Management System</span>
                 </div>
             </div>
         </footer>
-        <!-- End of Footer -->
-
-    </div>
-    <!-- End of Content Wrapper -->
-
-    </div>
-    <!-- End of Page Wrapper -->
-
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
     </div>
 @endsection

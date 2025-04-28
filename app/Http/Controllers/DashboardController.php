@@ -18,7 +18,7 @@ class DashboardController extends Controller
             case 'adminlapangan':
                 return view('adminkantor.dashboard');
             case 'pelakuumkm':
-                return view('pelaku.dashboard');
+                return view('pelakuumkm.dashboard');
             default:
                 return abort(403, 'Akses ditolak'); // Jika peran tidak dikenal, tolak akses
         }

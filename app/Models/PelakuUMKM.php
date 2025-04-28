@@ -42,7 +42,7 @@ class PelakuUmkm extends Model
     {
         return $this->hasMany(Umkm::class, 'pelaku_umkm_id');
     }
-    
+
     public function omset()
     {
         return $this->hasMany(Omset::class, 'umkm_id');

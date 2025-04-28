@@ -9,9 +9,7 @@ class Legalitas extends Model
 {
     use HasFactory;
 
-
-    protected $table = 'legalitas'; // Deklarasi nama tabel secara eksplisit
-
+    protected $table = 'legalitas';
 
     protected $fillable = [
         'umkm_id',
@@ -24,11 +22,13 @@ class Legalitas extends Model
         'no_sk_merek',
         'no_sk_haki',
         'no_surat_keterangan',
-
     ];
+
+    /**
+     * Get the UMKM that owns the legalitas.
+     */
     public function dataUmkm()
     {
-        return $this->hasMany(Umkm::class, 'pelaku_umkm_id');
+        return $this->belongsTo(Umkm::class, 'umkm_id');
     }
-
 }

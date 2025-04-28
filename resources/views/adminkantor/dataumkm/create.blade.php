@@ -1,142 +1,142 @@
 @extends('layouts.app')
 @push('scripts')
     <script>
-       $(document).ready(function() {
-    // Initialize the counter for UMKM forms
-    let umkmCounter = 0;
+        $(document).ready(function() {
+            // Initialize the counter for UMKM forms
+            let umkmCounter = 0;
 
-    // Add event listener for the NIK check button
-    $("#cek_nik").click(function(e) {
-        e.preventDefault();
-        checkNik();
-    });
-
-    // Function to check if NIK exists in the pelaku_umkm database table
-    function checkNik() {
-        const nik = $("#search_nik").val().trim();
-
-        // Only proceed if NIK is not empty
-        if (nik.length > 0) {
-            // Clear any existing alerts
-            $("#nik-alert-container").remove();
-
-            // Add loading indicator
-            const loadingIndicator =
-                '<div id="loading-indicator" class="text-center my-2"><i class="fas fa-spinner fa-spin"></i> Memeriksa NIK...</div>';
-            $(loadingIndicator).insertAfter($(".row:has(#search_nik)"));
-
-            // Make AJAX request to check if NIK exists in the database
-            $.ajax({
-                url: '/check-nik', // Direct URL path
-                type: 'POST',
-                data: {
-                    nik: nik,
-                    _token: $('meta[name="csrf-token"]').attr('content') // CSRF token
-                },
-                dataType: 'json',
-                success: function(response) {
-                    // Remove loading indicator
-                    $("#loading-indicator").remove();
-
-                    if (response.exists) {
-                        // NIK exists in the database - show danger alert
-                        $('<div id="nik-alert-container" class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                            '<strong>Perhatian!</strong> NIK ' + nik +
-                            ' sudah terdaftar dalam sistem. ' +
-                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                            '<span aria-hidden="true">&times;</span>' +
-                            '</button>' +
-                            '</div>'
-                        ).insertAfter($(".row:has(#search_nik)"));
-
-                        // Populate the form fields with existing data from the response
-                        if (response.data) {
-                            // Fill in all form fields
-                            $("#nik").val(response.data.nik || '');
-                            $("#nama_lengkap").val(response.data.nama_lengkap || '');
-                            $("#no_kk").val(response.data.no_kk || '');
-                            $("#tempat_lahir").val(response.data.tempat_lahir || '');
-                            $("#tgl_lahir").val(response.data.tgl_lahir || '');
-                            $("#jenis_kelamin").val(response.data.jenis_kelamin || '');
-                            $("#status_hubungan_keluarga").val(response.data
-                                .status_hubungan_keluarga || '');
-                            $("#status_perkawinan").val(response.data.status_perkawinan || '');
-                            $("#alamat_sesuai_ktp").val(response.data.alamat_sesuai_ktp || '');
-                            $("#kelurahan").val(response.data.kelurahan || '');
-                            $("#rw").val(response.data.rw || '');
-                            $("#rt").val(response.data.rt || '');
-                            $("#no_telp").val(response.data.no_telp || '');
-                            $("#pendidikan_terakhir").val(response.data.pendidikan_terakhir ||
-                                '');
-                            $("#status_keaktifan").val(response.data.status_keaktifan || '');
-                        }
-                    } else {
-                        // NIK not found in the database - show success message
-                        $('<div id="nik-alert-container" class="alert alert-success alert-dismissible fade show" role="alert">' +
-                            '<strong>Sukses!</strong> NIK ' + nik +
-                            ' belum terdaftar dalam sistem. ' +
-                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                            '<span aria-hidden="true">&times;</span>' +
-                            '</button>' +
-                            '</div>'
-                        ).insertAfter($(".row:has(#search_nik)"));
-
-                        // Clear form fields for new entry except NIK
-                        $("#nik").val(nik);
-                        $("#nama_lengkap").val('');
-                        $("#no_kk").val('');
-                        $("#tempat_lahir").val('');
-                        $("#tgl_lahir").val('');
-                        $("#jenis_kelamin").val('');
-                        $("#status_hubungan_keluarga").val('');
-                        $("#status_perkawinan").val('');
-                        $("#alamat_sesuai_ktp").val('');
-                        $("#kelurahan").val('');
-                        $("#rw").val('');
-                        $("#rt").val('');
-                        $("#no_telp").val('');
-                        $("#pendidikan_terakhir").val('');
-                        $("#status_keaktifan").val('');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    // Remove loading indicator
-                    $("#loading-indicator").remove();
-
-                    // Log detailed error information for debugging
-                    console.error("AJAX Error: ", {
-                        status: status,
-                        error: error,
-                        response: xhr.responseText
-                    });
-
-                    // Show error alert with more information
-                    $('<div id="nik-alert-container" class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                        '<strong>Error!</strong> Terjadi kesalahan saat memeriksa NIK: ' +
-                        (xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON
-                            .message : error) +
-                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                        '<span aria-hidden="true">&times;</span>' +
-                        '</button>' +
-                        '</div>'
-                    ).insertAfter($(".row:has(#search_nik)"));
-                }
+            // Add event listener for the NIK check button
+            $("#cek_nik").click(function(e) {
+                e.preventDefault();
+                checkNik();
             });
-        }
-    }
 
-    // Add this function to update UMKM numbers (already referenced in your code)
-    function updateUmkmNumbers() {
-        $('.umkm-form-entry').each(function(index) {
-            $(this).find('.umkm-number').text('UMKM #' + (index + 1));
-        });
-    }
+            // Function to check if NIK exists in the pelaku_umkm database table
+            function checkNik() {
+                const nik = $("#search_nik").val().trim();
 
-    // Function to add a new UMKM form
-    function addUmkmForm() {
-        umkmCounter++;
+                // Only proceed if NIK is not empty
+                if (nik.length > 0) {
+                    // Clear any existing alerts
+                    $("#nik-alert-container").remove();
 
-        const newForm = `
+                    // Add loading indicator
+                    const loadingIndicator =
+                        '<div id="loading-indicator" class="text-center my-2"><i class="fas fa-spinner fa-spin"></i> Memeriksa NIK...</div>';
+                    $(loadingIndicator).insertAfter($(".row:has(#search_nik)"));
+
+                    // Make AJAX request to check if NIK exists in the database
+                    $.ajax({
+                        url: '/check-nik', // Direct URL path
+                        type: 'POST',
+                        data: {
+                            nik: nik,
+                            _token: $('meta[name="csrf-token"]').attr('content') // CSRF token
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            // Remove loading indicator
+                            $("#loading-indicator").remove();
+
+                            if (response.exists) {
+                                // NIK exists in the database - show danger alert
+                                $('<div id="nik-alert-container" class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                                    '<strong>Perhatian!</strong> NIK ' + nik +
+                                    ' sudah terdaftar dalam sistem. ' +
+                                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                                    '<span aria-hidden="true">&times;</span>' +
+                                    '</button>' +
+                                    '</div>'
+                                ).insertAfter($(".row:has(#search_nik)"));
+
+                                // Populate the form fields with existing data from the response
+                                if (response.data) {
+                                    // Fill in all form fields
+                                    $("#nik").val(response.data.nik || '');
+                                    $("#nama_lengkap").val(response.data.nama_lengkap || '');
+                                    $("#no_kk").val(response.data.no_kk || '');
+                                    $("#tempat_lahir").val(response.data.tempat_lahir || '');
+                                    $("#tgl_lahir").val(response.data.tgl_lahir || '');
+                                    $("#jenis_kelamin").val(response.data.jenis_kelamin || '');
+                                    $("#status_hubungan_keluarga").val(response.data
+                                        .status_hubungan_keluarga || '');
+                                    $("#status_perkawinan").val(response.data.status_perkawinan || '');
+                                    $("#alamat_sesuai_ktp").val(response.data.alamat_sesuai_ktp || '');
+                                    $("#kelurahan").val(response.data.kelurahan || '');
+                                    $("#rw").val(response.data.rw || '');
+                                    $("#rt").val(response.data.rt || '');
+                                    $("#no_telp").val(response.data.no_telp || '');
+                                    $("#pendidikan_terakhir").val(response.data.pendidikan_terakhir ||
+                                        '');
+                                    $("#status_keaktifan").val(response.data.status_keaktifan || '');
+                                }
+                            } else {
+                                // NIK not found in the database - show success message
+                                $('<div id="nik-alert-container" class="alert alert-success alert-dismissible fade show" role="alert">' +
+                                    '<strong>Sukses!</strong> NIK ' + nik +
+                                    ' belum terdaftar dalam sistem. ' +
+                                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                                    '<span aria-hidden="true">&times;</span>' +
+                                    '</button>' +
+                                    '</div>'
+                                ).insertAfter($(".row:has(#search_nik)"));
+
+                                // Clear form fields for new entry except NIK
+                                $("#nik").val(nik);
+                                $("#nama_lengkap").val('');
+                                $("#no_kk").val('');
+                                $("#tempat_lahir").val('');
+                                $("#tgl_lahir").val('');
+                                $("#jenis_kelamin").val('');
+                                $("#status_hubungan_keluarga").val('');
+                                $("#status_perkawinan").val('');
+                                $("#alamat_sesuai_ktp").val('');
+                                $("#kelurahan").val('');
+                                $("#rw").val('');
+                                $("#rt").val('');
+                                $("#no_telp").val('');
+                                $("#pendidikan_terakhir").val('');
+                                $("#status_keaktifan").val('');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            // Remove loading indicator
+                            $("#loading-indicator").remove();
+
+                            // Log detailed error information for debugging
+                            console.error("AJAX Error: ", {
+                                status: status,
+                                error: error,
+                                response: xhr.responseText
+                            });
+
+                            // Show error alert with more information
+                            $('<div id="nik-alert-container" class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                                '<strong>Error!</strong> Terjadi kesalahan saat memeriksa NIK: ' +
+                                (xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON
+                                    .message : error) +
+                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                                '<span aria-hidden="true">&times;</span>' +
+                                '</button>' +
+                                '</div>'
+                            ).insertAfter($(".row:has(#search_nik)"));
+                        }
+                    });
+                }
+            }
+
+            // Add this function to update UMKM numbers (already referenced in your code)
+            function updateUmkmNumbers() {
+                $('.umkm-form-entry').each(function(index) {
+                    $(this).find('.umkm-number').text('UMKM #' + (index + 1));
+                });
+            }
+
+            // Function to add a new UMKM form
+            function addUmkmForm() {
+                umkmCounter++;
+
+                const newForm = `
             <div class="umkm-form-entry border rounded p-3 mb-4" id="umkm-entry-${umkmCounter}" data-umkm-id="${umkmCounter}">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="m-0 umkm-number">UMKM #${$('.umkm-form-entry').length + 1}</h5>
@@ -175,7 +175,11 @@
                 <div class="row mb-3">
                     <label for="pengelolaan_usaha_${umkmCounter}" class="col-sm-2 col-form-label">Pengelolaan Usaha</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="pengelolaan_usaha_${umkmCounter}" name="umkm[${umkmCounter}][pengelolaan_usaha]">
+                         <select class="form-control" id="pengelolaan_usaha_${umkmCounter}" name="umkm[${umkmCounter}][pengelolaan_usaha]">
+                            <option value="">-- Pilih --</option>
+                            <option value="PERSEORANGAN / MANDIRI">PERSEORANGAN / MANDIRI</option>
+                            <option value="KELOMPOK / SUBKON / KERJASAMA">KELOMPOK / SUBKON / KERJASAMA</option>
+                        </select>
                     </div>
                 </div>
 
@@ -183,58 +187,97 @@
                 <div class="row mb-3">
                     <label for="klasifikasi_kinerja_usaha_${umkmCounter}" class="col-sm-2 col-form-label">Klasifikasi Kinerja Usaha</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="klasifikasi_kinerja_usaha_${umkmCounter}" name="umkm[${umkmCounter}][klasifikasi_kinerja_usaha]">
+                        <select class="form-control" id="klasifikasi_kinerja_usaha_${umkmCounter}" name="umkm[${umkmCounter}][klasifikasi_kinerja_usaha]">
+                            <option value="">-- Pilih --</option>
+                            <option value="PEMULA">PEMULA</option>
+                            <option value="MADYA">MADYA</option>
+                            <option value="MANDIRI">MANDIRI</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <label for="jumlah_tenaga_kerja_${umkmCounter}" class="col-sm-2 col-form-label">Jumlah Tenaga Kerja</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="jumlah_tenaga_kerja_${umkmCounter}" name="umkm[${umkmCounter}][jumlah_tenaga_kerja]">
+                        <input type="number" class="form-control" id="jumlah_tenaga_kerja_${umkmCounter}" name="umkm[${umkmCounter}][jumlah_tenaga_kerja]">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <label for="sektor_usaha_${umkmCounter}" class="col-sm-2 col-form-label">Sektor Usaha</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="sektor_usaha_${umkmCounter}" name="umkm[${umkmCounter}][sektor_usaha]">
+                        <select class="form-control" id="sektor_usaha_${umkmCounter}" name="umkm[${umkmCounter}][sektor_usaha]">
+                            <option value="">-- Pilih --</option>
+                            <option value="INDUSTRI">INDUSTRI</option>
+                            <option value="DAGANG">DAGANG</option>
+                            <option value="JASA">JASA</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <label for="status_${umkmCounter}" class="col-sm-2 col-form-label">Status Keaktifan UMKM</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="status_${umkmCounter}" name="umkm[${umkmCounter}][status]">
+                        <select class="form-control" id="status_${umkmCounter}" name="umkm[${umkmCounter}][status]">
+                            <option value="">-- Pilih --</option>
+                            <option value="AKTIF">AKTIF</option>
+                            <option value="CUKUP AKTIF">CUKUP AKTIF</option>
+                            <option value="KURANG AKTIF">KURANG AKTIF</option>
+                            <option value="TIDAK AKTIF">TIDAK AKTIF</option>
+                        </select>
                     </div>
                 </div>
             </div>
             `;
 
-        $('#umkm-entries-container').append(newForm);
-    }
+                $('#umkm-entries-container').append(newForm);
+            }
 
-    // Add the first UMKM form by default
-    addUmkmForm();
-
-    // Add button to add another UMKM form
-    $('#add-umkm-btn').click(function() {
-        addUmkmForm();
-    });
-
-    // Remove UMKM form when remove button is clicked
-    $(document).on('click', '.remove-umkm', function() {
-        const umkmId = $(this).data('umkm-id');
-        $(`#umkm-entry-${umkmId}`).remove();
-
-        // Don't allow removing all entries - ensure at least one remains
-        if ($('.umkm-form-entry').length === 0) {
+            // Add the first UMKM form by default
             addUmkmForm();
-        }
 
-        // Update the UMKM numbers after removal
-        updateUmkmNumbers();
-    });
-});
+            // Add button to add another UMKM form
+            $('#add-umkm-btn').click(function() {
+                addUmkmForm();
+            });
+
+            // Remove UMKM form when remove button is clicked
+            $(document).on('click', '.remove-umkm', function() {
+                const umkmId = $(this).data('umkm-id');
+                $(`#umkm-entry-${umkmId}`).remove();
+
+                // Don't allow removing all entries - ensure at least one remains
+                if ($('.umkm-form-entry').length === 0) {
+                    addUmkmForm();
+                }
+
+                // Update the UMKM numbers after removal
+                updateUmkmNumbers();
+            });
+        });
+        $(document).ready(function() {
+            // Cek apakah jQuery berfungsi
+            console.log("jQuery is working!");
+
+            // Panggil file JSON dari direktori public
+            $.getJSON("{{ asset('data/kelurahan_sby.json') }}")
+                .done(function(data) {
+                    var kelurahanSelect = $("#kelurahan");
+                    kelurahanSelect.empty(); // Kosongkan opsi terlebih dahulu
+                    kelurahanSelect.append('<option value="">Pilih Kelurahan...</option>');
+
+                    // Loop untuk menambahkan data ke dropdown
+                    $.each(data, function(key, entry) {
+                        kelurahanSelect.append($('<option></option>').attr('value', entry.nama).text(
+                            entry.nama));
+                    });
+
+                    console.log("Data kelurahan berhasil dimuat:", data);
+                })
+                .fail(function(jqxhr, textStatus, error) {
+                    console.error("Gagal mengambil data JSON:", textStatus, error);
+                });
+        });
     </script>
 @endpush
 @section('content')
@@ -299,7 +342,7 @@
                                     <div class="row mb-3">
                                         <label for="nik_pemilik" class="col-sm-2 col-form-label">NIK Pemilik</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="nik" name="nik">
+                                            <input type="number" class="form-control" id="nik" name="nik">
                                         </div>
                                     </div>
 
@@ -314,7 +357,7 @@
                                     <div class="row mb-3">
                                         <label for="no_kk_pemilik" class="col-sm-2 col-form-label">No KK Pemilik</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="no_kk" name="no_kk">
+                                            <input type="number" class="form-control" id="no_kk" name="no_kk">
                                         </div>
                                     </div>
 
@@ -336,8 +379,12 @@
                                     <div class="row mb-3">
                                         <label for="jenis_kelamin" class="col-sm-2 col-form-label">Jenis Kelamin</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="jenis_kelamin"
-                                                name="jenis_kelamin">
+                                            <select class="form-control" id="jenis_kelamin"
+                                            name="jenis_kelamin">
+                                            <option value="">-- Pilih --</option>
+                                            <option value="LAKI - LAKI">LAKI - LAKI</option>
+                                            <option value="PEREMPUAN">PEREMPUAN</option>
+                                        </select>
                                         </div>
                                     </div>
 
@@ -345,16 +392,37 @@
                                         <label for="status_hub_keluarga" class="col-sm-2 col-form-label">Status Hub.
                                             Keluarga</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="status_hubungan_keluarga"
+                                            <select class="form-control" id="status_hubungan_keluarga"
                                                 name="status_hubungan_keluarga">
+                                                <option value="">-- Pilih Status --</option>
+                                                <option value="ANAK">ANAK</option>
+                                                <option value="CUCU">CUCU</option>
+                                                <option value="ISTRI">ISTRI</option>
+                                                <option value="SUAMI">SUAMI</option>
+                                                <option value="KEPALA KELUARGA">KEPALA KELUARGA</option>
+                                                <option value="MENANTU">MENANTU</option>
+                                                <option value="MERTUA">MERTUA</option>
+                                                <option value="ORANG TUA">ORANG TUA</option>
+                                                <option value="FAMILI LAIN">FAMILI LAIN</option>
+                                                <option value="LAINYA">LAINYA</option>
+                                            </select>
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
                                         <label for="status" class="col-sm-2 col-form-label">Status Perkawinan</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="status_perkawinan"
-                                                name="status_perkawinan">
+                                            <select class="form-control" id="status_perkawinan" name="status_perkawinan">
+                                                <option value="">-- Pilih --</option>
+                                                <option value="KAWIN">KAWIN</option>
+                                                <option value="KAWIN BELUM TERCATAT">KAWIN BELUM TERCATAT</option>
+                                                <option value="KAWIN TERCATAT">KAWIN TERCATAT</option>
+                                                <option value="BELUM KAWIN">BELUM KAWIN</option>
+                                                <option value="CERAI BELUM TERCATAT">CERAI BELUM TERCATAT</option>
+                                                <option value="CERAI HIDUP">CERAI HIDUP</option>
+                                                <option value="CERAI MATI">CERAI MATI</option>
+                                                <option value="CERAI TERCATAT">CERAI TERCATAT</option>
+                                            </select>
                                         </div>
                                     </div>
 
@@ -371,28 +439,32 @@
                                         <label for="kelurahan_sesuai_ktp" class="col-sm-2 col-form-label">Kelurahan Sesuai
                                             KTP</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="kelurahan" name="kelurahan">
+                                            <select id="kelurahan"
+                                                class="form-control @error('kelurahan') is-invalid @enderror"
+                                                name="kelurahan" required>
+                                                <option value="">Pilih Kelurahan...</option>
+                                            </select>
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
                                         <label for="rw" class="col-sm-2 col-form-label">RW</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="rw" name="rw">
+                                            <input type="number" class="form-control" id="rw" name="rw">
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
                                         <label for="rt" class="col-sm-2 col-form-label">RT</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="rt" name="rt">
+                                            <input type="number" class="form-control" id="rt" name="rt">
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
-                                        <label for="telp" class="col-sm-2 col-form-label">Telp</label>
+                                        <label for="telp" class="col-sm-2 col-form-label">No Telepon</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="no_telp" name="no_telp">
+                                            <input type="number" class="form-control" id="no_telp" name="no_telp">
                                         </div>
                                     </div>
 
@@ -400,8 +472,21 @@
                                         <label for="pendidikan_terakhir" class="col-sm-2 col-form-label">Pendidikan
                                             Terakhir</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="pendidikan_terakhir"
+                                            <select class="form-control" id="pendidikan_terakhir"
                                                 name="pendidikan_terakhir">
+                                                <option value="">-- Pilih --</option>
+                                                <option value="TIDAK/BELUM SEKOLAH">TIDAK/BELUM SEKOLAH</option>
+                                                <option value="BELUM TAMAT SD/SEDERAJAT">BELUM TAMAT SD/SEDERAJAT</option>
+                                                <option value="TAMAT SD/SEDERAJAT">TAMAT SD/SEDERAJAT</option>
+                                                <option value="SLTP/SEDERAJAT">SLTP/SEDERAJAT</option>
+                                                <option value="SLTA/SEDERAJAT">SLTA/SEDERAJAT</option>
+                                                <option value="DIPLOMA I/II">DIPLOMA I/II</option>
+                                                <option value="AKADEMI/DIPLOMA III/S. MUDA">AKADEMI/DIPLOMA III/S. MUDA
+                                                </option>
+                                                <option value="DIPLOMA IV/STRATA I">DIPLOMA IV/STRATA I</option>
+                                                <option value="STRATA II">STRATA II</option>
+                                                <option value="STRATA III">STRATA III</option>
+                                            </select>
                                         </div>
                                     </div>
 
@@ -409,16 +494,13 @@
                                         <label for="pendidikan_terakhir" class="col-sm-2 col-form-label">Status Keaktifan
                                             Pelaku UMKM</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="status_keaktifan"
+                                            <select class="form-control" id="status_keaktifan"
                                                 name="status_keaktifan">
+                                                <option value="">-- Pilih --</option>
+                                                <option value="AKTIF">AKTIF</option>
+                                                <option value="TIDAK AKTIF">TIDAK AKTIF</option>
+                                            </select>
                                         </div>
-                                    </div>
-
-                                    <div class="text-right">
-                                        <button type="button" class="btn btn-primary"
-                                            onclick="$('#umkm-tab').tab('show')">
-                                            Selanjutnya <i class="fas fa-arrow-right"></i>
-                                        </button>
                                     </div>
                                 </div>
 
@@ -440,10 +522,6 @@
                                     </div>
 
                                     <div class="d-flex justify-content-between mt-4">
-                                        <button type="button" class="btn btn-secondary"
-                                            onclick="$('#pelaku-tab').tab('show')">
-                                            <i class="fas fa-arrow-left"></i> Kembali
-                                        </button>
                                         <button type="submit" class="btn btn-success">
                                             <i class="fas fa-save"></i> Simpan
                                         </button>

@@ -95,7 +95,7 @@ class DataUmkmController extends Controller
                 'username' => $request->nik,
                 'nik' => $request->nik,
                 'password' => Hash::make($request->nik),
-                'role' => 'pelaku-umkm',
+                'role' => 'pelakuumkm',
             ]);
             Log::info('User created successfully', ['user_id' => $user->id]);
 

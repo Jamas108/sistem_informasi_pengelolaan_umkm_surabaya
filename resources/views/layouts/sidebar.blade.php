@@ -30,6 +30,10 @@
                 <i class="fas fa-fw fa-store-alt"></i>
                 <span>Data UMKM</span>
             </a>
+            <a class="nav-link py-2" href="{{route('datakegiatan.index')}}">
+                <i class="fas fa-fw fa-calendar-week"></i>
+                <span>Data Kegiatan</span>
+            </a>
         </li>
 
         <hr class="sidebar-divider mb-2">
@@ -75,7 +79,7 @@
         <hr class="sidebar-divider d-none d-md-block mb-0">
 
         <li class="nav-item">
-            <a class="nav-link" href="{{route('datauser.index')}}">
+            <a class="nav-link" href="{{route('manajemenuser.index')}}">
                 <i class="fas fa-fw fa-users"></i>
                 <span>Manajemen User</span></a>
         </li>

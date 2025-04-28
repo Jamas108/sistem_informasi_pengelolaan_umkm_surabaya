@@ -21,6 +21,7 @@ class Umkm extends Model
         'jumlah_tenaga_kerja',
         'klasifikasi_kinerja_usaha',
         'pengelolaan_usaha',
+        'sektor_usaha',
 
 
     ];

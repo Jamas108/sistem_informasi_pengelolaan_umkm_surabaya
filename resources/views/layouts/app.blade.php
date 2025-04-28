@@ -27,6 +27,7 @@
 
     <script src="{{ asset('js/umkm-form.js') }}"></script>
     @vite('resources/css/sb-admin-2.min.css')
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
 
     <style>
         body {
