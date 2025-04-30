@@ -10,7 +10,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class KegiatanController extends Controller
+class AdminLapKegiatanController extends Controller
 {
     /**
      * Display a listing of the resource.

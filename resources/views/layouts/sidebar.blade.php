@@ -21,16 +21,16 @@
 
     @if ($role == 'adminkantor')
         <li class="nav-item mb-2">
-            <a class="nav-link py-2" href="{{route('dashboard.admin_kantor')}}">
+            <a class="nav-link py-2" href="{{ route('dashboard.admin_kantor') }}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
 
-            <a class="nav-link py-2" href="{{route('dataumkm.index')}}">
+            <a class="nav-link py-2" href="{{ route('dataumkm.index') }}">
                 <i class="fas fa-fw fa-store-alt"></i>
                 <span>Data UMKM</span>
             </a>
-            <a class="nav-link py-2" href="{{route('datakegiatan.index')}}">
+            <a class="nav-link py-2" href="{{ route('datakegiatan.index') }}">
                 <i class="fas fa-fw fa-calendar-week"></i>
                 <span>Data Kegiatan</span>
             </a>
@@ -47,8 +47,8 @@
             <div id="collapseApprove" class="collapse" aria-labelledby="headingApprove" data-parent="#accordionSidebar"
                 style="margin-top: -10px;">
                 <div class="py-1 collapse-inner rounded" style="background-color: #1C486F">
-                    <a class="collapse-item text-white" href="index.html"><i class="fas fa-fw fa-check-circle"></i><span
-                            class="ml-2">Approve UMKM</span></a>
+                    <a class="collapse-item text-white" href="{{ route('approvalumkm.index') }}"><i
+                            class="fas fa-fw fa-check-circle"></i><span class="ml-2">Approve UMKM</span></a>
                     <a class="collapse-item text-white" href="index.html"><i class="fas fa-fw fa-check-circle"></i><span
                             class="ml-2">Approve Intervensi</span></a>
                 </div>
@@ -79,7 +79,7 @@
         <hr class="sidebar-divider d-none d-md-block mb-0">
 
         <li class="nav-item">
-            <a class="nav-link" href="{{route('manajemenuser.index')}}">
+            <a class="nav-link" href="{{ route('manajemenuser.index') }}">
                 <i class="fas fa-fw fa-users"></i>
                 <span>Manajemen User</span></a>
         </li>
@@ -87,14 +87,18 @@
 
     @if ($role == 'adminlapangan')
         <li class="nav-item mb-2">
-            <a class="nav-link py-2" href="index.html">
+            <a class="nav-link py-2" href="{{route ('dashboard.admin_lapangan')}}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
 
-            <a class="nav-link py-2" href="index.html">
+            <a class="nav-link py-2" href="{{ route('dataumkm.index') }}">
                 <i class="fas fa-fw fa-store-alt"></i>
                 <span>Data UMKM</span>
+            </a>
+            <a class="nav-link py-2" href="{{ route('datakegiatan.index') }}">
+                <i class="fas fa-fw fa-calendar-week"></i>
+                <span>Data Kegiatan</span>
             </a>
         </li>
 
@@ -106,10 +110,10 @@
                 <i class="fas fa-fw fa-check-circle"></i>
                 <span>Approve</span>
             </a>
-            <div id="collapseApprove" class="collapse" aria-labelledby="headingApprove" data-parent="#accordionSidebar"
-                style="margin-top: -10px;">
+            <div id="collapseApprove" class="collapse" aria-labelledby="headingApprove"
+                data-parent="#accordionSidebar" style="margin-top: -10px;">
                 <div class="py-1 collapse-inner rounded" style="background-color: #1C486F">
-                    <a class="collapse-item text-white" href="index.html"><i
+                    <a class="collapse-item text-white" href="{{ route('approvalumkm.index') }}"><i
                             class="fas fa-fw fa-check-circle"></i><span class="ml-2">Approve UMKM</span></a>
                     <a class="collapse-item text-white" href="index.html"><i
                             class="fas fa-fw fa-check-circle"></i><span class="ml-2">Approve Intervensi</span></a>

@@ -45,7 +45,15 @@ class PelakuKelolaUmkmController extends Controller
      */
     public function create()
     {
-        //
+        $user = Auth::user();
+
+        // Find the PelakuUmkm record associated with the logged-in user
+        $pelakuUmkm = PelakuUmkm::where('users_id', $user->id)->firstOrFail();
+
+        return view('pelakuumkm.kelolaumkm.create', [
+            'pelakuUmkm' => $pelakuUmkm,
+            'pageTitle' => 'Tambah UMKM Baru'
+        ]);
     }
 
     /**
@@ -53,7 +61,86 @@ class PelakuKelolaUmkmController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Log store attempt
+        Log::info('Storing new UMKM data', ['request_data' => $request->except(['_token'])]);
+
+        // Get the currently logged-in user
+        $user = Auth::user();
+
+        // Find the PelakuUmkm record associated with the logged-in user
+        $pelakuUmkm = PelakuUmkm::where('users_id', $user->id)->first();
+
+        // If no PelakuUmkm record found, return with error
+        if (!$pelakuUmkm) {
+            Log::error('No PelakuUmkm record found for user', ['user_id' => $user->id]);
+            return redirect()->route('pelakukelolaumkm.index')
+                ->with('status', 'Data pelaku UMKM tidak ditemukan')
+                ->with('status_type', 'danger');
+        }
+
+        // Begin transaction to ensure data consistency
+        DB::beginTransaction();
+
+        try {
+            $successCount = 0; // Counter for successful UMKM creations
+
+            // Handle UMKM data - create new ones
+            if ($request->has('umkm')) {
+                foreach ($request->umkm as $index => $umkmData) {
+                    Log::info('Processing UMKM data', ['index' => $index, 'data' => $umkmData]);
+
+                    // Skip empty entries (if any)
+                    if (empty($umkmData['nama_usaha']) && empty($umkmData['alamat'])) {
+                        Log::info('Skipping empty UMKM entry', ['index' => $index]);
+                        continue;
+                    }
+
+                    // Create new UMKM
+                    $dataUmkm = Umkm::create([
+                        'pelaku_umkm_id' => $pelakuUmkm->id,
+                        'nama_usaha' => $umkmData['nama_usaha'],
+                        'alamat' => $umkmData['alamat'],
+                        'jenis_produk' => $umkmData['jenis_produk'] ?? null,
+                        'tipe_produk' => $umkmData['tipe_produk'] ?? null,
+                        'pengelolaan_usaha' => $umkmData['pengelolaan_usaha'] ?? null,
+                        'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'] ?? null,
+                        'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'] ?? null,
+                        'sektor_usaha' => $umkmData['sektor_usaha'] ?? null,
+                        'status' => 'Menunggu Verifikasi',
+                    ]);
+
+                    Log::info('Created new UMKM', ['umkm_id' => $dataUmkm->id]);
+                    $successCount++;
+
+                }
+            }
+
+            // Commit all changes
+            DB::commit();
+            Log::info('All store operations completed successfully', ['success_count' => $successCount]);
+
+            // Redirect with success message
+            $successMessage = $successCount > 1
+                ? "$successCount UMKM berhasil ditambahkan dan menunggu verifikasi admin"
+                : "UMKM berhasil ditambahkan dan menunggu verifikasi admin";
+
+            return redirect()->route('pelakukelolaumkm.index')
+                ->with('status', $successMessage)
+                ->with('status_type', 'success');
+        } catch (\Exception $e) {
+            // Rollback in case of any exceptions
+            DB::rollBack();
+            Log::error('Error storing UMKM data', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Redirect with error message
+            return redirect()->back()
+                ->with('status', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->with('status_type', 'danger')
+                ->withInput();
+        }
     }
 
     /**
@@ -171,6 +258,7 @@ class PelakuKelolaUmkmController extends Controller
                             'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'] ?? null,
                             'sektor_usaha' => $umkmData['sektor_usaha'] ?? null,
                             'status' => $umkmData['status'] ?? 'Aktif',
+                            'status' => 'Menunggu Verifikasi',
                         ]);
                         Log::info('Updated existing UMKM', ['umkm_id' => $dataUmkm->id]);
                         $submittedUmkmIds[] = $dataUmkm->id;
@@ -186,7 +274,7 @@ class PelakuKelolaUmkmController extends Controller
                             'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'] ?? null,
                             'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'] ?? null,
                             'sektor_usaha' => $umkmData['sektor_usaha'] ?? null,
-                            'status' => $umkmData['status'] ?? 'Aktif',
+                            'status' => 'Menunggu Verifikasi',
                         ]);
                         Log::info('Created new UMKM', ['umkm_id' => $dataUmkm->id]);
                         $submittedUmkmIds[] = $dataUmkm->id;

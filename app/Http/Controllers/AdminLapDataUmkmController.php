@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class DataUmkmController extends Controller
+class AdminLapDataUmkmController extends Controller
 {
     /**
      * Display a listing of the resource.

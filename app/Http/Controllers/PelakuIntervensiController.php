@@ -6,6 +6,7 @@ use App\Models\Intervensi;
 use App\Models\Kegiatan;
 use App\Models\Umkm;
 use App\Models\PelakuUmkm;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -112,15 +113,22 @@ class PelakuIntervensiController extends Controller
                     ->with('error', 'Maaf, kuota kegiatan sudah penuh. Tidak dapat mendaftar.');
             }
 
+            // Generate unique registration number
+            $registrationNumber = $this->generateUniqueRegistrationNumber(
+                $validatedData['kegiatan_id'],
+                $validatedData['umkm_id']
+            );
+
             // Create a new Intervensi record
             $intervensi = new Intervensi();
             $intervensi->umkm_id = $validatedData['umkm_id'];
             $intervensi->kegiatan_id = $validatedData['kegiatan_id'];
+            $intervensi->no_pendaftaran_kegiatan = $registrationNumber;
             $intervensi->save();
 
             // Redirect with success message
             return redirect()->route('pelakukelolaintervensi.index')
-                ->with('success', 'Intervensi berhasil ditambahkan.');
+                ->with('success', 'Intervensi berhasil ditambahkan dengan nomor pendaftaran: ' . $registrationNumber);
         } catch (\Exception $e) {
             // Log the error
             Log::error('Error creating intervention: ' . $e->getMessage());
@@ -190,11 +198,11 @@ class PelakuIntervensiController extends Controller
 
             // Log hasil pencarian
             if ($buktiPendaftaranPath) {
-                \Log::info('Bukti Pendaftaran Ditemukan', [
+                Log::info('Bukti Pendaftaran Ditemukan', [
                     'path' => $buktiPendaftaranPath
                 ]);
             } else {
-                \Log::warning('Bukti Pendaftaran Tidak Ditemukan', [
+                Log::warning('Bukti Pendaftaran Tidak Ditemukan', [
                     'kegiatan_id' => $intervensi->kegiatan->id,
                     'umkm_nama' => $intervensi->dataUmkm->nama_usaha,
                     'bukti_pendaftaran_path' => $intervensi->kegiatan->bukti_pendaftaran_path
@@ -332,5 +340,40 @@ class PelakuIntervensiController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    private function generateUniqueRegistrationNumber($kegiatanId, $umkmId)
+    {
+        // Get current year and month
+        $now = Carbon::now();
+        $year = $now->format('Y');
+        $month = $now->format('m');
+
+        // Get kegiatan code (first 3 letters of kegiatan name, uppercase)
+        $kegiatan = Kegiatan::findOrFail($kegiatanId);
+        $kegiatanCode = Str::upper(Str::substr(Str::slug($kegiatan->nama_kegiatan), 0, 3));
+
+        // Get UMKM code (first 3 letters of UMKM name, uppercase)
+        $umkm = Umkm::findOrFail($umkmId);
+        $umkmCode = Str::upper(Str::substr(Str::slug($umkm->nama_usaha), 0, 3));
+
+        // Find existing registrations count for this kegiatan
+        $registrationCount = Intervensi::where('kegiatan_id', $kegiatanId)->count();
+        $sequenceNumber = str_pad($registrationCount + 1, 3, '0', STR_PAD_LEFT);
+
+        // Generate a random 2-digit number to ensure uniqueness
+        $randomNum = str_pad(mt_rand(10, 99), 2, '0', STR_PAD_LEFT);
+
+        // Format: REG/YEAR/MONTH/KEGIATAN_CODE/UMKM_CODE/SEQUENCE/RANDOM
+        $registrationNumber = "REG/{$year}/{$month}/{$kegiatanCode}/{$umkmCode}/{$sequenceNumber}/{$randomNum}";
+
+        // Ensure uniqueness by checking if this number already exists
+        while (Intervensi::where('no_pendaftaran_kegiatan', $registrationNumber)->exists()) {
+            // If exists, generate a new random number and try again
+            $randomNum = str_pad(mt_rand(10, 99), 2, '0', STR_PAD_LEFT);
+            $registrationNumber = "REG/{$year}/{$month}/{$kegiatanCode}/{$umkmCode}/{$sequenceNumber}/{$randomNum}";
+        }
+
+        return $registrationNumber;
     }
 }

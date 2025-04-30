@@ -77,7 +77,7 @@
             <small class="text-uppercase fw-bold text-white-50 ps-3">Akun</small>
         </div>
 
-        <a class="nav-link {{ $currentRouteName == 'profil' ? 'active' : '' }}" href="#profil">
+        <a class="nav-link {{ $currentRouteName == 'profil' ? 'active' : '' }}" href="{{route ('profil.index')}}">
             <div class="d-flex align-items-center">
                 <div class="icon-circle me-3 d-flex align-items-center justify-content-center">
                     <i class="fas fa-user"></i>

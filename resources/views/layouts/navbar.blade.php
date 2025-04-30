@@ -19,7 +19,7 @@
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i style="color: black" class="fas fa-user fa-sm fa-fw mr-2 text-black"></i>
-                <span style="color: black" class="mr-2 d-none d-lg-inline small">Admin Kantor</span>
+                <span style="color: black" class="mr-2 d-none d-lg-inline small"> {{ $user->username ?? 'Admin' }}</span>
                 <!-- Added dropdown icon -->
                 <i class="fas fa-chevron-down fa-sm text-black"></i>
             </a>

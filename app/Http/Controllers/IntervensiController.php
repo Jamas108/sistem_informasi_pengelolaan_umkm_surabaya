@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Intervensi;
+use App\Models\Kegiatan;
 use App\Models\Umkm;
 use App\Models\PelakuUmkm;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -55,9 +58,12 @@ class IntervensiController extends Controller
             $umkmIds = Umkm::where('pelaku_umkm_id', $id)->pluck('id')->toArray();
             Log::info('Found associated UMKMs', ['pelaku_id' => $id, 'umkm_count' => count($umkmIds)]);
 
-            // Get all intervensi data for these UMKMs with UMKM name
+            // Get all intervensi data for these UMKMs with UMKM name and kegiatan details
             $intervensiData = Intervensi::whereIn('umkm_id', $umkmIds)
-                ->with('dataUmkm:id,nama_usaha')
+                ->with([
+                    'dataUmkm:id,nama_usaha',
+                    'kegiatan:id,nama_kegiatan,status_kegiatan,tanggal_mulai' // Include kegiatan details
+                ])
                 ->get();
 
             Log::info('Retrieved intervensi data', ['pelaku_id' => $id, 'intervensi_count' => $intervensiData->count()]);
@@ -69,8 +75,12 @@ class IntervensiController extends Controller
                     'nama_usaha' => $item->dataUmkm->nama_usaha ?? 'Tidak ada',
                     'tgl_intervensi' => $item->tgl_intervensi,
                     'jenis_intervensi' => $item->jenis_intervensi,
-                    'nama_kegiatan' => $item->nama_kegiatan,
-                    'omset' => $item->omset,
+                    'nama_kegiatan' => $item->kegiatan->nama_kegiatan ?? $item->nama_kegiatan ?? '-',
+                    'no_pendaftaran_kegiatan' => $item->no_pendaftaran_kegiatan ?? '-',
+                    'status_kegiatan' => $item->kegiatan->status_kegiatan ?? 'PROSES',
+                    'tanggal_kegiatan' => $item->kegiatan->tanggal_mulai ?? $item->tgl_intervensi,
+                    'omset' => $item->omset ?? 0,
+                    'kegiatan_id' => $item->kegiatan_id ?? null
                 ];
             });
 
@@ -104,14 +114,56 @@ class IntervensiController extends Controller
     {
         Log::info('Getting intervensi details', ['intervensi_id' => $id]);
         try {
-            // Find the intervensi data
-            $intervensi = Intervensi::findOrFail($id);
+            // Find the intervensi data with eager loading of related models
+            $intervensi = Intervensi::with([
+                'dataUmkm:id,nama_usaha,sektor_usaha',
+                'kegiatan' => function ($query) {
+                    $query->select([
+                        'id',
+                        'nama_kegiatan',
+                        'jenis_kegiatan',
+                        'lokasi_kegiatan',
+                        'tanggal_mulai',
+                        'tanggal_selesai',
+                        'jam_mulai',
+                        'jam_selesai',
+                        'status_kegiatan',
+                        'kuota_pendaftaran'
+                    ]);
+                }
+            ])->findOrFail($id);
+
             Log::info('Found intervensi data', ['intervensi_id' => $id, 'umkm_id' => $intervensi->umkm_id]);
+
+            // Prepare a comprehensive response with all related data
+            $responseData = [
+                'id' => $intervensi->id,
+                'umkm_id' => $intervensi->umkm_id,
+                'kegiatan_id' => $intervensi->kegiatan_id,
+                'no_pendaftaran_kegiatan' => $intervensi->no_pendaftaran_kegiatan,
+                'omset' => $intervensi->omset,
+                'dokumentasi_kegiatan' => $intervensi->dokumentasi_kegiatan,
+
+                // UMKM details
+                'umkm_nama_usaha' => $intervensi->dataUmkm->nama_usaha,
+                'umkm_sektor_usaha' => $intervensi->dataUmkm->sektor_usaha,
+
+                // Kegiatan details
+                'kegiatan_nama' => $intervensi->kegiatan->nama_kegiatan,
+                'kegiatan_jenis' => $intervensi->kegiatan->jenis_kegiatan,
+                'kegiatan_lokasi' => $intervensi->kegiatan->lokasi_kegiatan,
+                'kegiatan_tanggal_mulai' => $intervensi->kegiatan->tanggal_mulai,
+                'kegiatan_tanggal_selesai' => $intervensi->kegiatan->tanggal_selesai,
+                'kegiatan_jam_mulai' => $intervensi->kegiatan->jam_mulai,
+                'kegiatan_jam_selesai' => $intervensi->kegiatan->jam_selesai,
+                'kegiatan_status' => $intervensi->kegiatan->status_kegiatan,
+                'kegiatan_kuota' => $intervensi->kegiatan->kuota_pendaftaran
+            ];
 
             Log::info('Returning intervensi data response', ['intervensi_id' => $id]);
             return response()->json([
                 'success' => true,
-                'data' => $intervensi
+                'data' => $responseData
             ]);
         } catch (\Exception $e) {
             Log::error('Error getting intervensi data', [
@@ -143,11 +195,12 @@ class IntervensiController extends Controller
         ]);
 
         try {
-            // Validate the request
+            // Validate the request - match fields from original saveIntervensi
             $validated = $request->validate([
                 'umkm_id' => 'required|exists:umkm,id',
-                'tgl_intervensi' => 'required|date',
-                'jenis_intervensi' => 'required|string|max:100',
+                'kegiatan_id' => 'required|exists:kegiatan,id',
+                'tgl_intervensi' => 'nullable|date',
+                'jenis_intervensi' => 'nullable|string|max:100',
                 'nama_kegiatan' => 'nullable|string|max:255',
                 'omset' => 'nullable|numeric',
             ]);
@@ -169,24 +222,74 @@ class IntervensiController extends Controller
 
             Log::info('UMKM verified', ['umkm_id' => $umkm->id, 'nama_usaha' => $umkm->nama_usaha]);
 
-            // Create new intervensi data
-            $intervensi = new Intervensi([
-                'umkm_id' => $request->umkm_id,
-                'tgl_intervensi' => $request->tgl_intervensi,
-                'jenis_intervensi' => $request->jenis_intervensi,
-                'nama_kegiatan' => $request->nama_kegiatan,
-                'omset' => $request->omset ?? 0,
-                'status_intervensi' => 'PROSES',
-            ]);
+            // Get kegiatan data
+            $kegiatan = Kegiatan::findOrFail($validated['kegiatan_id']);
+
+            // Check if kegiatan status allows registration (only Pendaftaran status)
+            if ($kegiatan->status_kegiatan !== 'Pendaftaran') {
+                $errorMessage = "";
+
+                if ($kegiatan->status_kegiatan === 'Belum Dimulai') {
+                    $errorMessage = 'Maaf, pendaftaran untuk kegiatan ini belum dibuka.';
+                } else if ($kegiatan->status_kegiatan === 'Sedang Berlangsung') {
+                    $errorMessage = 'Maaf, kegiatan ini sedang berlangsung dan tidak menerima pendaftaran baru.';
+                } else if ($kegiatan->status_kegiatan === 'Selesai') {
+                    $errorMessage = 'Maaf, kegiatan ini telah selesai dan tidak menerima pendaftaran.';
+                } else {
+                    $errorMessage = 'Maaf, pendaftaran untuk kegiatan ini tidak tersedia.';
+                }
+
+                Log::warning('Kegiatan status invalid', [
+                    'kegiatan_id' => $validated['kegiatan_id'],
+                    'status' => $kegiatan->status_kegiatan
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => $errorMessage
+                ], 422);
+            }
+
+            // Count existing interventions for this kegiatan
+            $existingInterventions = Intervensi::where('kegiatan_id', $kegiatan->id)->count();
+
+            // Check if kuota has been reached
+            if ($existingInterventions >= $kegiatan->kuota_pendaftaran) {
+                // Return error message about quota being full
+                Log::warning('Kegiatan quota reached', [
+                    'kegiatan_id' => $validated['kegiatan_id'],
+                    'kuota' => $kegiatan->kuota_pendaftaran,
+                    'existing' => $existingInterventions
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Maaf, kuota kegiatan sudah penuh. Tidak dapat mendaftar.'
+                ], 422);
+            }
+
+            // Generate unique registration number using the same format as PelakuIntervensiController
+            $registrationNumber = $this->generateUniqueRegistrationNumber(
+                $validated['kegiatan_id'],
+                $validated['umkm_id']
+            );
+
+            // Create a new Intervensi record
+            $intervensi = new Intervensi();
+            $intervensi->umkm_id = $validated['umkm_id'];
+            $intervensi->kegiatan_id = $validated['kegiatan_id'];
+            $intervensi->no_pendaftaran_kegiatan = $registrationNumber;
 
             // Save the intervensi
             $intervensi->save();
-            Log::info('New intervensi data saved successfully', ['intervensi_id' => $intervensi->id]);
+            Log::info('New intervensi data saved successfully', [
+                'intervensi_id' => $intervensi->id,
+                'registration_number' => $registrationNumber
+            ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Data intervensi berhasil disimpan',
-                'data' => $intervensi
+                'data' => $intervensi,
+                'registration_number' => $registrationNumber
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation failed for intervensi data', [
@@ -209,6 +312,41 @@ class IntervensiController extends Controller
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    private function generateUniqueRegistrationNumber($kegiatanId, $umkmId)
+    {
+        // Get current year and month
+        $now = Carbon::now();
+        $year = $now->format('Y');
+        $month = $now->format('m');
+
+        // Get kegiatan code (first 3 letters of kegiatan name, uppercase)
+        $kegiatan = Kegiatan::findOrFail($kegiatanId);
+        $kegiatanCode = Str::upper(Str::substr(Str::slug($kegiatan->nama_kegiatan), 0, 3));
+
+        // Get UMKM code (first 3 letters of UMKM name, uppercase)
+        $umkm = Umkm::findOrFail($umkmId);
+        $umkmCode = Str::upper(Str::substr(Str::slug($umkm->nama_usaha), 0, 3));
+
+        // Find existing registrations count for this kegiatan
+        $registrationCount = Intervensi::where('kegiatan_id', $kegiatanId)->count();
+        $sequenceNumber = str_pad($registrationCount + 1, 3, '0', STR_PAD_LEFT);
+
+        // Generate a random 2-digit number to ensure uniqueness
+        $randomNum = str_pad(mt_rand(10, 99), 2, '0', STR_PAD_LEFT);
+
+        // Format: REG/YEAR/MONTH/KEGIATAN_CODE/UMKM_CODE/SEQUENCE/RANDOM
+        $registrationNumber = "REG/{$year}/{$month}/{$kegiatanCode}/{$umkmCode}/{$sequenceNumber}/{$randomNum}";
+
+        // Ensure uniqueness by checking if this number already exists
+        while (Intervensi::where('no_pendaftaran_kegiatan', $registrationNumber)->exists()) {
+            // If exists, generate a new random number and try again
+            $randomNum = str_pad(mt_rand(10, 99), 2, '0', STR_PAD_LEFT);
+            $registrationNumber = "REG/{$year}/{$month}/{$kegiatanCode}/{$umkmCode}/{$sequenceNumber}/{$randomNum}";
+        }
+
+        return $registrationNumber;
     }
 
     /**

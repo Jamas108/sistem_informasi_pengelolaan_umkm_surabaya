@@ -13,10 +13,9 @@
                     <p class="mb-0 fs-6">Atur dan kembangkan usaha Anda untuk pertumbuhan bisnis yang optimal</p>
                 </div>
                 <div>
-                    <button class="btn btn-light rounded-pill px-4 shadow-sm" data-bs-toggle="modal"
-                        data-bs-target="#tambahUMKMModal">
+                    <a class="btn btn-light rounded-pill px-4 shadow-sm" href="{{ route('pelakukelolaumkm.create') }}">
                         <i class="fas fa-plus-circle me-2"></i> Tambah UMKM Baru
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -100,7 +99,7 @@
                                         <td>{{ $umkm->alamat }}</td>
                                         <td>
                                             <span
-                                                class="badge rounded-pill text-white 
+                                                class="badge rounded-pill text-white
                                                 @if ($umkm->sektor_usaha == 'Makanan & Minuman') bg-danger
                                                 @elseif($umkm->sektor_usaha == 'Fashion') bg-info
                                                 @elseif($umkm->sektor_usaha == 'Kerajinan') bg-warning
@@ -110,15 +109,15 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                <div
-                                                    class="status-dot {{ $umkm->status == 'AKTIF' ? 'bg-success' : 'bg-warning' }} me-2">
-                                                </div>
-                                                <span
-                                                    class="{{ $umkm->status == 'AKTIF' ? 'text-success' : 'text-warning' }} fw-medium ml-2">
-                                                    {{ $umkm->status }}
-                                                </span>
-                                            </div>
+                                            <span
+                                                class="badge rounded-pill text-white
+                                                @if ($umkm->status == 'AKTIF') bg-success
+                                                @elseif($umkm->status == 'DITOLAK') bg-danger
+                                                @elseif($umkm->status == 'MENUNGGU VERIFIKASI') bg-info
+                                                @elseif($umkm->status == 'TIDAK AKTIF') bg-warning
+                                                @else bg-secondary @endif px-3 py-2">
+                                                {{ $umkm->status ?? 'Tidak Dikategorikan' }}
+                                            </span>
                                         </td>
                                         <td>
                                             <div class="d-flex justify-content-center gap-2">
@@ -268,83 +267,6 @@
         </button>
     </main>
 
-    <!-- Modal Tambah UMKM -->
-    <div class="modal fade" id="tambahUMKMModal" tabindex="-1" aria-labelledby="tambahUMKMModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="tambahUMKMModalLabel">
-                        <i class="fas fa-plus-circle me-2"></i> Tambah UMKM Baru
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <form id="tambahUMKMForm">
-                        <div class="mb-3">
-                            <label for="namausaha" class="form-label fw-medium">Nama Usaha <span
-                                    class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-store"></i></span>
-                                <input type="text" class="form-control border-start-0" id="namausaha"
-                                    placeholder="Masukkan Nama UMKM" required>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="kategoriusaha" class="form-label fw-medium">Kategori Usaha <span
-                                    class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-tag"></i></span>
-                                <select class="form-select border-start-0" id="kategoriusaha" required>
-                                    <option value="">-- Pilih Kategori --</option>
-                                    <option value="makanan">Makanan & Minuman</option>
-                                    <option value="fashion">Fashion</option>
-                                    <option value="kerajinan">Kerajinan</option>
-                                    <option value="jasa">Jasa</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="alamatusaha" class="form-label fw-medium">Alamat Usaha <span
-                                    class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0"><i
-                                        class="fas fa-map-marker-alt"></i></span>
-                                <input type="text" class="form-control border-start-0" id="alamatusaha"
-                                    placeholder="Masukkan Alamat Lengkap" required>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="deskripasiusaha" class="form-label fw-medium">Deskripsi Usaha</label>
-                            <textarea class="form-control" id="deskripasiusaha" rows="3" placeholder="Jelaskan tentang usaha Anda"></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="omzetusaha" class="form-label fw-medium">Omzet Perbulan (Rp) <span
-                                    class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-coins"></i></span>
-                                <input type="text" class="form-control border-start-0" id="omzetusaha"
-                                    placeholder="Masukkan omzet rata-rata per bulan" required>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i> Batal
-                    </button>
-                    <button type="button" class="btn btn-primary" id="submitUMKM">
-                        <i class="fas fa-save me-1"></i> Simpan UMKM
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <style>
         /* Utility classes */

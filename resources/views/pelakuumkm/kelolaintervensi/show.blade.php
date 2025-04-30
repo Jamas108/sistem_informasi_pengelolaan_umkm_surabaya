@@ -575,10 +575,10 @@
                                             </div>
                                         </div>
                                     @else
-                                        <div class="col-md-12">
+                                        <div class="col-md-12 mt-3">
                                             <div class="alert alert-warning d-flex align-items-center" role="alert">
                                                 <i class="fas fa-exclamation-triangle me-3 fa-2x"></i>
-                                                <div>
+                                                <div class="ml-2">
                                                     Bukti pendaftaran belum tersedia.
                                                     @if ($intervensi->kegiatan->status_kegiatan == 'Pendaftaran')
                                                         Dokumen akan dibuat setelah admin mengubah status kegiatan.
@@ -594,6 +594,21 @@
 
 
                                 <div class="row g-4">
+
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="umkm_id" class="form-label fw-bold text-muted mb-2">
+                                                <i class="fas fa-registered me-2 text-primary"></i>
+                                                <span>Nomor Pendaftaran Kegiatan Intervensi </span>
+                                            </label>
+                                            <div class="position-relative">
+                                                <input type="text" class="form-control" id="lokasi_kegiatan"
+                                                    name="lokasi_kegiatan"
+                                                    value="{{ $intervensi->no_pendaftaran_kegiatan }}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="umkm_id" class="form-label fw-bold text-muted mb-2">
