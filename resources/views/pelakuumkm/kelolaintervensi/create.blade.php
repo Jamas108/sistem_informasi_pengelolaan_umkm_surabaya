@@ -131,7 +131,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-8">
                         <div class="d-flex align-items-center">
-                            <div class="bg-white bg-opacity-20 rounded-circle p-3 me-3">
+                            <div class="bg-opacity-20 rounded-circle p-3 me-3">
                                 <i class="fas fa-plus-circle fa-2x text-white"></i>
                             </div>
                             <div>
@@ -416,6 +416,12 @@
         /* Custom background for soft colors */
         .bg-soft-primary {
             background-color: rgba(13, 110, 253, 0.1);
+        }
+
+        .main-content {
+            margin-left: 220px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
         }
 
         /* Enhanced select styling */

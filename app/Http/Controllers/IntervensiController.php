@@ -15,41 +15,18 @@ use Illuminate\Support\Facades\DB;
 
 class IntervensiController extends Controller
 {
+    public function index()
+    {
+        $dataintervensis = Intervensi::with('kegiatan','dataUmkm')->get();
+        return view('adminkantor.export.intervensi', compact('dataintervensis'));
+    }
+
     /**
-     * Get list of intervensi data for a specific Pelaku UMKM.
+     * Get list of intervensi data for the specific Pelaku UMKM
      *
      * @param string $id The ID of the PelakuUmkm
      * @return \Illuminate\Http\JsonResponse
      */
-
-    public function index()
-    {
-        $user = Auth::user();
-
-        // Find the PelakuUmkm record associated with the logged-in user
-        $pelakuUmkm = PelakuUmkm::where('users_id', $user->id)->first();
-
-        // If no PelakuUmkm record found, return with empty data
-        if (!$pelakuUmkm) {
-            return view('pelakuumkm.kelolaintervensi.index', [
-                'dataintervensi' => collect(), // Empty collection
-                'pageTitle' => 'Kelola Intervensi'
-            ]);
-        }
-
-        // Get the UMKM IDs for this PelakuUmkm
-        $umkmIds = $pelakuUmkm->dataUmkm->pluck('id');
-
-        // Retrieve Intervensi data for the specific UMKM
-        $dataintervensi = Intervensi::whereIn('umkm_id', $umkmIds)
-            ->with('dataUmkm') // Eager load the related UMKM
-            ->get();
-
-        return view('pelakuumkm.kelolaintervensi.index', [
-            'dataintervensi' => $dataintervensi,
-            'pageTitle' => 'Kelola Intervensi'
-        ]);
-    }
     public function getIntervensiList(string $id)
     {
         Log::info('Getting intervensi list', ['pelaku_id' => $id]);
@@ -171,6 +148,127 @@ class IntervensiController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'intervensi_id' => $id,
                 'exception_class' => get_class($e)
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get intervensi data for editing
+     *
+     * @param string $pelakuId The ID of the PelakuUmkm
+     * @param string $intervensiId The ID of the intervensi to edit
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getIntervensiForEdit(string $pelakuId, string $intervensiId)
+    {
+        Log::info('Getting intervensi data for edit', [
+            'pelaku_id' => $pelakuId,
+            'intervensi_id' => $intervensiId
+        ]);
+
+        try {
+            // Find the PelakuUmkm
+            $pelakuUmkm = PelakuUmkm::findOrFail($pelakuId);
+
+            // Get all UMKMs associated with this PelakuUmkm
+            $umkms = Umkm::where('pelaku_umkm_id', $pelakuId)
+                ->select('id', 'nama_usaha', 'sektor_usaha', 'jenis_produk')
+                ->get();
+
+            Log::info('Found UMKMs for pelaku', [
+                'pelaku_id' => $pelakuId,
+                'umkm_count' => $umkms->count(),
+                'umkms' => $umkms->toArray()
+            ]);
+
+            // Get all kegiatans
+            $kegiatans = Kegiatan::select([
+                'id',
+                'nama_kegiatan',
+                'jenis_kegiatan',
+                'lokasi_kegiatan',
+                'tanggal_mulai',
+                'tanggal_selesai',
+                'jam_mulai',
+                'jam_selesai',
+                'status_kegiatan'
+            ])->get();
+
+            Log::info('Found kegiatan data', [
+                'kegiatan_count' => $kegiatans->count(),
+                'kegiatan_names' => $kegiatans->pluck('nama_kegiatan', 'id')
+            ]);
+
+            // Find the intervensi with related data
+            $intervensi = Intervensi::with([
+                'dataUmkm',
+                'kegiatan'
+            ])->findOrFail($intervensiId);
+
+            Log::info('Found intervensi data', [
+                'intervensi_id' => $intervensiId,
+                'umkm_id' => $intervensi->umkm_id,
+                'kegiatan_id' => $intervensi->kegiatan_id,
+                'no_pendaftaran' => $intervensi->no_pendaftaran_kegiatan
+            ]);
+
+            // Make sure this intervensi belongs to one of this PelakuUmkm's UMKMs
+            $umkmIds = $umkms->pluck('id')->toArray();
+
+            if (!in_array($intervensi->umkm_id, $umkmIds)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data intervensi tidak terkait dengan Pelaku UMKM ini'
+                ], 403);
+            }
+
+            // Prepare response data
+            $responseData = [
+                'id' => $intervensi->id,
+                'umkm_id' => $intervensi->umkm_id,
+                'kegiatan_id' => $intervensi->kegiatan_id,
+                'no_pendaftaran_kegiatan' => $intervensi->no_pendaftaran_kegiatan,
+                'omset' => $intervensi->omset,
+
+                // Additional data for convenience
+                'nama_usaha' => $intervensi->dataUmkm->nama_usaha ?? null,
+                'nama_kegiatan' => $intervensi->kegiatan->nama_kegiatan ?? null
+            ];
+
+            Log::info('Sending response for edit intervensi', [
+                'umkm_count' => $umkms->count(),
+                'kegiatan_count' => $kegiatans->count(),
+                'response_data' => $responseData
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $responseData,
+                'umkms' => $umkms,
+                'kegiatans' => $kegiatans
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Model not found', [
+                'exception' => $e->getMessage(),
+                'pelaku_id' => $pelakuId,
+                'intervensi_id' => $intervensiId
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Error getting intervensi data for edit', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'pelaku_id' => $pelakuId,
+                'intervensi_id' => $intervensiId
             ]);
 
             return response()->json([
@@ -353,37 +451,60 @@ class IntervensiController extends Controller
      * Update the specified intervensi in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $id
+     * @param  string  $pelakuId
+     * @param  string  $intervensiId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function updateIntervensi(Request $request, string $id)
+    public function updateIntervensi(Request $request, string $pelakuId, string $intervensiId)
     {
         Log::info('Intervensi update request received', [
-            'intervensi_id' => $id,
+            'pelaku_id' => $pelakuId,
+            'intervensi_id' => $intervensiId,
             'request_data' => $request->all()
         ]);
 
         try {
+            // Find the PelakuUmkm
+            $pelakuUmkm = PelakuUmkm::findOrFail($pelakuId);
+
             // Find the intervensi
-            $intervensi = Intervensi::findOrFail($id);
+            $intervensi = Intervensi::findOrFail($intervensiId);
 
             // Validate the request
             $validated = $request->validate([
                 'umkm_id' => 'required|exists:umkm,id',
-                'tgl_intervensi' => 'required|date',
-                'jenis_intervensi' => 'required|string|max:100',
-                'nama_kegiatan' => 'nullable|string|max:255',
-                'omset' => 'nullable|numeric',
+                'kegiatan_id' => 'required|exists:kegiatan,id',
+                'omset' => 'nullable',
             ]);
+
+            // Make sure the UMKM belongs to this PelakuUmkm
+            $umkmBelongsToPelaku = Umkm::where('id', $request->umkm_id)
+                ->where('pelaku_umkm_id', $pelakuId)
+                ->exists();
+
+            if (!$umkmBelongsToPelaku) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'UMKM tidak terkait dengan Pelaku UMKM ini'
+                ], 403);
+            }
 
             Log::info('Intervensi update validation passed', ['validated_data' => $validated]);
 
             // Update the intervensi
             $intervensi->umkm_id = $request->umkm_id;
-            $intervensi->tgl_intervensi = $request->tgl_intervensi;
-            $intervensi->jenis_intervensi = $request->jenis_intervensi;
-            $intervensi->nama_kegiatan = $request->nama_kegiatan;
-            $intervensi->omset = $request->omset ?? 0;
+            $intervensi->kegiatan_id = $request->kegiatan_id;
+
+            // Handle omset value (might be formatted with currency symbols)
+            if ($request->has('omset')) {
+                $omsetValue = $request->omset;
+                if (is_string($omsetValue)) {
+                    // Remove any non-numeric characters (currency formatting)
+                    $omsetValue = preg_replace('/[^0-9]/', '', $omsetValue);
+                }
+                $intervensi->omset = empty($omsetValue) ? null : (float)$omsetValue;
+            }
+
             $intervensi->save();
 
             Log::info('Intervensi data updated successfully', ['intervensi_id' => $intervensi->id]);
@@ -394,18 +515,22 @@ class IntervensiController extends Controller
                 'data' => $intervensi
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            Log::error('Intervensi not found', [
-                'intervensi_id' => $id
+            Log::error('Model not found in update', [
+                'exception' => $e->getMessage(),
+                'pelaku_id' => $pelakuId,
+                'intervensi_id' => $intervensiId
             ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Data intervensi tidak ditemukan'
+                'message' => 'Data tidak ditemukan'
             ], 404);
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation failed for intervensi update', [
                 'errors' => $e->errors(),
                 'request' => $request->all()
             ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal',
@@ -417,6 +542,7 @@ class IntervensiController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'request' => $request->all()
             ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()

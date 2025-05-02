@@ -257,6 +257,12 @@
             display: none;
         }
 
+        .main-content {
+            margin-left: 220px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+        }
+
         @media (max-width: 768px) {
             .btn-tambah-umkm {
                 display: flex;

@@ -7,6 +7,7 @@ use App\Models\Kegiatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -31,7 +32,14 @@ class KegiatanController extends Controller
         // Muat ulang data setelah update untuk memastikan perubahan terlihat
         $kegiatans = Kegiatan::all();
 
-        return view('adminkantor.datakegiatan.index', compact('kegiatans'));
+        $userRole = Auth::user()->role;
+
+        // Menampilkan view yang berbeda berdasarkan role
+        if ($userRole === 'adminkantor') {
+            return view('adminkantor.datakegiatan.index', compact('kegiatans'));
+        } elseif ($userRole === 'adminlapangan') {
+            return view('adminkantor.datakegiatan.index', compact('kegiatans'));
+        }
     }
 
     /**
@@ -39,7 +47,14 @@ class KegiatanController extends Controller
      */
     public function create()
     {
-        return view('adminkantor.datakegiatan.create');
+        $userRole = Auth::user()->role;
+
+        // Menampilkan view yang berbeda berdasarkan role
+        if ($userRole === 'adminkantor') {
+            return view('adminkantor.datakegiatan.create');
+        } elseif ($userRole === 'adminlapangan') {
+            return view('adminkantor.datakegiatan.create');
+        }
     }
 
     /**
@@ -88,10 +103,21 @@ class KegiatanController extends Controller
             ->with('dataUmkm')
             ->get();
 
-        return view('adminkantor.datakegiatan.show', [
-            'kegiatan' => $kegiatan,
-            'intervensis' => $intervensis
-        ]);
+
+        $userRole = Auth::user()->role;
+
+        // Menampilkan view yang berbeda berdasarkan role
+        if ($userRole === 'adminkantor') {
+            return view('adminkantor.datakegiatan.show', [
+                'kegiatan' => $kegiatan,
+                'intervensis' => $intervensis
+            ]);
+        } elseif ($userRole === 'adminlapangan') {
+            return view('adminkantor.datakegiatan.show',  [
+                'kegiatan' => $kegiatan,
+                'intervensis' => $intervensis
+            ]);
+        }
     }
 
     /**
@@ -100,7 +126,15 @@ class KegiatanController extends Controller
     public function edit(string $id)
     {
         $kegiatan = Kegiatan::findOrFail($id);
-        return view('adminkantor.datakegiatan.edit', compact('kegiatan'));
+
+        $userRole = Auth::user()->role;
+
+        // Menampilkan view yang berbeda berdasarkan role
+        if ($userRole === 'adminkantor') {
+            return view('adminkantor.datakegiatan.edit', compact('kegiatan'));
+        } elseif ($userRole === 'adminlapangan') {
+            return view('adminkantor.datakegiatan.edit', compact('kegiatan'));
+        }
     }
 
     /**
@@ -169,7 +203,7 @@ class KegiatanController extends Controller
         $kegiatan = Kegiatan::findOrFail($id);
 
         // Validasi status kegiatan
-        if ($kegiatan->status_kegiatan !== 'Pendaftaran') {
+        if ($kegiatan->status_kegiatan !== 'Persiapan Acara') {
             return redirect()->back()->with('error', 'Bukti pendaftaran hanya dapat dibuat saat status Pendaftaran');
         }
 

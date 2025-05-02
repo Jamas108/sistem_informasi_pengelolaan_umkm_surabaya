@@ -42,6 +42,13 @@ class DataUmkmController extends Controller
         }
     }
 
+    public function ExportUmkmIndex()
+    {
+        $pageTitle = 'Data UMKM';
+        $dataumkms = Umkm::with('pelakuUmkm')->get();
+        return view('adminkantor.export.dataumkm', compact('dataumkms', 'pageTitle'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -184,7 +191,15 @@ class DataUmkmController extends Controller
     {
 
         $pelakuUmkm = PelakuUmkm::with('dataUmkm')->findOrFail($id);
-        return view('adminkantor.dataumkm.show', compact('pelakuUmkm'));
+
+        $userRole = Auth::user()->role;
+
+        // Menampilkan view yang berbeda berdasarkan role
+        if ($userRole === 'adminkantor') {
+            return view('adminkantor.dataumkm.show', compact('pelakuUmkm',));
+        } elseif ($userRole === 'adminlapangan') {
+            return view('adminlapangan.dataumkm.show', compact('pelakuUmkm'));
+        }
     }
 
     /**
@@ -195,10 +210,14 @@ class DataUmkmController extends Controller
         $pelakuUmkm = PelakuUmkm::with('dataUmkm')->findOrFail($id);
         $kegiatans = Kegiatan::all();
 
-        return view('adminkantor.dataumkm.edit', [
-            'pelakuUmkm' => $pelakuUmkm,
-            'kegiatans' => $kegiatans,
-        ]);
+        $userRole = Auth::user()->role;
+
+        // Menampilkan view yang berbeda berdasarkan role
+        if ($userRole === 'adminkantor') {
+            return view('adminkantor.dataumkm.edit', compact('pelakuUmkm', 'kegiatans'));
+        } elseif ($userRole === 'adminlapangan') {
+            return view('adminlapangan.dataumkm.edit', compact('pelakuUmkm', 'kegiatans'));
+        }
     }
 
     /**
@@ -459,9 +478,4 @@ class DataUmkmController extends Controller
         }
     }
 
-    // public function ApprovalUMKM(string $id)
-    // {
-    //     $pelakuUmkm = PelakuUmkm::with('dataUmkm')->findOrFail($id);
-    //     return view('adminkantor.dataumkm.edit', compact('pelakuUmkm'));
-    // }
 }

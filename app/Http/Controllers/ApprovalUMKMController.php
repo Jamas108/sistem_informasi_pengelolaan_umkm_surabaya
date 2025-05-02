@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PelakuUmkm;
 use App\Models\Umkm;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -17,7 +18,15 @@ class ApprovalUMKMController extends Controller
     {
         $pageTitle = 'Data UMKM';
         $dataumkms = Umkm::with('pelakuUmkm')->where('status', 'Menunggu Verifikasi')->get();
-        return view('adminkantor.approval.approvalumkm', compact('dataumkms', 'pageTitle'));
+
+        $userRole = Auth::user()->role;
+
+        // Menampilkan view yang berbeda berdasarkan role
+        if ($userRole === 'adminkantor') {
+            return view('adminkantor.approval.approvalumkm', compact('dataumkms', 'pageTitle'));
+        } elseif ($userRole === 'adminlapangan') {
+            return view('adminkantor.approval.approvalumkm', compact('dataumkms', 'pageTitle'));
+        }
     }
 
     /**
@@ -43,7 +52,14 @@ class ApprovalUMKMController extends Controller
     {
 
         $dataumkm = Umkm::with('pelakuUmkm')->findOrFail($id);
-        return view('adminkantor.approval.show', compact('dataumkm'));
+        $userRole = Auth::user()->role;
+
+        // Menampilkan view yang berbeda berdasarkan role
+        if ($userRole === 'adminkantor') {
+            return view('adminkantor.approval.show', compact('dataumkms', 'pageTitle'));
+        } elseif ($userRole === 'adminlapangan') {
+            return view('adminkantor.approval.show', compact('dataumkms', 'pageTitle'));
+        }
     }
 
     /**

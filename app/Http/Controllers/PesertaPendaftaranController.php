@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PendaftarExport;
+use Illuminate\Support\Facades\Auth;
 
 class PesertaPendaftaranController extends Controller
 {
@@ -25,10 +26,20 @@ class PesertaPendaftaranController extends Controller
             ->with(['dataUmkm', 'dataUmkm.pelakuUmkm'])
             ->get();
 
-        return view('adminkantor.datakegiatan.peserta-kegiatan', [
-            'kegiatan' => $kegiatan,
-            'intervensis' => $intervensis
-        ]);
+        $userRole = Auth::user()->role;
+
+        // Menampilkan view yang berbeda berdasarkan role
+        if ($userRole === 'adminkantor') {
+            return view('adminkantor.datakegiatan.peserta-kegiatan', [
+                'kegiatan' => $kegiatan,
+                'intervensis' => $intervensis
+            ]);
+        } elseif ($userRole === 'adminlapangan') {
+            return view('adminkantor.datakegiatan.peserta-kegiatan', [
+                'kegiatan' => $kegiatan,
+                'intervensis' => $intervensis
+            ]);
+        }
     }
 
     /**

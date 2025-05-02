@@ -66,11 +66,11 @@
             <div id="collapseExport" class="collapse" aria-labelledby="headingExport" data-parent="#accordionSidebar"
                 style="margin-top: -10px;">
                 <div class="py-1 collapse-inner rounded" style="background-color: #1C486F;">
-                    <a class="collapse-item text-white" href="charts.html"><i class="fas fa-fw fa-file-export"></i><span
+                    <a class="collapse-item text-white" href="{{route  ('exportomset.index')}}"><i class="fas fa-fw fa-file-export"></i><span
                             class="ml-2">Export Omset</span></a>
-                    <a class="collapse-item text-white" href="tables.html"><i class="fas fa-fw fa-file-export"></i><span
+                    <a class="collapse-item text-white" href="{{route  ('exportintervensi.index')}}"><i class="fas fa-fw fa-file-export"></i><span
                             class="ml-2">Export Intervensi</span></a>
-                    <a class="collapse-item text-white" href="tables.html"><i class="fas fa-fw fa-file-export"></i><span
+                    <a class="collapse-item text-white" href="{{route  ('exportumkm.index')}}"><i class="fas fa-fw fa-file-export"></i><span
                             class="ml-2">Export UMKM</span></a>
                 </div>
             </div>

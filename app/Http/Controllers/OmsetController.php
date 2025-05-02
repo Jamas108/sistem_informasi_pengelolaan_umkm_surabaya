@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Log;
 
 class OmsetController extends Controller
 {
+
+    public function index()
+    {
+        $dataomsets = Omset::with('dataUmkm')->get();
+        return view('adminkantor.export.omset', compact('dataomsets'));
+    }
+
     /**
      * Get list of omset data for a specific Pelaku UMKM.
      *

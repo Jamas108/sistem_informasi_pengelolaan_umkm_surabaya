@@ -1451,7 +1451,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Edit Intervensi Modal -->
+                                            <!-- Edit Intervensi Modal (Updated) -->
                                             <div class="modal fade" id="editIntervensiModal" tabindex="-1"
                                                 role="dialog" aria-labelledby="editIntervensiModalLabel"
                                                 aria-hidden="true">
@@ -1473,11 +1473,13 @@
                                                                 <!-- UMKM Selection -->
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_umkm_id"
-                                                                        class="col-sm-3 col-form-label">UMKM</label>
+                                                                        class="col-sm-3 col-form-label font-weight-bold">UMKM</label>
                                                                     <div class="col-sm-9">
-                                                                        <select class="form-control" id="edit_umkm_id"
-                                                                            name="umkm_id">
-                                                                            <!-- Options will be populated dynamically via AJAX -->
+                                                                        <select class="form-control" id="edit_umkm_id" name="umkm_id">
+                                                                            @foreach ($pelakuUmkm->dataUmkm as $umkm)
+                                                                <option value="{{ $umkm->id }}">
+                                                                    {{ $umkm->nama_usaha }}</option>
+                                                            @endforeach
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -1485,7 +1487,7 @@
                                                                 <!-- Kegiatan Selection -->
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_kegiatan_id"
-                                                                        class="col-sm-3 col-form-label">Kegiatan
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Kegiatan
                                                                         Intervensi</label>
                                                                     <div class="col-sm-9">
                                                                         <select class="form-control" id="edit_kegiatan_id"
@@ -1498,8 +1500,8 @@
                                                                 <!-- Auto-populated fields based on Kegiatan selection -->
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_jenis_kegiatan"
-                                                                        class="col-sm-3 col-form-label">Jenis
-                                                                        Kegiatan</label>
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Kegiatan
+                                                                        Intervensi</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
                                                                             id="edit_jenis_kegiatan" name="jenis_kegiatan"
@@ -1509,8 +1511,8 @@
 
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_lokasi_kegiatan"
-                                                                        class="col-sm-3 col-form-label">Lokasi
-                                                                        Kegiatan</label>
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Lokasi
+                                                                        Kegiatan Intervensi</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
                                                                             id="edit_lokasi_kegiatan"
@@ -1520,7 +1522,7 @@
 
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_tanggal_mulai"
-                                                                        class="col-sm-3 col-form-label">Tanggal
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Tanggal
                                                                         Mulai</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
@@ -1531,7 +1533,7 @@
 
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_tanggal_selesai"
-                                                                        class="col-sm-3 col-form-label">Tanggal
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Tanggal
                                                                         Selesai</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
@@ -1542,7 +1544,8 @@
 
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_jam_mulai"
-                                                                        class="col-sm-3 col-form-label">Jam Mulai</label>
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Jam
+                                                                        Mulai</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
                                                                             id="edit_jam_mulai" name="jam_mulai" readonly>
@@ -1551,7 +1554,8 @@
 
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_jam_selesai"
-                                                                        class="col-sm-3 col-form-label">Jam Selesai</label>
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Jam
+                                                                        Selesai</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
                                                                             id="edit_jam_selesai" name="jam_selesai"
@@ -1562,7 +1566,7 @@
                                                                 <!-- Read-only generated information -->
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_no_pendaftaran"
-                                                                        class="col-sm-3 col-form-label">Nomor
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Nomor
                                                                         Pendaftaran</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
@@ -1574,7 +1578,7 @@
                                                                 <!-- Optional fields for additional data -->
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_omset"
-                                                                        class="col-sm-3 col-form-label">Omset</label>
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Omset</label>
                                                                     <div class="col-sm-9">
                                                                         <div class="input-group">
                                                                             <div class="input-group-prepend">
@@ -1593,7 +1597,9 @@
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">Batal</button>
                                                             <button type="button" class="btn btn-primary"
-                                                                id="save-edit-intervensi">Simpan Perubahan</button>
+                                                                id="save-edit-intervensi">
+                                                                <i class="fas fa-save mr-2"></i> Simpan Perubahan
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
