@@ -217,6 +217,26 @@
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
+                            @if(session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                            @endif
+
+                            @if($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            @endif
+
+                            <!-- Debug Form Values -->
+                            <div style="display: none;" id="debug-form-values">
+                                <pre>{{ json_encode($pelakuUmkm->toArray(), JSON_PRETTY_PRINT) }}</pre>
+                            </div>
                             <div class="tab-content" id="myTabContent">
                                 <!-- Tab 1: Data Pelaku UMKM -->
                                 <!-- Tab 1: Data Pelaku UMKM (Revised) -->
@@ -474,7 +494,7 @@
                                             </div>
 
                                             <div class="d-flex justify-content-center mt-4 pt-3 border-top">
-                                                <button type="submit" class="btn btn-success btn-md mr-3">
+                                                <button type="submit" class="btn btn-success btn-md main-submit-btn">
                                                     <i class="fas fa-save mr-2"></i> Simpan Data Pelaku
                                                 </button>
                                             </div>
