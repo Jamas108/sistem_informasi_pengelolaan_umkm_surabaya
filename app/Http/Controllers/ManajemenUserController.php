@@ -7,6 +7,7 @@ use App\Models\PelakuUmkm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -39,20 +40,21 @@ class ManajemenUserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
         // Validasi data
         $validator = Validator::make($request->all(), [
             'username' => ['required', 'string', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+
+            // Data Pelaku UMKM
             'nama_lengkap' => ['required', 'string', 'max:255'],
-            'nik' => ['required', 'string', 'max:16', 'unique:pelaku_umkm,nik'],
-            'no_kk' => ['required', 'string', 'max:16'],
+            'nik' => ['required', 'string', 'max:16', 'unique:pelaku_umkm,nik'], // Ubah menjadi string
+            'no_kk' => ['required', 'string', 'max:16'], // Ubah menjadi string
             'tempat_lahir' => ['required', 'string', 'max:255'],
             'tgl_lahir' => ['required', 'date'],
             'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
-            'status_hubungan_keluarga' => ['required', 'string', 'max:255'],
-            'status_perkawinan' => ['required', 'string', 'max:255'],
             'alamat_sesuai_ktp' => ['required', 'string', 'max:255'],
             'kelurahan' => ['required', 'string', 'max:255'],
             'rt' => ['required', 'integer'],
@@ -63,6 +65,13 @@ class ManajemenUserController extends Controller
         ]);
 
         if ($validator->fails()) {
+            // Log kegagalan validasi
+            Log::warning('Validasi gagal saat menambah user: ', [
+                'username' => $request->username,
+                'errors' => $validator->errors()->toArray(),
+                'input' => $request->except(['password', 'password_confirmation'])
+            ]);
+
             return redirect()
                 ->back()
                 ->withErrors($validator)
@@ -88,8 +97,8 @@ class ManajemenUserController extends Controller
                     'tempat_lahir' => $request->tempat_lahir,
                     'tgl_lahir' => $request->tgl_lahir,
                     'jenis_kelamin' => $request->jenis_kelamin,
-                    'status_hubungan_keluarga' => $request->status_hubungan_keluarga,
-                    'status_perkawinan' => $request->status_perkawinan,
+                    'status_hubungan_keluarga' => $request->status_hubungan_keluarga ?? null,
+                    'status_perkawinan' => $request->status_perkawinan ?? null,
                     'alamat_sesuai_ktp' => $request->alamat_sesuai_ktp,
                     'kelurahan' => $request->kelurahan,
                     'rt' => $request->rt,
@@ -97,12 +106,28 @@ class ManajemenUserController extends Controller
                     'no_telp' => $request->no_telp,
                     'pendidikan_terakhir' => $request->pendidikan_terakhir,
                 ]);
+
+                // Log berhasil tambah user
+                Log::info('User berhasil ditambahkan', [
+                    'user_id' => $user->id,
+                    'username' => $user->username,
+                    'role' => $user->role
+                ]);
             });
 
             return redirect()
                 ->route('manajemenuser.index')
                 ->with('success', 'User berhasil ditambahkan');
         } catch (\Exception $e) {
+            // Log kegagalan dengan detil error
+            Log::error('Gagal menambahkan user: ' . $e->getMessage(), [
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'input' => $request->except(['password', 'password_confirmation'])
+            ]);
+
             return redirect()
                 ->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())

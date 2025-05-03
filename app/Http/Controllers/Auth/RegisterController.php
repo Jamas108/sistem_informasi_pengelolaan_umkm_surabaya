@@ -42,6 +42,57 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        $messages = [
+            // Custom messages for User data
+            'username.required' => 'Username wajib diisi',
+            'username.string' => 'Username harus berupa teks',
+            'username.max' => 'Username maksimal 255 karakter',
+            'username.unique' => 'Username sudah digunakan',
+            'password.required' => 'Password wajib diisi',
+            'password.string' => 'Password harus berupa teks',
+            'password.min' => 'Password minimal 8 karakter',
+            'password.confirmed' => 'Konfirmasi password tidak cocok',
+
+            // Custom messages for Pelaku UMKM data
+            'nama_lengkap.required' => 'Nama lengkap wajib diisi',
+            'nama_lengkap.string' => 'Nama lengkap harus berupa teks',
+            'nama_lengkap.max' => 'Nama lengkap maksimal 255 karakter',
+            'nik.required' => 'NIK wajib diisi',
+            'nik.numeric' => 'NIK harus berupa angka',
+            'nik.digits' => 'NIK harus berisi 16 angka',
+            'nik.unique' => 'NIK sudah terdaftar',
+            'no_kk.required' => 'Nomor KK wajib diisi',
+            'no_kk.numeric' => 'Nomor KK harus berupa teks',
+            'no_kk.digits' => 'Nomor KK harus 16 digit',
+            'tempat_lahir.required' => 'Tempat lahir wajib diisi',
+            'tempat_lahir.string' => 'Tempat lahir harus berupa teks',
+            'tempat_lahir.max' => 'Tempat lahir maksimal 255 karakter',
+            'tgl_lahir.required' => 'Tanggal lahir wajib diisi',
+            'tgl_lahir.date' => 'Format tanggal lahir tidak valid',
+            'jenis_kelamin.required' => 'Jenis kelamin wajib diisi',
+            'jenis_kelamin.string' => 'Jenis kelamin harus berupa teks',
+            'jenis_kelamin.in' => 'Jenis kelamin harus Laki-laki atau Perempuan',
+            'alamat.required' => 'Alamat wajib diisi',
+            'alamat.string' => 'Alamat harus berupa teks',
+            'alamat.max' => 'Alamat maksimal 255 karakter',
+            'kelurahan.required' => 'Kelurahan wajib diisi',
+            'kelurahan.string' => 'Kelurahan harus berupa teks',
+            'kelurahan.max' => 'Kelurahan maksimal 255 karakter',
+            'rt.required' => 'RT wajib diisi',
+            'rt.integer' => 'RT harus berupa angka',
+            'rw.required' => 'RW wajib diisi',
+            'rw.integer' => 'RW harus berupa angka',
+            'alamat_sesuai_ktp.required' => 'Status alamat wajib diisi',
+            'alamat_sesuai_ktp.string' => 'Status alamat harus berupa teks',
+            'alamat_sesuai_ktp.in' => 'Status alamat harus Ya atau Tidak',
+            'no_telp.required' => 'Nomor telepon wajib diisi',
+            'no_telp.string' => 'Nomor telepon harus berupa teks',
+            'no_telp.max' => 'Nomor telepon maksimal 15 digit',
+            'pendidikan_terakhir.required' => 'Pendidikan terakhir wajib diisi',
+            'pendidikan_terakhir.string' => 'Pendidikan terakhir harus berupa teks',
+            'pendidikan_terakhir.max' => 'Pendidikan terakhir maksimal 255 karakter',
+        ];
+
         return Validator::make($data, [
             // Data Users
             'username' => ['required', 'string', 'max:255', 'unique:users'],
@@ -49,13 +100,11 @@ class RegisterController extends Controller
 
             // Data Pelaku UMKM
             'nama_lengkap' => ['required', 'string', 'max:255'],
-            'nik' => ['required', 'string', 'max:16', 'unique:pelaku_umkm,nik'],
-            'no_kk' => ['required', 'string', 'max:16'],
+            'nik' => ['required', 'numeric', 'digits:16', 'unique:pelaku_umkm,nik'],
+            'no_kk' => ['required', 'numeric', 'digits:16'],
             'tempat_lahir' => ['required', 'string', 'max:255'],
             'tgl_lahir' => ['required', 'date'],
             'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
-            'status_hubungan_keluarga' => ['required', 'string', 'max:255'],
-            'status_perkawinan' => ['required', 'string', 'max:255'],
             'alamat' => ['required', 'string', 'max:255'],
             'kelurahan' => ['required', 'string', 'max:255'],
             'rt' => ['required', 'integer'],
@@ -63,7 +112,7 @@ class RegisterController extends Controller
             'alamat_sesuai_ktp' => ['required', 'string', 'in:Ya,Tidak'],
             'no_telp' => ['required', 'string', 'max:15'],
             'pendidikan_terakhir' => ['required', 'string', 'max:255'],
-        ]);
+        ], $messages);
     }
 
     /**

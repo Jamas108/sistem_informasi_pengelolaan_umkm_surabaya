@@ -7,3 +7,4 @@ import '../js/umkm-omset';
 import '../js/umkm-legalitas';
 import '../js/umkm-intervensi';
 import '../js/chart';
+import '../js/produk-umkm';

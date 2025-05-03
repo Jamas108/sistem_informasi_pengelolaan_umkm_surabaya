@@ -7,6 +7,7 @@ use App\Models\Kegiatan;
 use App\Models\Legalitas;
 use App\Models\Omset;
 use App\Models\PelakuUmkm;
+use App\Models\ProdukUmkm;
 use App\Models\Umkm;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -158,10 +159,28 @@ class DataUmkmController extends Controller
                     'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'] ?? null,
                     'sektor_usaha' => $umkmData['sektor_usaha'] ?? null,
                     'status' => $umkmData['status'] ?? 'Aktif',
-                    'jenis_produk' => $umkmData['jenis_produk'] ?? null,
-                    'tipe_produk' => $umkmData['tipe_produk'] ?? null,
                 ]);
                 Log::info('UMKM entry created successfully', ['umkm_id' => $umkm->id]);
+
+                // Process products for this UMKM if they exist
+                if (isset($umkmData['products']) && !empty($umkmData['products'])) {
+                    Log::info('Processing products for UMKM', [
+                        'umkm_id' => $umkm->id,
+                        'product_count' => count($umkmData['products'])
+                    ]);
+
+                    foreach ($umkmData['products'] as $productData) {
+                        // Create product record
+                        $product = ProdukUmkm::create([
+                            'umkm_id' => $umkm->id,
+                            'jenis_produk' => $productData['jenis_produk'],
+                            'tipe_produk' => $productData['tipe_produk'],
+                            'status' => $productData['status'] ?? 'Aktif',
+                        ]);
+
+                        Log::info('Product created successfully', ['product_id' => $product->id]);
+                    }
+                }
             }
 
             DB::commit();
@@ -281,8 +300,6 @@ class DataUmkmController extends Controller
                     $dataUmkm->update([
                         'nama_usaha' => $umkmData['nama_usaha'],
                         'alamat' => $umkmData['alamat'],
-                        'jenis_produk' => $umkmData['jenis_produk'],
-                        'tipe_produk' => $umkmData['tipe_produk'],
                         'pengelolaan_usaha' => $umkmData['pengelolaan_usaha'],
                         'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'],
                         'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'],
@@ -295,8 +312,6 @@ class DataUmkmController extends Controller
                     $dataUmkm = $pelakuUmkm->dataUmkm()->create([
                         'nama_usaha' => $umkmData['nama_usaha'],
                         'alamat' => $umkmData['alamat'],
-                        'jenis_produk' => $umkmData['jenis_produk'],
-                        'tipe_produk' => $umkmData['tipe_produk'],
                         'pengelolaan_usaha' => $umkmData['pengelolaan_usaha'],
                         'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'],
                         'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'],
@@ -477,5 +492,4 @@ class DataUmkmController extends Controller
             ], 500);
         }
     }
-
 }

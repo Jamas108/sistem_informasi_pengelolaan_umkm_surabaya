@@ -16,8 +16,6 @@ class Umkm extends Model
         'nama_usaha',
         'alamat',
         'status',
-        'jenis_produk',
-        'tipe_produk',
         'jumlah_tenaga_kerja',
         'klasifikasi_kinerja_usaha',
         'pengelolaan_usaha',
@@ -32,7 +30,12 @@ class Umkm extends Model
     }
 
     public function omset()
-{
-    return $this->hasMany(Omset::class, 'umkm_id');
-}
+    {
+        return $this->hasMany(Omset::class, 'umkm_id');
+    }
+
+    public function produkUmkm()
+    {
+        return $this->hasMany(ProdukUmkm::class, 'umkm_id');
+    }
 }

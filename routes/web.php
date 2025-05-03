@@ -15,8 +15,10 @@ use App\Http\Controllers\PelakuIntervensiController;
 use App\Http\Controllers\PelakuKegiatanController;
 use App\Http\Controllers\PelakuKelolaUmkmController;
 use App\Http\Controllers\PesertaPendaftaranController;
+use App\Http\Controllers\ProdukUmkmController;
 use App\Http\Controllers\ProfilController;
 use App\Models\Intervensi;
+use App\Models\ProdukUmkm;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -51,6 +53,19 @@ Route::middleware(['auth'])->group(function () {
 // CRUD UMKM //
 Route::resource('dataumkm', DataUmkmController::class);
 Route::post('/check-nik', [App\Http\Controllers\DataUmkmController::class, 'checkNik'])->name('check.nik');
+
+// EDIT UMKM > TAB UMKM > PRODUK
+Route::resource('produkumkm', ProdukUmkmController::class);
+Route::post('/store-product', [ProdukUmkmController::class, 'store']);
+Route::put('/update-product/{id}', [ProdukUmkmController::class, 'update']);
+Route::delete('/delete-product/{id}', [ProdukUmkmController::class, 'destroy']);
+Route::get('/get-products/{umkmId}', [ProdukUmkmController::class, 'getProductsByUmkm']);
+// Product CRUD routes
+Route::get('/get-products/{umkmId}', [App\Http\Controllers\ProdukUmkmController::class, 'getProductsByUmkm']);
+Route::get('/get-product/{id}', [App\Http\Controllers\ProdukUmkmController::class, 'show']);
+Route::post('/store-product', [App\Http\Controllers\ProdukUmkmController::class, 'store']);
+Route::put('/update-product/{id}', [App\Http\Controllers\ProdukUmkmController::class, 'update']);
+Route::delete('/delete-product/{id}', [App\Http\Controllers\ProdukUmkmController::class, 'destroy']);
 
 // EDIT UMKM > TAB OMSET //
 Route::post('/dataumkm/omset/save/{id}', [OmsetController::class, 'saveOmset']);
