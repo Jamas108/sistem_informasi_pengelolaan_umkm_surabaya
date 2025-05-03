@@ -193,10 +193,10 @@
                                     <a class="nav-link" id="umkm-tab" data-toggle="tab" href="#umkm" role="tab"
                                         aria-controls="umkm" aria-selected="false">Data UMKM</a>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                {{-- <li class="nav-item" role="presentation">
                                     <a class="nav-link" id="omset-tab" data-toggle="tab" href="#omset" role="tab"
                                         aria-controls="omset" aria-selected="false">Omset</a>
-                                </li>
+                                </li> --}}
                                 <li class="nav-item" role="presentation">
                                     <a class="nav-link" id="legalitas-tab" data-toggle="tab" href="#legalitas"
                                         role="tab" aria-controls="legalitas" aria-selected="false">Legalitas</a>
@@ -568,7 +568,7 @@
                                                                                 id="pengelolaan_usaha_{{ $index }}"
                                                                                 name="umkm[{{ $index }}][pengelolaan_usaha]">
                                                                                 <option value="">-- Pilih --</option>
-                                                                                <option value="PERSEORANGAN / MANDIRIx"
+                                                                                <option value="PERSEORANGAN / MANDIRI"
                                                                                     {{ $umkm->pengelolaan_usaha == 'PERSEORANGAN / MANDIRI' ? 'selected' : '' }}>
                                                                                     PERSEORANGAN / MANDIRI</option>
                                                                                 <option value="KELOMPOK / SUBKON / KERJASAMA"
@@ -742,7 +742,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab-pane fade" id="omset" role="tabpanel"
+                                    {{-- <div class="tab-pane fade" id="omset" role="tabpanel"
                                         aria-labelledby="omset-tab">
                                         <div class="card border-0 shadow-sm">
                                             <div class="card-header bg-gradient-primary text-white py-3">
@@ -973,7 +973,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <!-- Tab 5: Legalitas UMKM -->
                                     <div class="tab-pane fade" id="legalitas" role="tabpanel"
                                         aria-labelledby="legalitas-tab">

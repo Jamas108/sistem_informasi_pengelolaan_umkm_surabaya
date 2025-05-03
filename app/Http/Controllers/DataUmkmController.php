@@ -245,168 +245,222 @@ class DataUmkmController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, string $id)
     {
-        // Validate the request data
-        $request->validate([
-            'nik' => 'required|string|max:16',
-            'nama_lengkap' => 'required|string|max:255',
-            'no_kk' => 'required|string|max:16',
-            'tempat_lahir' => 'required|string|max:255',
-            'tgl_lahir' => 'required|date',
-            'jenis_kelamin' => 'required|string|max:20',
-            'status_hubungan_keluarga' => 'required|string|max:50',
-            'status_perkawinan' => 'required|string|max:50',
-            'alamat_sesuai_ktp' => 'required|string',
-            'kelurahan' => 'required|string|max:255',
-            'rw' => 'required|string|max:10',
-            'rt' => 'required|string|max:10',
-            'no_telp' => 'required|string|max:15',
-            'pendidikan_terakhir' => 'required|string|max:50',
-            'status_keaktifan' => 'required|string|max:50',
-        ]);
+        // Start a transaction to ensure data integrity
+        DB::beginTransaction();
 
-        // Find the Pelaku UMKM
-        $pelakuUmkm = PelakuUmkm::findOrFail($id);
+        try {
+            // Log the incoming request data
+            Log::info('UMKM update request started', [
+                'pelaku_umkm_id' => $id,
+                'has_temp_products' => isset($request->temp_products),
+                'temp_products_count' => isset($request->temp_products) ? count($request->temp_products) : 0
+            ]);
 
-        // Update Pelaku UMKM data
-        $pelakuUmkm->update([
-            'nik' => $request->nik,
-            'nama_lengkap' => $request->nama_lengkap,
-            'no_kk' => $request->no_kk,
-            'tempat_lahir' => $request->tempat_lahir,
-            'tgl_lahir' => $request->tgl_lahir,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'status_hubungan_keluarga' => $request->status_hubungan_keluarga,
-            'status_perkawinan' => $request->status_perkawinan,
-            'alamat_sesuai_ktp' => $request->alamat_sesuai_ktp,
-            'kelurahan' => $request->kelurahan,
-            'rw' => $request->rw,
-            'rt' => $request->rt,
-            'no_telp' => $request->no_telp,
-            'pendidikan_terakhir' => $request->pendidikan_terakhir,
-            'status_keaktifan' => $request->status_keaktifan,
-        ]);
+            // Validate the request data
+            $request->validate([
+                'nik' => 'required|string|max:16',
+                'nama_lengkap' => 'required|string|max:255',
+                'no_kk' => 'required|string|max:16',
+                'tempat_lahir' => 'required|string|max:255',
+                'tgl_lahir' => 'required|date',
+                'jenis_kelamin' => 'required|string|max:20',
+                'status_hubungan_keluarga' => 'required|string|max:50',
+                'status_perkawinan' => 'required|string|max:50',
+                'alamat_sesuai_ktp' => 'required|string',
+                'kelurahan' => 'required|string|max:255',
+                'rw' => 'required|string|max:10',
+                'rt' => 'required|string|max:10',
+                'no_telp' => 'required|string|max:15',
+                'pendidikan_terakhir' => 'required|string|max:50',
+                'status_keaktifan' => 'required|string|max:50',
+            ]);
 
-        // Handle UMKM data - update existing, add new ones, remove deleted ones
-        if ($request->has('umkm')) {
-            $existingUmkmIds = $pelakuUmkm->dataUmkm->pluck('id')->toArray();
-            $submittedUmkmIds = [];
+            // Find the Pelaku UMKM
+            $pelakuUmkm = PelakuUmkm::findOrFail($id);
+            Log::info('Found PelakuUmkm record', [
+                'id' => $pelakuUmkm->id,
+                'nama' => $pelakuUmkm->nama_lengkap
+            ]);
 
-            foreach ($request->umkm as $index => $umkmData) {
-                if (!empty($umkmData['id'])) {
-                    // Update existing UMKM
-                    $dataUmkm = Umkm::findOrFail($umkmData['id']);
-                    $dataUmkm->update([
-                        'nama_usaha' => $umkmData['nama_usaha'],
-                        'alamat' => $umkmData['alamat'],
-                        'pengelolaan_usaha' => $umkmData['pengelolaan_usaha'],
-                        'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'],
-                        'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'],
-                        'sektor_usaha' => $umkmData['sektor_usaha'],
-                        'status' => $umkmData['status'],
-                    ]);
-                    $submittedUmkmIds[] = $dataUmkm->id;
-                } else {
-                    // Create new UMKM
-                    $dataUmkm = $pelakuUmkm->dataUmkm()->create([
-                        'nama_usaha' => $umkmData['nama_usaha'],
-                        'alamat' => $umkmData['alamat'],
-                        'pengelolaan_usaha' => $umkmData['pengelolaan_usaha'],
-                        'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'],
-                        'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'],
-                        'sektor_usaha' => $umkmData['sektor_usaha'],
-                        'status' => $umkmData['status'],
-                    ]);
-                    $submittedUmkmIds[] = $dataUmkm->id;
+            // Update Pelaku UMKM data
+            $pelakuUmkm->update([
+                'nik' => $request->nik,
+                'nama_lengkap' => $request->nama_lengkap,
+                'no_kk' => $request->no_kk,
+                'tempat_lahir' => $request->tempat_lahir,
+                'tgl_lahir' => $request->tgl_lahir,
+                'jenis_kelamin' => $request->jenis_kelamin,
+                'status_hubungan_keluarga' => $request->status_hubungan_keluarga,
+                'status_perkawinan' => $request->status_perkawinan,
+                'alamat_sesuai_ktp' => $request->alamat_sesuai_ktp,
+                'kelurahan' => $request->kelurahan,
+                'rw' => $request->rw,
+                'rt' => $request->rt,
+                'no_telp' => $request->no_telp,
+                'pendidikan_terakhir' => $request->pendidikan_terakhir,
+                'status_keaktifan' => $request->status_keaktifan,
+            ]);
+            Log::info('Updated PelakuUmkm record');
+
+            // Track newly created UMKMs to use for saving temporary products
+            $newUmkmIds = [];
+
+            // Handle UMKM data - update existing, add new ones, remove deleted ones
+            if ($request->has('umkm')) {
+                $existingUmkmIds = $pelakuUmkm->dataUmkm->pluck('id')->toArray();
+                $submittedUmkmIds = [];
+
+                Log::info('Processing UMKM data', [
+                    'count' => count($request->umkm),
+                    'existing_count' => count($existingUmkmIds)
+                ]);
+
+                foreach ($request->umkm as $index => $umkmData) {
+                    if (!empty($umkmData['id'])) {
+                        // Update existing UMKM
+                        $dataUmkm = Umkm::findOrFail($umkmData['id']);
+                        $dataUmkm->update([
+                            'nama_usaha' => $umkmData['nama_usaha'],
+                            'alamat' => $umkmData['alamat'],
+                            'pengelolaan_usaha' => $umkmData['pengelolaan_usaha'],
+                            'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'],
+                            'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'],
+                            'sektor_usaha' => $umkmData['sektor_usaha'],
+                            'status' => $umkmData['status'],
+                        ]);
+                        $submittedUmkmIds[] = $dataUmkm->id;
+                        Log::info('Updated existing UMKM', [
+                            'index' => $index,
+                            'id' => $dataUmkm->id,
+                            'nama_usaha' => $dataUmkm->nama_usaha
+                        ]);
+                    } else {
+                        // Create new UMKM
+                        $dataUmkm = $pelakuUmkm->dataUmkm()->create([
+                            'nama_usaha' => $umkmData['nama_usaha'],
+                            'alamat' => $umkmData['alamat'],
+                            'pengelolaan_usaha' => $umkmData['pengelolaan_usaha'],
+                            'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'],
+                            'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'],
+                            'sektor_usaha' => $umkmData['sektor_usaha'],
+                            'status' => $umkmData['status'],
+                        ]);
+                        $submittedUmkmIds[] = $dataUmkm->id;
+                        $newUmkmIds[$index] = $dataUmkm->id;
+                        Log::info('Created new UMKM', [
+                            'index' => $index,
+                            'id' => $dataUmkm->id,
+                            'nama_usaha' => $dataUmkm->nama_usaha
+                        ]);
+                    }
+                }
+
+                // Remove UMKMs that were deleted from the form
+                $umkmsToDelete = array_diff($existingUmkmIds, $submittedUmkmIds);
+                if (count($umkmsToDelete) > 0) {
+                    Umkm::whereIn('id', $umkmsToDelete)->delete();
+                    Log::info('Deleted UMKMs', ['deleted_ids' => $umkmsToDelete]);
                 }
             }
 
-            // Remove UMKMs that were deleted from the form
-            $umkmsToDelete = array_diff($existingUmkmIds, $submittedUmkmIds);
-            if (count($umkmsToDelete) > 0) {
-                Umkm::whereIn('id', $umkmsToDelete)->delete();
+            // Process temp products if any exist
+            if ($request->has('temp_products')) {
+                Log::info('Processing temporary products', [
+                    'count' => count($request->temp_products),
+                    'new_umkm_count' => count($newUmkmIds)
+                ]);
+
+                foreach ($request->temp_products as $umkmIndex => $products) {
+                    // Determine the UMKM ID
+                    $umkmId = null;
+
+                    // Check if this is for an existing UMKM
+                    if (isset($request->umkm[$umkmIndex]['id'])) {
+                        $umkmId = $request->umkm[$umkmIndex]['id'];
+                        Log::info('Found existing UMKM for temp products', [
+                            'umkm_index' => $umkmIndex,
+                            'umkm_id' => $umkmId
+                        ]);
+                    }
+                    // Or for a new UMKM
+                    else if (isset($newUmkmIds[$umkmIndex])) {
+                        $umkmId = $newUmkmIds[$umkmIndex];
+                        Log::info('Found new UMKM for temp products', [
+                            'umkm_index' => $umkmIndex,
+                            'umkm_id' => $umkmId
+                        ]);
+                    }
+
+                    // Create products if we have a valid UMKM ID
+                    if ($umkmId) {
+                        Log::info('Creating products for UMKM', [
+                            'umkm_id' => $umkmId,
+                            'product_count' => count($products)
+                        ]);
+
+                        foreach ($products as $productIndex => $product) {
+                            try {
+                                $newProduct = ProdukUmkm::create([
+                                    'umkm_id' => $umkmId,
+                                    'jenis_produk' => $product['jenis_produk'],
+                                    'tipe_produk' => $product['tipe_produk'],
+                                    'status' => $product['status'],
+                                ]);
+
+                                Log::info('Successfully created product', [
+                                    'umkm_id' => $umkmId,
+                                    'product_index' => $productIndex,
+                                    'product_id' => $newProduct->id,
+                                    'jenis_produk' => $newProduct->jenis_produk
+                                ]);
+                            } catch (\Exception $e) {
+                                Log::error('Failed to create product', [
+                                    'umkm_id' => $umkmId,
+                                    'product_index' => $productIndex,
+                                    'error' => $e->getMessage(),
+                                    'product_data' => $product
+                                ]);
+                                throw $e;
+                            }
+                        }
+                    } else {
+                        Log::warning('Could not find UMKM ID for temp products', [
+                            'umkm_index' => $umkmIndex,
+                            'new_umkm_ids' => $newUmkmIds
+                        ]);
+                    }
+                }
+            } else {
+                Log::info('No temporary products to process');
             }
-        }
 
-        // Handle Omset data if it's submitted
-        if ($request->has('omset') && isset($request->omset['umkm_id']) && !empty($request->omset['umkm_id'])) {
-            $omsetData = $request->omset;
+            // Commit the transaction
+            DB::commit();
+            Log::info('UMKM update completed successfully');
 
-            // Create or update omset data
-            Omset::updateOrCreate(
-                [
-                    'umkm_id' => $omsetData['umkm_id'],
-                    'jangka_waktu' => $omsetData['jangka_waktu'],
-                ],
-                [
-                    'total_omset' => str_replace(['.', ','], ['', '.'], $omsetData['total_omset']),
-                    'keterangan' => $omsetData['keterangan'],
-                ]
-            );
-        }
+            return redirect()->route('dataumkm.index')
+                ->with('status', 'Data UMKM berhasil diperbarui')
+                ->with('status_type', 'success');
+        } catch (\Exception $e) {
+            // Rollback the transaction if an error occurred
+            DB::rollBack();
 
-        // Handle Legalitas data if it's submitted
-        if ($request->has('legalitas') && isset($request->legalitas['umkm_id']) && !empty($request->legalitas['umkm_id'])) {
-            $legalitasData = $request->legalitas;
-
-            // Create or update legalitas data
-            Legalitas::updateOrCreate(
-                [
-                    'umkm_id' => $legalitasData['umkm_id'],
-                ],
-                [
-                    'no_sk_nib' => $legalitasData['no_sk_nib'] ?? null,
-                    'no_sk_siup' => $legalitasData['no_sk_siup'] ?? null,
-                    'no_sk_tdp' => $legalitasData['no_sk_tdp'] ?? null,
-                    'no_sk_pirt' => $legalitasData['no_sk_pirt'] ?? null,
-                    'no_sk_bpom' => $legalitasData['no_sk_bpom'] ?? null,
-                    'no_sk_halal' => $legalitasData['no_sk_halal'] ?? null,
-                    'no_sk_merek' => $legalitasData['no_sk_merek'] ?? null,
-                    'no_sk_haki' => $legalitasData['no_sk_haki'] ?? null,
-                    'no_surat_keterangan' => $legalitasData['no_surat_keterangan'] ?? null,
-                ]
-            );
-        }
-
-        // UPDATED: For consistency, call the storeIntervensi method if intervention data is present
-        if ($request->has('intervensi') && isset($request->intervensi['umkm_id']) && !empty($request->intervensi['umkm_id'])) {
-            // Create a new request with just the intervention data
-            $intervensiRequest = new Request([
-                'umkm_id' => $request->intervensi['umkm_id'],
-                'kegiatan_id' => $request->intervensi['kegiatan_id'] ?? null,
+            Log::error('UMKM update failed', [
+                'pelaku_umkm_id' => $id,
+                'error_message' => $e->getMessage(),
+                'error_trace' => $e->getTraceAsString()
             ]);
 
-            // If kegiatan_id is not provided but nama_kegiatan is, try to find or create the kegiatan
-            if (!isset($request->intervensi['kegiatan_id']) && isset($request->intervensi['nama_kegiatan'])) {
-                // Find or create a Kegiatan based on nama_kegiatan
-                $kegiatan = Kegiatan::firstOrCreate(
-                    ['nama_kegiatan' => $request->intervensi['nama_kegiatan']],
-                    [
-                        'status_kegiatan' => 'Pendaftaran', // Default status for admin-created kegiatan
-                        'tanggal_kegiatan' => isset($request->intervensi['tanggal_intervensi'])
-                            ? $request->intervensi['tanggal_intervensi']
-                            : now(),
-                        'kuota_pendaftaran' => 100, // Default quota
-                    ]
-                );
-                $intervensiRequest->merge(['kegiatan_id' => $kegiatan->id]);
-            }
-
-            // Call the storeIntervensi method to handle the intervention creation
-            $result = $this->storeIntervensi($intervensiRequest);
-
-            // If there was an error and a redirect was returned, extract the error message
-            if ($result instanceof \Illuminate\Http\RedirectResponse && $result->getSession()->has('error')) {
-                return redirect()->route('dataumkm.index')
-                    ->with('status', $result->getSession()->get('error'))
-                    ->with('status_type', 'error');
-            }
+            return redirect()->back()
+                ->with('status', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->with('status_type', 'danger')
+                ->withInput();
         }
-
-        return redirect()->route('dataumkm.index')
-            ->with('status', 'Data UMKM berhasil diperbarui')
-            ->with('status_type', 'success');
     }
 
     /**

@@ -81,40 +81,41 @@ class ProdukUmkmController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
-    {
-        try {
-            $request->validate([
-                'jenis_produk' => 'required|string|max:255',
-                'tipe_produk' => 'required|string|max:255',
-                'status' => 'required|string|in:AKTIF,TIDAK AKTIF',
-            ]);
 
-            $product = ProdukUmkm::findOrFail($id);
-            $product->update([
-                'jenis_produk' => $request->jenis_produk,
-                'tipe_produk' => $request->tipe_produk,
-                'status' => $request->status,
-            ]);
+     public function update(Request $request, $id)
+     {
+         try {
+             $request->validate([
+                 'jenis_produk' => 'required|string|max:255',
+                 'tipe_produk' => 'required|string|max:255',
+                 'status' => 'required|string|in:AKTIF,TIDAK AKTIF',
+             ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Produk berhasil diperbarui',
-                'data' => $product
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error updating product: ' . $e->getMessage(), [
-                'product_id' => $id,
-                'request' => $request->all(),
-                'exception' => $e->getTraceAsString()
-            ]);
+             $product = ProdukUmkm::findOrFail($id);
+             $product->update([
+                 'jenis_produk' => $request->jenis_produk,
+                 'tipe_produk' => $request->tipe_produk,
+                 'status' => $request->status,
+             ]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui produk: ' . $e->getMessage()
-            ], 500);
-        }
-    }
+             return response()->json([
+                 'success' => true,
+                 'message' => 'Produk berhasil diperbarui',
+                 'data' => $product
+             ]);
+         } catch (\Exception $e) {
+             Log::error('Error updating product: ' . $e->getMessage(), [
+                 'product_id' => $id,
+                 'request' => $request->all(),
+                 'exception' => $e->getTraceAsString()
+             ]);
+
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Terjadi kesalahan saat memperbarui produk: ' . $e->getMessage()
+             ], 500);
+         }
+     }
 
     /**
      * Remove the specified resource from storage.
@@ -163,4 +164,6 @@ class ProdukUmkmController extends Controller
             ], 500);
         }
     }
+
+    
 }
