@@ -61,14 +61,20 @@ Route::put('/update-product/{id}', [ProdukUmkmController::class, 'update']);
 Route::delete('/delete-product/{id}', [ProdukUmkmController::class, 'destroy']);
 Route::get('/get-products/{umkmId}', [ProdukUmkmController::class, 'getProductsByUmkm']);
 // Product CRUD routes
-Route::get('/get-products/{umkmId}', [App\Http\Controllers\ProdukUmkmController::class, 'getProductsByUmkm']);
-Route::get('/get-product/{id}', [App\Http\Controllers\ProdukUmkmController::class, 'show']);
-Route::post('/store-product', [App\Http\Controllers\ProdukUmkmController::class, 'store']);
-Route::put('/update-product/{id}', [App\Http\Controllers\ProdukUmkmController::class, 'update']);
-Route::delete('/delete-product/{id}', [App\Http\Controllers\ProdukUmkmController::class, 'destroy']);
-Route::post('/process-temp-products', [App\Http\Controllers\ProdukUmkmController::class, 'processTemp'])->name('produk.process.temp');
-Route::post('/store-multiple-products', [App\Http\Controllers\ProdukUmkmController::class, 'storeMultiple'])->name('produk.store.multiple');
-Route::post('/process-edit-form-temp', [App\Http\Controllers\ProdukUmkmController::class, 'processEditFormTemp'])->name('produk.process.edit.form.temp');
+    Route::get('/get-products/{umkmId}', [App\Http\Controllers\ProdukUmkmController::class, 'getProductsByUmkm']);
+    Route::get('/get-product/{id}', [App\Http\Controllers\ProdukUmkmController::class, 'show']);
+    Route::post('/store-product', [App\Http\Controllers\ProdukUmkmController::class, 'store']);
+    Route::put('/update-product/{id}', [App\Http\Controllers\ProdukUmkmController::class, 'update']);
+    Route::delete('/delete-product/{id}', [App\Http\Controllers\ProdukUmkmController::class, 'destroy']);
+    Route::post('/process-temp-products', [App\Http\Controllers\ProdukUmkmController::class, 'processTemp'])->name('produk.process.temp');
+  // Make sure this route is already defined
+    Route::post('/store-multiple-products', [App\Http\Controllers\ProdukUmkmController::class, 'storeMultiple'])->name('produk.store.multiple');
+    Route::post('/process-edit-form-temp', [App\Http\Controllers\ProdukUmkmController::class, 'processEditFormTemp'])->name('produk.process.edit.form.temp');
+
+//     // In routes/api.php
+// Route::post('/produk-umkm', [ProdukUmkmController::class, 'storeAjax']);
+// Route::put('/produk-umkm/{id}', [ProdukUmkmController::class, 'updateAjax']);
+// Route::delete('/produk-umkm/{id}', [ProdukUmkmController::class, 'destroyAjax']);
 
 // EDIT UMKM > TAB OMSET //
 Route::post('/dataumkm/omset/save/{id}', [OmsetController::class, 'saveOmset']);

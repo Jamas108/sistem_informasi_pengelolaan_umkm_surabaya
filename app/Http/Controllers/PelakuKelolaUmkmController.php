@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Omset;
 use App\Models\PelakuUmkm;
+use App\Models\ProdukUmkm;
 use App\Models\Umkm;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -100,8 +101,6 @@ class PelakuKelolaUmkmController extends Controller
                         'pelaku_umkm_id' => $pelakuUmkm->id,
                         'nama_usaha' => $umkmData['nama_usaha'],
                         'alamat' => $umkmData['alamat'],
-                        'jenis_produk' => $umkmData['jenis_produk'] ?? null,
-                        'tipe_produk' => $umkmData['tipe_produk'] ?? null,
                         'pengelolaan_usaha' => $umkmData['pengelolaan_usaha'] ?? null,
                         'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'] ?? null,
                         'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'] ?? null,
@@ -112,6 +111,25 @@ class PelakuKelolaUmkmController extends Controller
                     Log::info('Created new UMKM', ['umkm_id' => $dataUmkm->id]);
                     $successCount++;
 
+                    // Process products for this UMKM if they exist
+                    if (isset($umkmData['products']) && !empty($umkmData['products'])) {
+                        Log::info('Processing products for UMKM', [
+                            'umkm_id' => $dataUmkm->id,
+                            'product_count' => count($umkmData['products'])
+                        ]);
+
+                        foreach ($umkmData['products'] as $productData) {
+                            // Create product record
+                            $product = ProdukUmkm::create([
+                                'umkm_id' => $dataUmkm->id,
+                                'jenis_produk' => $productData['jenis_produk'],
+                                'tipe_produk' => $productData['tipe_produk'],
+                                'status' => $productData['status'] ?? 'Aktif',
+                            ]);
+
+                            Log::info('Product created successfully', ['product_id' => $product->id]);
+                        }
+                    }
                 }
             }
 
@@ -148,7 +166,13 @@ class PelakuKelolaUmkmController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // Get the currently logged-in user
+        $user = Auth::user();
+
+        // Find the PelakuUmkm record associated with the logged-in user
+        $pelakuUmkm = PelakuUmkm::where('users_id', $user->id)->firstOrFail();
+
+        return view('pelakuumkm.kelolaumkm.edit', compact('pelakuUmkm'));
     }
 
     /**

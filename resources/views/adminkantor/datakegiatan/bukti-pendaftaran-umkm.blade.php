@@ -23,6 +23,7 @@
             width: 100%;
             max-width: 190mm;
             margin: 0 auto;
+            position: relative; /* Important for absolute positioning inside */
         }
 
         .kop-surat {
@@ -80,7 +81,7 @@
         .header {
             text-align: center;
             margin-top: -30px;
-            margin-bottom: -30px ;
+            margin-bottom: -30px;
             padding-bottom: 10px;
         }
 
@@ -118,8 +119,30 @@
             padding: 8px;
         }
 
-        #titik{
+        #titik {
             padding-left: 70px;
+        }
+
+        /* Fixed signature positioning for PDF export */
+        .ttddinas {
+            position: absolute;
+            bottom: 30px;
+            right: 100px;
+            width: 150px; /* Define a width */
+            text-align: center;
+        }
+
+        .ttddinas img {
+            max-height: 100px;
+            display: block;
+            margin-left: auto; /* Push to the right */
+        }
+
+        /* Add empty space at the bottom for signature */
+        .signature-spacer {
+            height: 150px; /* Adjust as needed */
+            width: 100%;
+            clear: both;
         }
     </style>
 </head>
@@ -162,17 +185,18 @@
                         <td id="titik">:</td>
                         <td>Dinas Koperasi Usaha Kecil dan Menengah dan Perdagangan Kota Surabaya</td>
                     </tr>
-
                 </table>
             </div>
 
             <div class="details-section">
-                <p>Selaku penanggung jawab dari seluruh kegiatan yang diadakah oleh perusahaan. Dalam surat ini resmi menyatakan bahwa data umkm di bawah ini,</p>
+                <p>Selaku penanggung jawab dari seluruh kegiatan yang diadakah oleh perusahaan. Dalam surat ini resmi
+                    menyatakan bahwa data umkm di bawah ini, Berhak untuk mengikuti rangkaian dari kegiatan intervensi UMKM yang di selenggarakan oleh Dinas
+                    Koperasi Usaha Kecil dan Menengah dan Perdagangan Kota Surabaya</p>
                 <table>
                     <tr>
                         <td style="width: 200px;">Nama UMKM</td>
                         <td style="width: 10px;">:</td>
-                        <td>{{ $intervensi->dataUmkm->nama_usaha  }}</td>
+                        <td>{{ $intervensi->dataUmkm->nama_usaha }}</td>
                     </tr>
                     <tr>
                         <td>Pemilik UMKM</td>
@@ -184,13 +208,16 @@
                         <td id="titik2">:</td>
                         <td>{{ $intervensi->created_at->format('d M Y H:i') }}</td>
                     </tr>
-
                 </table>
             </div>
 
             <div class="details-section">
-                <p>Berhak untuk mengikuti rangkaian dari kegiatan intervensi UMKM yang di selenggarakan oleh Dinas Koperasi Usaha Kecil dan Menengah dan Perdagangan Kota Surabaya dengan detail kegiatan sebagai berikut</p>
                 <table>
+                    <tr>
+                        <td style="width: 200px;">No Pendaftaran Intervensi</td>
+                        <td style="width: 10px;">:</td>
+                        <td>{{ $intervensi->no_pendaftaran_kegiatan }}</td>
+                    </tr>
                     <tr>
                         <td style="width: 200px;">Nama Kegiatan</td>
                         <td style="width: 10px;">:</td>
@@ -215,16 +242,16 @@
                     <tr>
                         <td>Waktu Kegiatan</td>
                         <td id="titik2">:</td>
-                        <td>{{ \Carbon\Carbon::parse($kegiatan->jam_mulai)->format('H:i') }} - {{
-                            \Carbon\Carbon::parse($kegiatan->jam_selesai)->format('H:i') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($kegiatan->jam_mulai)->format('H:i') }} -
+                            {{ \Carbon\Carbon::parse($kegiatan->jam_selesai)->format('H:i') }}</td>
                     </tr>
-
                 </table>
             </div>
+        </div>
 
-            <div class="details-section">
-                <p>Demikian surat ini kami sampaikan sebagai kelengkapan persyaratan mengikuti kegiatan intervensi UMKM. Dimohon untuk dapat membawa undangan ini saat kegiatan dimulai dan menghadiri kegiatan sesuai jadwal yang sudah di tentukan</p>
-            </div>
+        <!-- Signature placed at the bottom right -->
+        <div class="ttddinas">
+            <img src="{{ public_path('images/ttddinas.jpeg') }}" height="100" alt="Tanda Tangan Dinas">
         </div>
     </div>
 </body>

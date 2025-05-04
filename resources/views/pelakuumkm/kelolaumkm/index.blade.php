@@ -14,7 +14,7 @@
                 </div>
                 <div>
                     <a class="btn btn-light rounded-pill px-4 shadow-sm" href="{{ route('pelakukelolaumkm.create') }}">
-                        <i class="fas fa-plus-circle me-2"></i> Tambah UMKM Baru
+                        <i class="fas fa-plus-circle me-2"></i> Pendaftaran UMKM
                     </a>
                 </div>
             </div>

@@ -37,44 +37,21 @@
         </li>
 
         <hr class="sidebar-divider mb-2">
-
-        <li class="nav-item mt-0 mb-2">
-            <a class="nav-link py-2 collapsed" href="#" data-toggle="collapse" data-target="#collapseApprove"
-                aria-expanded="true" aria-controls="collapseApprove">
+        <li class="nav-item mb-2">
+            <a class="nav-link py-2" href="{{ route('approvalumkm.index') }}">
                 <i class="fas fa-fw fa-check-circle"></i>
-                <span>Approve</span>
+                <span>Approve UMKM</span>
             </a>
-            <div id="collapseApprove" class="collapse" aria-labelledby="headingApprove" data-parent="#accordionSidebar"
-                style="margin-top: -10px;">
-                <div class="py-1 collapse-inner rounded" style="background-color: #1C486F">
-                    <a class="collapse-item text-white" href="{{ route('approvalumkm.index') }}"><i
-                            class="fas fa-fw fa-check-circle"></i><span class="ml-2">Approve UMKM</span></a>
-                    <a class="collapse-item text-white" href="index.html"><i class="fas fa-fw fa-check-circle"></i><span
-                            class="ml-2">Approve Intervensi</span></a>
-                </div>
-            </div>
         </li>
 
         <hr class="sidebar-divider mb-2">
-
-        <li class="nav-item mt-0 mb-2">
-            <a class="nav-link py-2 collapsed" href="#" data-toggle="collapse" data-target="#collapseExport"
-                aria-expanded="true" aria-controls="collapseExport">
+        <li class="nav-item mb-2">
+            <a class="nav-link py-2" href="{{ route('exportintervensi.index') }}">
                 <i class="fas fa-fw fa-file-export"></i>
-                <span>Export Laporan</span>
+                <span>Laporan Intervensi</span>
             </a>
-            <div id="collapseExport" class="collapse" aria-labelledby="headingExport" data-parent="#accordionSidebar"
-                style="margin-top: -10px;">
-                <div class="py-1 collapse-inner rounded" style="background-color: #1C486F;">
-                    <a class="collapse-item text-white" href="{{route  ('exportomset.index')}}"><i class="fas fa-fw fa-file-export"></i><span
-                            class="ml-2">Export Omset</span></a>
-                    <a class="collapse-item text-white" href="{{route  ('exportintervensi.index')}}"><i class="fas fa-fw fa-file-export"></i><span
-                            class="ml-2">Export Intervensi</span></a>
-                    <a class="collapse-item text-white" href="{{route  ('exportumkm.index')}}"><i class="fas fa-fw fa-file-export"></i><span
-                            class="ml-2">Export UMKM</span></a>
-                </div>
-            </div>
         </li>
+
 
         <hr class="sidebar-divider d-none d-md-block mb-0">
 
@@ -87,7 +64,7 @@
 
     @if ($role == 'adminlapangan')
         <li class="nav-item mb-2">
-            <a class="nav-link py-2" href="{{route ('dashboard.admin_lapangan')}}">
+            <a class="nav-link py-2" href="{{ route('dashboard.admin_lapangan') }}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
@@ -110,13 +87,13 @@
                 <i class="fas fa-fw fa-check-circle"></i>
                 <span>Approve</span>
             </a>
-            <div id="collapseApprove" class="collapse" aria-labelledby="headingApprove"
-                data-parent="#accordionSidebar" style="margin-top: -10px;">
+            <div id="collapseApprove" class="collapse" aria-labelledby="headingApprove" data-parent="#accordionSidebar"
+                style="margin-top: -10px;">
                 <div class="py-1 collapse-inner rounded" style="background-color: #1C486F">
                     <a class="collapse-item text-white" href="{{ route('approvalumkm.index') }}"><i
                             class="fas fa-fw fa-check-circle"></i><span class="ml-2">Approve UMKM</span></a>
-                    <a class="collapse-item text-white" href="index.html"><i
-                            class="fas fa-fw fa-check-circle"></i><span class="ml-2">Approve Intervensi</span></a>
+                    <a class="collapse-item text-white" href="index.html"><i class="fas fa-fw fa-check-circle"></i><span
+                            class="ml-2">Approve Intervensi</span></a>
                 </div>
             </div>
         </li>

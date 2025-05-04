@@ -1,5 +1,6 @@
 @extends('layouts.pelakuumkm.app')
 @push('scripts')
+    <script type="text/javascript" src="{{ URL::asset('js/pelaku-edit-umkm.js') }}"></script>
     <script src="{{ asset('js/umkm-form.js') }}"></script>
     <script src="{{ asset('js/umkm-legalitas.js') }}"></script>
     <script src="{{ asset('js/umkm-omset.js') }}"></script>
@@ -73,17 +74,20 @@
                     <!-- Tab Navigation -->
                     <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="pelaku-tab" data-bs-toggle="tab" data-bs-target="#pelaku" type="button" role="tab" aria-controls="pelaku" aria-selected="true">
+                            <button class="nav-link active" id="pelaku-tab" data-bs-toggle="tab" data-bs-target="#pelaku"
+                                type="button" role="tab" aria-controls="pelaku" aria-selected="true">
                                 <i class="fas fa-user me-1"></i> Data Pelaku UMKM
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="umkm-tab" data-bs-toggle="tab" data-bs-target="#umkm" type="button" role="tab" aria-controls="umkm" aria-selected="false">
+                            <button class="nav-link" id="umkm-tab" data-bs-toggle="tab" data-bs-target="#umkm"
+                                type="button" role="tab" aria-controls="umkm" aria-selected="false">
                                 <i class="fas fa-store me-1"></i> Data UMKM
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="omset-tab" data-bs-toggle="tab" data-bs-target="#omset" type="button" role="tab" aria-controls="omset" aria-selected="false">
+                            <button class="nav-link" id="omset-tab" data-bs-toggle="tab" data-bs-target="#omset"
+                                type="button" role="tab" aria-controls="omset" aria-selected="false">
                                 <i class="fas fa-coins me-1"></i> Omset
                             </button>
                         </li>
@@ -144,8 +148,8 @@
                                             <label for="tanggal_lahir"
                                                 class="col-sm-3 col-form-label font-weight-bold">Tanggal Lahir</label>
                                             <div class="col-sm-9">
-                                                <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir"
-                                                    value="{{ $pelakuUmkm->tgl_lahir }}">
+                                                <input type="date" class="form-control" id="tgl_lahir"
+                                                    name="tgl_lahir" value="{{ $pelakuUmkm->tgl_lahir }}">
                                             </div>
                                         </div>
 

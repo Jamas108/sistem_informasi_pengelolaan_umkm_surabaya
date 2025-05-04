@@ -125,7 +125,7 @@ $(document).ready(function () {
                         <td>${formattedDate}</td>
                         <td class="text-center">
                             <button type="button" class="btn btn-warning btn-sm edit-intervensi" data-id="${item.id}">
-                                <i class="fas fa-edit"></i> Edit
+                                <i class="fas fa-edit"></i>
                             </button>
                             <button type="button" class="btn btn-danger btn-sm delete-intervensi" data-id="${item.id}">
                                 <i class="fas fa-trash"></i>
@@ -326,9 +326,6 @@ $(document).ready(function () {
                         console.log('Setting selected option:', umkm);
                     }
 
-                    // Tambahkan atribut tambahan untuk detail UMKM
-                    $(option).attr('data-sektor-usaha', umkm.sektor_usaha || '');
-                    $(option).attr('data-jenis-produk', umkm.jenis_produk || '');
 
                     $('#edit_umkm_id').append(option);
                 });

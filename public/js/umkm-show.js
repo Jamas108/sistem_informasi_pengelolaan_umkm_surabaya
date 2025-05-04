@@ -83,18 +83,10 @@ $(document).ready(function () {
                     <td>${item.no_sk_merek || '-'}</td>
                     <td>${item.no_sk_haki || '-'}</td>
                     <td>${item.no_surat_keterangan || '-'}</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-warning btn-sm edit-legalitas" data-id="${item.id}">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button type="button" class="btn btn-danger btn-sm delete-legalitas" data-id="${item.id}">
-                            <i class="fas fa-trash"></i> Hapus
-                        </button>
-                    </td>
                 </tr>
                 `;
             });
-            
+
             // Insert rows into the table
             $('#table-legalitas tbody').html(tableRows);
 
@@ -419,7 +411,7 @@ $(document).ready(function () {
         } else {
             $('.container-fluid > .alert').remove();
         }
-        
+
         const alertHTML = `
         <div class="alert alert-${type} alert-dismissible fade show" role="alert">
             ${message}
@@ -428,14 +420,14 @@ $(document).ready(function () {
             </button>
         </div>
         `;
-    
+
         if (modalId) {
             $(`#${modalId} .modal-body`).prepend(alertHTML);
         } else {
             // Tambahkan hanya ke elemen container-fluid pertama
             $('.container-fluid:first').prepend(alertHTML);
         }
-    
+
         // Auto-close after 5 seconds
         setTimeout(function () {
             $('.alert').alert('close');

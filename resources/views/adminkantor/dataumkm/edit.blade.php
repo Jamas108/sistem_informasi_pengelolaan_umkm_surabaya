@@ -1,17 +1,11 @@
     @extends('layouts.app')
     @push('scripts')
-        <script src="{{ asset('js/umkm-form.js') }}"></script>
-        <script src="{{ asset('js/umkm-legalitas.js') }}"></script>
-        <script src="{{ asset('js/umkm-omset.js') }}"></script>
-        <script src="{{ asset('js/umkm-intervensi.js') }}"></script>
+        <script type="text/javascript" src="{{ URL::asset ('js/umkm-form.js') }}"></script>
+        <script type="text/javascript" src="{{ URL::asset ('js/umkm-legalitas.js') }}"></script>
+        <script type="text/javascript" src="{{ URL::asset ('js/umkm-intervensi.js') }}"></script>
         <script>
             $(document).ready(function() {
                 // This initializes umkmCounter for both inline script and the external script
-                window.umkmCounter = $('.umkm-form-entry').length > 0 ? $('.umkm-form-entry').length : 0;
-
-                // Manual test for Bootstrap and jQuery
-                console.log("Document ready in main script");
-                console.log("jQuery version:", $.fn.jquery);
 
                 // Test modal functionality directly
                 $('#test-modal-btn').on('click', function() {
@@ -732,7 +726,7 @@
 
                                                 <div class="d-sm-flex align-items-center justify-content-center my-4">
                                                     <button type="button" class="btn btn-primary btn-md"
-                                                        id="add-umkm-btn">
+                                                        id="add-umkm-btn-edit">
                                                         <i class="fas fa-plus-circle mr-2"></i> Tambah UMKM Baru
                                                     </button>
                                                     <button type="submit" class="btn btn-success btn-md ml-2">
@@ -1160,11 +1154,12 @@
                                                                                         <td>{{ $item->no_surat_keterangan ?: '-' }}
                                                                                         </td>
                                                                                         <td class="text-center">
+
                                                                                             <button type="button"
                                                                                                 class="btn btn-warning btn-sm edit-legalitas"
                                                                                                 data-id="{{ $item->id }}">
                                                                                                 <i class="fas fa-edit"></i>
-                                                                                                Edit
+
                                                                                             </button>
                                                                                         </td>
                                                                                     </tr>
@@ -1745,7 +1740,14 @@
 
                     <div class="form-group">
                         <label for="add_product_tipe" class="font-weight-bold">Tipe Produk</label>
-                        <input type="text" class="form-control" id="add_product_tipe" name="tipe_produk" required>
+                        <select class="form-control" id="add_product_tipe" name="tipe_produk" required>
+                            <option value="Makanan dan Minuman">Makanan dan Minuman</option>
+                            <option value="Makanan">Makanan</option>
+                            <option value="Minuman">Minuman</option>
+                            <option value="Fashion">Fashion</option>
+                            <option value="Handycraft">Handycraft</option>
+                            <option value="Lainya">Lainya</option>
+                        </select>
                         <div class="invalid-feedback">Tipe produk wajib diisi</div>
                     </div>
 

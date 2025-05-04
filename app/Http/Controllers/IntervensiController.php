@@ -177,7 +177,7 @@ class IntervensiController extends Controller
 
             // Get all UMKMs associated with this PelakuUmkm
             $umkms = Umkm::where('pelaku_umkm_id', $pelakuId)
-                ->select('id', 'nama_usaha', 'sektor_usaha', 'jenis_produk')
+                ->select('id', 'nama_usaha', 'sektor_usaha')
                 ->get();
 
             Log::info('Found UMKMs for pelaku', [

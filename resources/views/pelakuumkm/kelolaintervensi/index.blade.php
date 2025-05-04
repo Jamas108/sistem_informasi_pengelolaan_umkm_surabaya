@@ -15,7 +15,7 @@
             </div>
             <div>
                 <a href="{{ route('pelakukelolaintervensi.create') }}" class="btn btn-light rounded-pill px-4 shadow-sm">
-                    <i class="fas fa-plus-circle me-2"></i> Tambah Intervensi Baru
+                    <i class="fas fa-plus-circle me-2"></i> Pendaftaran Intervensi
                 </a>
             </div>
         </div>

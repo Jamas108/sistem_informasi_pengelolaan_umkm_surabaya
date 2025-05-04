@@ -1,4 +1,8 @@
 @extends('layouts.pelakuumkm.app')
+@push('scripts')
+    <script type="text/javascript" src="{{ URL::asset('js/pelaku-create-umkm.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/produk-umkm.js') }}"></script>
+@endpush
 @section('content')
     @include('layouts.pelakuumkm.sidebar')
     <main class="main-content">
@@ -25,11 +29,14 @@
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body p-0">
                     <div class="p-4 pb-2">
-                        <h5 class="fw-semibold mb-3"><i class="fas fa-info-circle text-primary me-2"></i>Informasi Tambah UMKM</h5>
-                        <p class="text-muted mb-0">Lengkapi formulir di bawah ini dengan data usaha yang valid. Data Anda akan diverifikasi oleh admin sebelum disetujui.</p>
+                        <h5 class="fw-semibold mb-3"><i class="fas fa-info-circle text-primary me-2"></i>Informasi Tambah
+                            UMKM</h5>
+                        <p class="text-muted mb-0">Lengkapi formulir di bawah ini dengan data usaha yang valid. Data Anda
+                            akan diverifikasi oleh admin sebelum disetujui.</p>
                     </div>
                     <div class="progress" style="height: 4px;">
-                        <div class="progress-bar bg-primary" role="progressbar" id="formProgress" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-primary" role="progressbar" id="formProgress" style="width: 0%;"
+                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
             </div>
@@ -52,136 +59,23 @@
                     </h5>
                 </div>
                 <div class="card-body p-4">
-                    <form action="{{ route('pelakukelolaumkm.store') }}" method="POST" id="createUmkmForm">
+                    <form action="{{ route('pelakukelolaumkm.store') }}" method="POST">
                         @csrf
 
-                        <!-- UMKM Container -->
+                        <!-- Container for UMKM entries -->
                         <div id="umkm-entries-container">
-                            <!-- Template UMKM Entry -->
-                            <div class="umkm-form-entry rounded p-3 mb-4" id="umkm-entry-1" data-umkm-id="1">
-                                <div class="border-bottom pb-3 mb-4">
-                                    <h5 class="fw-semibold text-primary umkm-number">
-                                        <i class="fas fa-building me-2"></i>Data UMKM #1
-                                    </h5>
-                                </div>
-
-                                <div class="row g-3">
-                                    <!-- Kolom Kiri -->
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="nama_usaha_1" class="form-label fw-medium">Nama Usaha <span class="text-danger">*</span></label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-store"></i></span>
-                                                <input type="text" class="form-control border-start-0 required-field" id="nama_usaha_1" name="umkm[1][nama_usaha]" placeholder="Masukkan nama usaha" required>
-                                            </div>
-                                            <div class="invalid-feedback">Nama usaha tidak boleh kosong</div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="alamat_1" class="form-label fw-medium">Alamat Usaha <span class="text-danger">*</span></label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-map-marker-alt"></i></span>
-                                                <input type="text" class="form-control border-start-0 required-field" id="alamat_1" name="umkm[1][alamat]" placeholder="Masukkan alamat lengkap" required>
-                                            </div>
-                                            <div class="invalid-feedback">Alamat usaha tidak boleh kosong</div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="jenis_produk_1" class="form-label fw-medium">Jenis Produk</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-tag"></i></span>
-                                                <input type="text" class="form-control border-start-0" id="jenis_produk_1" name="umkm[1][jenis_produk]" placeholder="Masukkan jenis produk">
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="tipe_produk_1" class="form-label fw-medium">Tipe Produk</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-boxes"></i></span>
-                                                <input type="text" class="form-control border-start-0" id="tipe_produk_1" name="umkm[1][tipe_produk]" placeholder="Masukkan tipe produk">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Kolom Kanan -->
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="pengelolaan_usaha_1" class="form-label fw-medium">Pengelolaan Usaha <span class="text-danger">*</span></label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-users-cog"></i></span>
-                                                <select class="form-control border-start-0 required-field" id="pengelolaan_usaha_1" name="umkm[1][pengelolaan_usaha]" required>
-                                                    <option value="">-- Pilih Pengelolaan --</option>
-                                                    <option value="PERSEORANGAN / MANDIRI">PERSEORANGAN / MANDIRI</option>
-                                                    <option value="KELOMPOK / SUBKON / KERJASAMA">KELOMPOK / SUBKON / KERJASAMA</option>
-                                                </select>
-                                            </div>
-                                            <div class="invalid-feedback">Pengelolaan usaha harus dipilih</div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="sektor_usaha_1" class="form-label fw-medium">Sektor Usaha <span class="text-danger">*</span></label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-industry"></i></span>
-                                                <select class="form-control border-start-0 required-field" id="sektor_usaha_1" name="umkm[1][sektor_usaha]" required>
-                                                    <option value="">-- Pilih Sektor --</option>
-                                                    <option value="Makanan & Minuman">Makanan & Minuman</option>
-                                                    <option value="Fashion">Fashion</option>
-                                                    <option value="Kerajinan">Kerajinan</option>
-                                                    <option value="Jasa">Jasa</option>
-                                                    <option value="INDUSTRI">Industri</option>
-                                                    <option value="DAGANG">Dagang</option>
-                                                </select>
-                                            </div>
-                                            <div class="invalid-feedback">Sektor usaha harus dipilih</div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="klasifikasi_kinerja_usaha_1" class="form-label fw-medium">Klasifikasi Kinerja <span class="text-danger">*</span></label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-chart-line"></i></span>
-                                                <select class="form-control border-start-0 required-field" id="klasifikasi_kinerja_usaha_1" name="umkm[1][klasifikasi_kinerja_usaha]" required>
-                                                    <option value="">-- Pilih Klasifikasi --</option>
-                                                    <option value="PEMULA">PEMULA</option>
-                                                    <option value="MADYA">MADYA</option>
-                                                    <option value="MANDIRI">MANDIRI</option>
-                                                </select>
-                                            </div>
-                                            <div class="invalid-feedback">Klasifikasi kinerja harus dipilih</div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="jumlah_tenaga_kerja_1" class="form-label fw-medium">Jumlah Tenaga Kerja <span class="text-danger">*</span></label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-user-friends"></i></span>
-                                                <input type="number" class="form-control border-start-0 required-field" id="jumlah_tenaga_kerja_1" name="umkm[1][jumlah_tenaga_kerja]" placeholder="Masukkan jumlah tenaga kerja" min="0" required>
-                                            </div>
-                                            <div class="invalid-feedback">Jumlah tenaga kerja harus diisi</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="text-end mt-2">
-                                    <button type="button" class="btn btn-outline-danger remove-umkm" data-umkm-id="1">
-                                        <i class="fas fa-trash-alt me-1"></i> Hapus Data UMKM
-                                    </button>
-                                </div>
-                            </div>
+                            <!-- UMKM entries will be added here dynamically -->
                         </div>
 
-                        <!-- Tombol Tambah UMKM -->
-                        <div class="text-center my-4">
-                            <button type="button" class="btn btn-outline-primary rounded-pill px-4" id="add-umkm-btn">
-                                <i class="fas fa-plus-circle me-2"></i> Tambah UMKM Lain
+                        <div class="text-center my-3">
+                            <button type="button" class="btn btn-primary" id="add-umkm-btn">
+                                <i class="fas fa-plus"></i> Tambah UMKM
                             </button>
                         </div>
 
-                        <!-- Tombol Submit -->
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                            <a href="{{ route('pelakukelolaumkm.index') }}" class="btn btn-light px-4 me-md-2">
-                                <i class="fas fa-times me-1"></i> Batal
-                            </a>
-                            <button type="submit" class="btn btn-primary px-4" id="submitBtn">
-                                <i class="fas fa-save me-1"></i> Simpan Data
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Simpan
                             </button>
                         </div>
                     </form>
@@ -194,6 +88,96 @@
             <i class="fas fa-plus"></i>
         </button>
     </main>
+
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-primary text-white">
+                    <h5 class="modal-title" id="productModalLabel">Produk UMKM</h5>
+                    <!-- Bootstrap 5 close button - akan otomatis disembunyikan jika menggunakan Bootstrap 4 -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Hidden field for UMKM ID reference -->
+                    <input type="hidden" id="current-umkm-id" value="">
+
+                    <!-- Product list table -->
+                    <div class="table-responsive mb-3">
+                        <table class="table table-bordered" id="productTable">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th>Jenis Produk</th>
+                                    <th>Tipe Produk</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="product-list-body">
+                                <!-- Product rows will be added here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Add/Edit Product Form -->
+                    <div class="card mb-3">
+                        <div class="card-header bg-secondary text-white">
+                            <h6 class="m-0 fw-bold" id="product-form-title">Tambah Produk Baru</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="product-form">
+                                <input type="hidden" id="product-id" value="">
+                                <input type="hidden" id="editing-mode" value="add">
+
+                                <div class="row mb-3">
+                                    <label for="product-jenis" class="col-sm-3 col-form-label">Jenis Produk</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="product-jenis" required>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="product-tipe" class="col-sm-3 col-form-label">Tipe Produk</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="product-tipe" required>
+                                            <option value="Makanan dan Minuman">Makanan dan Minuman</option>
+                                            <option value="Makanan">Makanan</option>
+                                            <option value="Minuman">Minuman</option>
+                                            <option value="Fashion">Fashion</option>
+                                            <option value="Handycraft">Handycraft</option>
+                                            <option value="Lainya">Lainya</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="product-status" class="col-sm-3 col-form-label">Status</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="product-status" required>
+                                            <option value="AKTIF">AKTIF</option>
+                                            <option value="TIDAK AKTIF">TIDAK AKTIF</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-secondary"
+                                        id="reset-product-form">Reset</button>
+                                    <button type="submit" class="btn btn-primary" id="save-product">Simpan
+                                        Produk</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="apply-products">Terapkan</button>
+                    <button type="button" class="btn btn-secondary modal-close-btn">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <style>
         /* Utilities */
@@ -236,7 +220,8 @@
             color: #5a5c69;
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus,
+        .form-select:focus {
             border-color: #bac8f3;
             box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.1);
         }
@@ -289,199 +274,4 @@
             background-size: 16px 12px, calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
         }
     </style>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize tooltips
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function(tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-
-            // Initialize counter for UMKM forms
-            let umkmCounter = 1;
-
-            // Progress bar update
-            function updateProgress() {
-                const form = document.getElementById('createUmkmForm');
-                const requiredFields = form.querySelectorAll('.required-field');
-                const totalRequired = requiredFields.length;
-                let filledRequired = 0;
-
-                requiredFields.forEach(field => {
-                    if (field.value.trim() !== '') {
-                        filledRequired++;
-                    }
-                });
-
-                const progressPercentage = Math.round((filledRequired / totalRequired) * 100);
-                const progressBar = document.getElementById('formProgress');
-                progressBar.style.width = progressPercentage + '%';
-                progressBar.setAttribute('aria-valuenow', progressPercentage);
-            }
-
-            // Format currency (Rupiah)
-            function formatRupiah() {
-                const omzetInputs = document.querySelectorAll('.omzet-input');
-
-                omzetInputs.forEach(input => {
-                    input.addEventListener('input', function(e) {
-                        // Remove non-numeric characters
-                        let value = this.value.replace(/\D/g, '');
-
-                        // Format with thousands separator
-                        if (value) {
-                            value = new Intl.NumberFormat('id-ID').format(value);
-                        }
-
-                        this.value = value;
-                    });
-                });
-            }
-
-            // Initialize format for existing inputs
-            formatRupiah();
-
-            // Update UMKM numbers
-            function updateUmkmNumbers() {
-                document.querySelectorAll('.umkm-form-entry').forEach((entry, index) => {
-                    entry.querySelector('.umkm-number').innerHTML = '<i class="fas fa-building me-2"></i>Data UMKM #' + (index + 1);
-                });
-            }
-
-            // Add a new UMKM form
-            function addUmkmForm() {
-                umkmCounter++;
-
-                // Clone the first entry
-                const firstEntry = document.querySelector('.umkm-form-entry');
-                const newEntry = firstEntry.cloneNode(true);
-
-                // Update IDs and names
-                newEntry.id = 'umkm-entry-' + umkmCounter;
-                newEntry.setAttribute('data-umkm-id', umkmCounter);
-
-                // Update all input IDs, names, and clear values
-                const inputs = newEntry.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => {
-                    const idParts = input.id.split('_');
-                    const baseName = idParts.slice(0, -1).join('_');
-                    input.id = baseName + '_' + umkmCounter;
-
-                    const nameParts = input.name.match(/umkm\[(\d+)\]\[(.*?)\](?:\[(.*?)\])?/);
-                    if (nameParts) {
-                        if (nameParts[3]) {
-                            input.name = `umkm[${umkmCounter}][${nameParts[2]}][${nameParts[3]}]`;
-                        } else {
-                            input.name = `umkm[${umkmCounter}][${nameParts[2]}]`;
-                        }
-                    }
-
-                    // Clear values
-                    if (input.tagName === 'SELECT') {
-                        input.selectedIndex = 0;
-                    } else {
-                        input.value = '';
-                    }
-                });
-
-                // Update the remove button
-                const removeButton = newEntry.querySelector('.remove-umkm');
-                removeButton.setAttribute('data-umkm-id', umkmCounter);
-
-                // Append the new entry
-                document.getElementById('umkm-entries-container').appendChild(newEntry);
-
-                // Update UMKM numbers
-                updateUmkmNumbers();
-
-                // Re-initialize currency formatting for new inputs
-                formatRupiah();
-
-                // Scroll to the new entry
-                newEntry.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-
-            // Add UMKM form when button is clicked
-            document.getElementById('add-umkm-btn').addEventListener('click', addUmkmForm);
-            document.getElementById('mobile-add-umkm').addEventListener('click', addUmkmForm);
-
-            // Remove UMKM form
-            document.addEventListener('click', function(e) {
-                if (e.target && e.target.classList.contains('remove-umkm') ||
-                    e.target.parentElement && e.target.parentElement.classList.contains('remove-umkm')) {
-
-                    const button = e.target.classList.contains('remove-umkm') ? e.target : e.target.parentElement;
-                    const umkmId = button.getAttribute('data-umkm-id');
-                    const umkmEntry = document.getElementById('umkm-entry-' + umkmId);
-
-                    // Only remove if there's more than one entry
-                    if (document.querySelectorAll('.umkm-form-entry').length > 1) {
-                        umkmEntry.remove();
-
-                        // Update UMKM numbers
-                        updateUmkmNumbers();
-
-                        // Update progress
-                        updateProgress();
-                    } else {
-                        // Show alert if trying to remove the last entry
-                        const alertHTML = `
-                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                <i class="fas fa-exclamation-triangle me-2"></i> Minimal harus ada satu data UMKM
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        `;
-                        document.getElementById('alertContainer').innerHTML = alertHTML;
-                    }
-                }
-            });
-
-            // Form validation
-            document.getElementById('createUmkmForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                let isValid = true;
-                const requiredFields = this.querySelectorAll('.required-field');
-
-                requiredFields.forEach(field => {
-                    if (field.value.trim() === '') {
-                        field.classList.add('is-invalid');
-                        isValid = false;
-                    } else {
-                        field.classList.remove('is-invalid');
-                    }
-                });
-
-                if (isValid) {
-                    this.submit();
-                } else {
-                    // Show alert
-                    const alertHTML = `
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i> Harap lengkapi semua field yang wajib diisi
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    `;
-                    document.getElementById('alertContainer').innerHTML = alertHTML;
-
-                    // Scroll to the first invalid field
-                    const firstInvalid = this.querySelector('.is-invalid');
-                    if (firstInvalid) {
-                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                }
-            });
-
-            // Update progress when input changes
-            document.addEventListener('input', function(e) {
-                if (e.target.classList.contains('required-field')) {
-                    updateProgress();
-                }
-            });
-
-            // Initial progress update
-            updateProgress();
-        });
-    </script>
 @endsection

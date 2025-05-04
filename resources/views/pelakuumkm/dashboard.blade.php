@@ -12,11 +12,7 @@
                     </h4>
                     <p class="mb-0 fs-6">Pantau perkembangan usaha dan informasi terbaru</p>
                 </div>
-                <div>
-                    <a class="btn btn-light rounded-pill px-4 shadow-sm" href="{{ route('pelakukelolaumkm.create') }}">
-                        <i class="fas fa-plus-circle me-2"></i> Tambah UMKM Baru
-                    </a>
-                </div>
+
             </div>
         </div>
 
@@ -260,10 +256,7 @@
             </div>
         </div>
 
-        <!-- Floating Action Button -->
-        <a href="{{ route('pelakukelolaumkm.create') }}" class="btn btn-primary btn-tambah-umkm shadow">
-            <i class="fas fa-plus"></i>
-        </a>
+       
     </main>
 
     @push('scripts')

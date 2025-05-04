@@ -55,7 +55,7 @@
                 <!-- Form Edit Kegiatan -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-white">Form Edit Kegiatan Intervensi</h6>
+                        <h6 class="m-0 font-weight-bold text-black">Form Edit Kegiatan Intervensi</h6>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('datakegiatan.update', $kegiatan->id) }}" method="POST"
@@ -192,8 +192,9 @@
                                     </div>
                                 @endif
 
-                                <img id="image-preview" class="preview-image" src="#" alt="Preview"
-                                    style="display:none;">
+
+
+
                             </div>
 
                             <div class="form-group text-right">

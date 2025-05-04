@@ -31,7 +31,11 @@ class DataUmkmController extends Controller
     public function index()
     {
         $pageTitle = 'Data UMKM';
-        $dataumkms = Umkm::with('pelakuUmkm')->get();
+
+        // Filter out UMKM with status 'ditolak'
+        $dataumkms = Umkm::with('pelakuUmkm', 'produkUmkm')
+            ->where('status', '!=', 'DITOLAK')
+            ->get();
 
         $userRole = Auth::user()->role;
 
@@ -210,14 +214,15 @@ class DataUmkmController extends Controller
     {
 
         $pelakuUmkm = PelakuUmkm::with('dataUmkm')->findOrFail($id);
+        $kegiatans = Kegiatan::all();
 
         $userRole = Auth::user()->role;
 
         // Menampilkan view yang berbeda berdasarkan role
         if ($userRole === 'adminkantor') {
-            return view('adminkantor.dataumkm.show', compact('pelakuUmkm',));
+            return view('adminkantor.dataumkm.show', compact('pelakuUmkm', 'kegiatans'));
         } elseif ($userRole === 'adminlapangan') {
-            return view('adminlapangan.dataumkm.show', compact('pelakuUmkm'));
+            return view('adminlapangan.dataumkm.show', compact('pelakuUmkm', 'kegiatans'));
         }
     }
 
@@ -250,17 +255,10 @@ class DataUmkmController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Start a transaction to ensure data integrity
+        // Begin transaction to ensure data consistency
         DB::beginTransaction();
 
         try {
-            // Log the incoming request data
-            Log::info('UMKM update request started', [
-                'pelaku_umkm_id' => $id,
-                'has_temp_products' => isset($request->temp_products),
-                'temp_products_count' => isset($request->temp_products) ? count($request->temp_products) : 0
-            ]);
-
             // Validate the request data
             $request->validate([
                 'nik' => 'required|string|max:16',
@@ -282,10 +280,6 @@ class DataUmkmController extends Controller
 
             // Find the Pelaku UMKM
             $pelakuUmkm = PelakuUmkm::findOrFail($id);
-            Log::info('Found PelakuUmkm record', [
-                'id' => $pelakuUmkm->id,
-                'nama' => $pelakuUmkm->nama_lengkap
-            ]);
 
             // Update Pelaku UMKM data
             $pelakuUmkm->update([
@@ -305,20 +299,11 @@ class DataUmkmController extends Controller
                 'pendidikan_terakhir' => $request->pendidikan_terakhir,
                 'status_keaktifan' => $request->status_keaktifan,
             ]);
-            Log::info('Updated PelakuUmkm record');
-
-            // Track newly created UMKMs to use for saving temporary products
-            $newUmkmIds = [];
 
             // Handle UMKM data - update existing, add new ones, remove deleted ones
             if ($request->has('umkm')) {
                 $existingUmkmIds = $pelakuUmkm->dataUmkm->pluck('id')->toArray();
                 $submittedUmkmIds = [];
-
-                Log::info('Processing UMKM data', [
-                    'count' => count($request->umkm),
-                    'existing_count' => count($existingUmkmIds)
-                ]);
 
                 foreach ($request->umkm as $index => $umkmData) {
                     if (!empty($umkmData['id'])) {
@@ -327,133 +312,110 @@ class DataUmkmController extends Controller
                         $dataUmkm->update([
                             'nama_usaha' => $umkmData['nama_usaha'],
                             'alamat' => $umkmData['alamat'],
-                            'pengelolaan_usaha' => $umkmData['pengelolaan_usaha'],
-                            'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'],
-                            'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'],
-                            'sektor_usaha' => $umkmData['sektor_usaha'],
-                            'status' => $umkmData['status'],
+                            'pengelolaan_usaha' => $umkmData['pengelolaan_usaha'] ?? null,
+                            'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'] ?? null,
+                            'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'] ?? null,
+                            'sektor_usaha' => $umkmData['sektor_usaha'] ?? null,
+                            'status' => $umkmData['status'] ?? 'AKTIF',
                         ]);
                         $submittedUmkmIds[] = $dataUmkm->id;
-                        Log::info('Updated existing UMKM', [
-                            'index' => $index,
-                            'id' => $dataUmkm->id,
-                            'nama_usaha' => $dataUmkm->nama_usaha
-                        ]);
                     } else {
                         // Create new UMKM
                         $dataUmkm = $pelakuUmkm->dataUmkm()->create([
                             'nama_usaha' => $umkmData['nama_usaha'],
                             'alamat' => $umkmData['alamat'],
-                            'pengelolaan_usaha' => $umkmData['pengelolaan_usaha'],
-                            'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'],
-                            'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'],
-                            'sektor_usaha' => $umkmData['sektor_usaha'],
-                            'status' => $umkmData['status'],
+                            'pengelolaan_usaha' => $umkmData['pengelolaan_usaha'] ?? null,
+                            'klasifikasi_kinerja_usaha' => $umkmData['klasifikasi_kinerja_usaha'] ?? null,
+                            'jumlah_tenaga_kerja' => $umkmData['jumlah_tenaga_kerja'] ?? null,
+                            'sektor_usaha' => $umkmData['sektor_usaha'] ?? null,
+                            'status' => $umkmData['status'] ?? 'AKTIF',
                         ]);
                         $submittedUmkmIds[] = $dataUmkm->id;
-                        $newUmkmIds[$index] = $dataUmkm->id;
-                        Log::info('Created new UMKM', [
-                            'index' => $index,
-                            'id' => $dataUmkm->id,
-                            'nama_usaha' => $dataUmkm->nama_usaha
-                        ]);
+
+                        // Process products for new UMKM if they exist
+                        if (isset($umkmData['products']) && is_array($umkmData['products'])) {
+                            foreach ($umkmData['products'] as $productData) {
+                                if (!empty($productData['jenis_produk']) && !empty($productData['tipe_produk'])) {
+                                    // Create product for this new UMKM
+                                    ProdukUmkm::create([
+                                        'umkm_id' => $dataUmkm->id,
+                                        'jenis_produk' => $productData['jenis_produk'],
+                                        'tipe_produk' => $productData['tipe_produk'],
+                                        'status' => $productData['status'] ?? 'AKTIF',
+                                    ]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Process deleted products if any
+                if ($request->has('deleted_products') && is_array($request->deleted_products)) {
+                    foreach ($request->deleted_products as $productId) {
+                        $product = ProdukUmkm::find($productId);
+                        if ($product) {
+                            $product->delete();
+                        }
+                    }
+                }
+
+                // Process updated products if any
+                if ($request->has('updated_products') && is_array($request->updated_products)) {
+                    foreach ($request->updated_products as $productId => $productData) {
+                        $product = ProdukUmkm::find($productId);
+                        if ($product) {
+                            $data = explode('|', $productData);
+                            if (count($data) === 3) {
+                                $product->update([
+                                    'jenis_produk' => $data[0],
+                                    'tipe_produk' => $data[1],
+                                    'status' => $data[2]
+                                ]);
+                            }
+                        }
+                    }
+                }
+
+                // Process new products for existing UMKMs if any
+                if ($request->has('new_products') && is_array($request->new_products)) {
+                    foreach ($request->new_products as $umkmId => $products) {
+                        foreach ($products as $productData) {
+                            $data = explode('|', $productData);
+                            if (count($data) === 3) {
+                                ProdukUmkm::create([
+                                    'umkm_id' => $umkmId,
+                                    'jenis_produk' => $data[0],
+                                    'tipe_produk' => $data[1],
+                                    'status' => $data[2]
+                                ]);
+                            }
+                        }
                     }
                 }
 
                 // Remove UMKMs that were deleted from the form
                 $umkmsToDelete = array_diff($existingUmkmIds, $submittedUmkmIds);
                 if (count($umkmsToDelete) > 0) {
+                    // Delete associated products first
+                    foreach ($umkmsToDelete as $umkmId) {
+                        ProdukUmkm::where('umkm_id', $umkmId)->delete();
+                    }
                     Umkm::whereIn('id', $umkmsToDelete)->delete();
-                    Log::info('Deleted UMKMs', ['deleted_ids' => $umkmsToDelete]);
                 }
             }
 
-            // Process temp products if any exist
-            if ($request->has('temp_products')) {
-                Log::info('Processing temporary products', [
-                    'count' => count($request->temp_products),
-                    'new_umkm_count' => count($newUmkmIds)
-                ]);
+            // Existing code for handling Omset, Legalitas, and Intervensi data...
 
-                foreach ($request->temp_products as $umkmIndex => $products) {
-                    // Determine the UMKM ID
-                    $umkmId = null;
-
-                    // Check if this is for an existing UMKM
-                    if (isset($request->umkm[$umkmIndex]['id'])) {
-                        $umkmId = $request->umkm[$umkmIndex]['id'];
-                        Log::info('Found existing UMKM for temp products', [
-                            'umkm_index' => $umkmIndex,
-                            'umkm_id' => $umkmId
-                        ]);
-                    }
-                    // Or for a new UMKM
-                    else if (isset($newUmkmIds[$umkmIndex])) {
-                        $umkmId = $newUmkmIds[$umkmIndex];
-                        Log::info('Found new UMKM for temp products', [
-                            'umkm_index' => $umkmIndex,
-                            'umkm_id' => $umkmId
-                        ]);
-                    }
-
-                    // Create products if we have a valid UMKM ID
-                    if ($umkmId) {
-                        Log::info('Creating products for UMKM', [
-                            'umkm_id' => $umkmId,
-                            'product_count' => count($products)
-                        ]);
-
-                        foreach ($products as $productIndex => $product) {
-                            try {
-                                $newProduct = ProdukUmkm::create([
-                                    'umkm_id' => $umkmId,
-                                    'jenis_produk' => $product['jenis_produk'],
-                                    'tipe_produk' => $product['tipe_produk'],
-                                    'status' => $product['status'],
-                                ]);
-
-                                Log::info('Successfully created product', [
-                                    'umkm_id' => $umkmId,
-                                    'product_index' => $productIndex,
-                                    'product_id' => $newProduct->id,
-                                    'jenis_produk' => $newProduct->jenis_produk
-                                ]);
-                            } catch (\Exception $e) {
-                                Log::error('Failed to create product', [
-                                    'umkm_id' => $umkmId,
-                                    'product_index' => $productIndex,
-                                    'error' => $e->getMessage(),
-                                    'product_data' => $product
-                                ]);
-                                throw $e;
-                            }
-                        }
-                    } else {
-                        Log::warning('Could not find UMKM ID for temp products', [
-                            'umkm_index' => $umkmIndex,
-                            'new_umkm_ids' => $newUmkmIds
-                        ]);
-                    }
-                }
-            } else {
-                Log::info('No temporary products to process');
-            }
-
-            // Commit the transaction
             DB::commit();
-            Log::info('UMKM update completed successfully');
 
             return redirect()->route('dataumkm.index')
                 ->with('status', 'Data UMKM berhasil diperbarui')
                 ->with('status_type', 'success');
         } catch (\Exception $e) {
-            // Rollback the transaction if an error occurred
             DB::rollBack();
-
-            Log::error('UMKM update failed', [
-                'pelaku_umkm_id' => $id,
-                'error_message' => $e->getMessage(),
-                'error_trace' => $e->getTraceAsString()
+            Log::error('Error updating UMKM data', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return redirect()->back()

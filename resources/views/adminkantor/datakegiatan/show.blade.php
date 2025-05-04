@@ -38,13 +38,6 @@
                             </span>
                             <span class="text">Kembali</span>
                         </a>
-                        <a href="{{ route('datakegiatan.edit', $kegiatan->id) }}"
-                            class="btn btn-warning btn-icon-split ml-2">
-                            <span class="icon text-white-50">
-                                <i class="fas fa-edit"></i>
-                            </span>
-                            <span class="text">Edit</span>
-                        </a>
                     </div>
                 </div>
 

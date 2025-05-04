@@ -76,7 +76,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="jenis_kegiatan">Jenis Kegiatan</label>
-                                        <select class="form-control" id="jenis_kegiatan" name="jenis_kegiatan">
+                                        <select class="form-control" id="jenis_kegiatan" name="jenis_kegiatan" required>
                                             <option value="">-- Pilih Jenis Intervensi --</option>
                                             <option value="PEMASARAN">PEMASARAN</option>
                                             <option value="PELATIHAN">PELATIHAN</option>
@@ -93,7 +93,7 @@
                                         <input type="text"
                                             class="form-control @error('lokasi_kegiatan') is-invalid @enderror"
                                             id="lokasi_kegiatan" name="lokasi_kegiatan"
-                                            value="{{ old('lokasi_kegiatan') }}" placeholder="Masukan Lokasi Kegiatan">
+                                            value="{{ old('lokasi_kegiatan') }}" placeholder="Masukan Lokasi Kegiatan" required>
                                         @error('lokasi_kegiatan')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -159,7 +159,7 @@
                                         <input type="number"
                                             class="form-control @error('kuota_pendaftaran') is-invalid @enderror"
                                             id="kuota_pendaftaran" name="kuota_pendaftaran"
-                                            value="{{ old('kuota_pendaftaran') }}" placeholder="Masukan Kuota Pendaftaran Kegiatan">
+                                            value="{{ old('kuota_pendaftaran') }}" placeholder="Masukan Kuota Pendaftaran Kegiatan" required>
                                         @error('kuota_pendaftaran')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -170,7 +170,7 @@
                             <div class="form-group">
                                 <label for="status_kegiatan">Status Kegiatan</label>
                                 <select class="form-control @error('status_kegiatan') is-invalid @enderror"
-                                    id="status_kegiatan" name="status_kegiatan">
+                                    id="status_kegiatan" name="status_kegiatan" required>
                                     <option value="">Pilih Status</option>
                                     <option value="Belum Dimulai"
                                         {{ old('status_kegiatan') == 'BELUM DIMULAI' ? 'selected' : '' }}>BELUM DIMULAI
@@ -194,10 +194,7 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="mt-3 text-center">
-                                    <img id="image-preview" width="150" height="150" class="preview-image"
-                                        src="#" alt="Preview">
-                                </div>
+                                
 
                             </div>
 
