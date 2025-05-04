@@ -773,24 +773,48 @@
                                                 <!-- Camera button -->
                                                 <div class="text-center mb-3">
                                                     <button type="button" id="camera-button"
-                                                        class="btn btn-primary btn-lg"
-                                                        {{ $status === 'Pendaftaran' ? 'disabled' : '' }}>
-                                                        <i class="fas fa-camera me-2"></i>
-                                                        @if (empty(json_decode($intervensi->dokumentasi_kegiatan ?? '[]', true)))
-                                                            Ambil Foto Dokumentasi
-                                                        @else
-                                                            Ganti Foto Dokumentasi
-                                                        @endif
-                                                    </button>
+                                                    class="btn btn-primary btn-lg"
+                                                    {{ $status === 'Pendaftaran' ? 'disabled' : '' }}>
+                                                    <i class="fas fa-camera me-2"></i>
+                                                    @php
+                                                        // Safely determine if dokumentasi is empty
+                                                        $hasImages = false;
+
+                                                        if (!empty($intervensi->dokumentasi_kegiatan)) {
+                                                            $dokValue = $intervensi->dokumentasi_kegiatan;
+
+                                                            // If it's already an array, use it directly
+                                                            if (is_array($dokValue)) {
+                                                                $hasImages = !empty($dokValue);
+                                                            }
+                                                            // If it's a string that might be JSON, try to decode
+                                                            else if (is_string($dokValue)) {
+                                                                try {
+                                                                    $decodedValue = json_decode($dokValue, true);
+                                                                    // Use decoded value only if successful
+                                                                    if (json_last_error() === JSON_ERROR_NONE) {
+                                                                        $hasImages = !empty($decodedValue);
+                                                                    }
+                                                                } catch (\Exception $e) {
+                                                                    // If decoding fails, check if the string itself has content
+                                                                    $hasImages = !empty($dokValue);
+                                                                }
+                                                            }
+                                                        }
+                                                    @endphp
+
+                                                    {{ $hasImages ? 'Ganti Foto Dokumentasi' : 'Ambil Foto Dokumentasi' }}
+                                                </button>
                                                 </div>
 
                                                 <!-- Dokumentasi preview area -->
                                                 <div id="dokumentasi-preview" class="dokumentasi-preview mt-3">
                                                     @if ($intervensi->dokumentasi_kegiatan)
                                                         @php
-                                                            $dokumentasis =
-                                                                json_decode($intervensi->dokumentasi_kegiatan, true) ??
-                                                                [];
+                                                            // Check if dokumentasi_kegiatan is already an array or a JSON string
+                                                            $dokumentasis = is_array($intervensi->dokumentasi_kegiatan)
+                                                                ? $intervensi->dokumentasi_kegiatan
+                                                                : json_decode($intervensi->dokumentasi_kegiatan, true) ?? [];
                                                         @endphp
                                                         @forelse ($dokumentasis as $dok)
                                                             <div class="dokumentasi-item position-relative">

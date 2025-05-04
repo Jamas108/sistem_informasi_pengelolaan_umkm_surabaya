@@ -13,7 +13,7 @@ $(document).ready(function () {
     });
 
     // Add UMKM Button Click Event
-    $('#add-umkm-btn-edit').off('click').on('click', function() {
+    $('#add-umkm-btn-edit').off('click').on('click', function () {
         addNewUmkmEdit();
     });
 
@@ -23,7 +23,7 @@ $(document).ready(function () {
         console.log("Add product button clicked for UMKM ID:", umkmId);
 
         // Reset form fields
-        $('#add-product-form')[0].reset();
+        $('#add-product-form-edit')[0].reset();
         $('#product_id').val('');
         $('#add_product_umkm_id').val(umkmId);
         $('#editing_mode').val('add');
@@ -101,7 +101,8 @@ $(document).ready(function () {
     });
 
     // Product Form Submit Handler
-    $('#add-product-form').off('submit').on('submit', function (e) {
+    // Product Form Submit Handler
+    $('#add-product-form-edit').off('submit').on('submit', function (e) {
         e.preventDefault();
         console.log("Product form submitted");
 
@@ -129,12 +130,34 @@ $(document).ready(function () {
         const isEdit = $('#editing_mode').val() === 'edit';
         const isTemp = $('#is_temp_product').val() === '1';
 
+        // Force close the modal using all possible methods before proceeding
+        try {
+            // Method 1: jQuery Bootstrap
+            $('#addProductModal').modal('hide');
+
+            // Method 2: Bootstrap 5
+            const modalElement = document.getElementById('addProductModal');
+            if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                if (modalInstance) modalInstance.hide();
+            }
+
+            // Method 3: Manual DOM manipulation
+            $('#addProductModal').removeClass('show');
+            $('#addProductModal').css('display', 'none');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+
+            console.log("Modal closed successfully with multiple methods");
+        } catch (error) {
+            console.error("Error closing modal:", error);
+        }
+
         if (isEdit) {
             // Update existing product
             if (isTemp) {
                 // For temp product - update in the DOM only
                 updateTempProduct(productId, umkmId, jenisProduk, tipeProduk, status);
-                hideModal('addProductModal');
                 showAlert('success', 'Produk berhasil diperbarui (lokal)');
                 $(this).data('submitting', false);
             } else {
@@ -147,7 +170,6 @@ $(document).ready(function () {
             if (isTemp) {
                 // For temp UMKM - add to DOM only
                 addTempProduct(umkmId, jenisProduk, tipeProduk, status);
-                hideModal('addProductModal');
                 showAlert('success', 'Produk berhasil ditambahkan (lokal)');
                 $(this).data('submitting', false);
             } else {
@@ -349,24 +371,44 @@ $(document).ready(function () {
         });
 
         // Re-enable the add button after a short delay
-        setTimeout(function() {
+        setTimeout(function () {
             $('#add-umkm-btn').prop('disabled', false);
         }, 500);
     }
 
     // Function to update UMKM numbering after deletion
     function updateUmkmNumbers() {
-        $('.umkm-form-entry').each(function(index) {
+        $('.umkm-form-entry').each(function (index) {
             $(this).find('.umkm-number').text('UMKM ' + (index + 1));
         });
     }
 
     // Function to add a product to the server via API
+    // Function to add a product to the server via API
     function addServerProduct(umkmId, jenisProduk, tipeProduk, status) {
-        // Show loading indicator
-
         // Disable submit button during request
-        $('#add-product-form button[type="submit"]').prop('disabled', true);
+        $('#add-product-form-edit button[type="submit"]').prop('disabled', true);
+
+        // Force close modal before AJAX call using multiple methods
+        try {
+            // Method 1: jQuery Bootstrap
+            $('#addProductModal').modal('hide');
+
+            // Method 2: Bootstrap 5
+            const modalElement = document.getElementById('addProductModal');
+            if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                if (modalInstance) modalInstance.hide();
+            }
+
+            // Method 3: Manual DOM manipulation
+            $('#addProductModal').removeClass('show');
+            $('#addProductModal').css('display', 'none');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+        } catch (error) {
+            console.error("Error closing modal before AJAX:", error);
+        }
 
         $.ajax({
             url: '/store-product',
@@ -378,9 +420,35 @@ $(document).ready(function () {
                 status: status
             },
             success: function (response) {
-                hideLoading();
-                $('#add-product-form').data('submitting', false);
-                $('#add-product-form button[type="submit"]').prop('disabled', false);
+                // Reset form submission state
+                $('#add-product-form-edit').data('submitting', false);
+                $('#add-product-form-edit button[type="submit"]').prop('disabled', false);
+
+                // Use a more robust approach to close the modal
+                try {
+                    // Don't rely only on modal('hide') since it's failing
+                    // Method 1: Direct DOM manipulation first
+                    $('#addProductModal').removeClass('show');
+                    $('#addProductModal').css('display', 'none');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
+                    // Method 2: Try Bootstrap 5 approach
+                    const modalElement = document.getElementById('addProductModal');
+                    if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        if (modalInstance) modalInstance.hide();
+                    }
+
+                    // Method 3: Try jQuery method last
+                    if (typeof $.fn.modal === 'function') {
+                        $('#addProductModal').modal('hide');
+                    }
+
+                    console.log("Modal closed successfully with multiple methods");
+                } catch (error) {
+                    console.error("Error closing modal in success callback:", error);
+                }
 
                 if (response.success) {
                     // Get the product table
@@ -394,64 +462,98 @@ $(document).ready(function () {
                     // Add new row to the table
                     const rowCount = productTable.find('tr').length + 1;
                     const newRow = `
-                        <tr id="product-${response.data.id}" data-product-id="${response.data.id}">
-                            <td class="text-center">${rowCount}</td>
-                            <td>${response.data.jenis_produk}</td>
-                            <td>${response.data.tipe_produk}</td>
-                            <td>
-                                ${response.data.status === 'AKTIF' ?
+                    <tr id="product-${response.data.id}" data-product-id="${response.data.id}">
+                        <td class="text-center">${rowCount}</td>
+                        <td>${response.data.jenis_produk}</td>
+                        <td>${response.data.tipe_produk}</td>
+                        <td>
+                            ${response.data.status === 'AKTIF' ?
                             '<span class="badge badge-success">AKTIF</span>' :
                             '<span class="badge badge-danger">TIDAK AKTIF</span>'}
-                            </td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-warning edit-product-btn"
-                                    data-product-id="${response.data.id}"
-                                    data-umkm-id="${umkmId}"
-                                    data-jenis-produk="${response.data.jenis_produk}"
-                                    data-tipe-produk="${response.data.tipe_produk}"
-                                    data-status="${response.data.status}">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-danger delete-product-btn"
-                                    data-product-id="${response.data.id}"
-                                    data-umkm-id="${umkmId}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-warning edit-product-btn"
+                                data-product-id="${response.data.id}"
+                                data-umkm-id="${umkmId}"
+                                data-jenis-produk="${response.data.jenis_produk}"
+                                data-tipe-produk="${response.data.tipe_produk}"
+                                data-status="${response.data.status}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger delete-product-btn"
+                                data-product-id="${response.data.id}"
+                                data-umkm-id="${umkmId}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
                     productTable.append(newRow);
-
-                    // Hide modal
-                    hideModal('addProductModal');
 
                     // Show success alert
                     showAlert('success', 'Produk berhasil ditambahkan');
                 } else {
                     // Show error message
-                    showAlert('danger', 'Gagal menambahkan produk: ' + response.message, 'addProductModal');
+                    showAlert('danger', 'Gagal menambahkan produk: ' + response.message);
                 }
             },
             error: function (xhr) {
-                hideLoading();
-                $('#add-product-form').data('submitting', false);
-                $('#add-product-form button[type="submit"]').prop('disabled', false);
+                $('#add-product-form-edit').data('submitting', false);
+                $('#add-product-form-edit button[type="submit"]').prop('disabled', false);
+
+                // Similar modal closing logic for error condition
+                try {
+                    $('#addProductModal').removeClass('show');
+                    $('#addProductModal').css('display', 'none');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
+                    if (typeof $.fn.modal === 'function') {
+                        $('#addProductModal').modal('hide');
+                    }
+                } catch (error) {
+                    console.error("Error closing modal in error callback:", error);
+                }
 
                 let errorMessage = 'Terjadi kesalahan saat menyimpan produk';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     errorMessage = xhr.responseJSON.message;
                 }
-                showAlert('danger', errorMessage, 'addProductModal');
+                showAlert('danger', errorMessage);
             }
         });
     }
 
     // Function to update a product on the server via API
+    // Function to update a product on the server via API
     function updateServerProduct(productId, jenisProduk, tipeProduk, status) {
-        // Show loading indicator
-
         // Disable submit button during request
-        $('#add-product-form button[type="submit"]').prop('disabled', true);
+        $('#add-product-form-edit button[type="submit"]').prop('disabled', true);
+
+        // Force close modal with multiple methods before AJAX call
+        try {
+            // Method 1: Manual DOM manipulation (most reliable)
+            $('#addProductModal').removeClass('show');
+            $('#addProductModal').css('display', 'none');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+
+            // Method 2: Try Bootstrap 5 approach
+            const modalElement = document.getElementById('addProductModal');
+            if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                if (modalInstance) modalInstance.hide();
+            }
+
+            // Method 3: Try jQuery method last
+            if (typeof $.fn.modal === 'function') {
+                $('#addProductModal').modal('hide');
+            }
+
+            console.log("Modal closed successfully before AJAX with multiple methods");
+        } catch (error) {
+            console.error("Error closing modal before AJAX:", error);
+        }
 
         $.ajax({
             url: `/update-product/${productId}`,
@@ -462,9 +564,34 @@ $(document).ready(function () {
                 status: status
             },
             success: function (response) {
-                hideLoading();
-                $('#add-product-form').data('submitting', false);
-                $('#add-product-form button[type="submit"]').prop('disabled', false);
+                // Reset form submission state
+                $('#add-product-form-edit').data('submitting', false);
+                $('#add-product-form-edit button[type="submit"]').prop('disabled', false);
+
+                // Use multiple approaches to close the modal
+                try {
+                    // Method 1: Direct DOM manipulation first
+                    $('#addProductModal').removeClass('show');
+                    $('#addProductModal').css('display', 'none');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
+                    // Method 2: Try Bootstrap 5 approach
+                    const modalElement = document.getElementById('addProductModal');
+                    if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        if (modalInstance) modalInstance.hide();
+                    }
+
+                    // Method 3: Try jQuery method last
+                    if (typeof $.fn.modal === 'function') {
+                        $('#addProductModal').modal('hide');
+                    }
+
+                    console.log("Modal closed successfully in success callback with multiple methods");
+                } catch (error) {
+                    console.error("Error closing modal in success callback:", error);
+                }
 
                 if (response.success) {
                     // Update row in the table
@@ -488,26 +615,46 @@ $(document).ready(function () {
                         .data('status', response.data.status)
                         .attr('data-status', response.data.status);
 
-                    // Hide modal
-                    hideModal('addProductModal');
-
                     // Show success alert
                     showAlert('success', 'Produk berhasil diperbarui');
                 } else {
                     // Show error message
-                    showAlert('danger', 'Gagal memperbarui produk: ' + response.message, 'addProductModal');
+                    showAlert('danger', 'Gagal memperbarui produk: ' + response.message);
                 }
             },
             error: function (xhr) {
-                hideLoading();
-                $('#add-product-form').data('submitting', false);
-                $('#add-product-form button[type="submit"]').prop('disabled', false);
+                // Reset form submission state
+                $('#add-product-form-edit').data('submitting', false);
+                $('#add-product-form-edit button[type="submit"]').prop('disabled', false);
+
+                // Use multiple approaches to close the modal in error case
+                try {
+                    // Method 1: Direct DOM manipulation first
+                    $('#addProductModal').removeClass('show');
+                    $('#addProductModal').css('display', 'none');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
+                    // Method 2: Try Bootstrap 5 approach
+                    const modalElement = document.getElementById('addProductModal');
+                    if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        if (modalInstance) modalInstance.hide();
+                    }
+
+                    // Method 3: Try jQuery method last
+                    if (typeof $.fn.modal === 'function') {
+                        $('#addProductModal').modal('hide');
+                    }
+                } catch (error) {
+                    console.error("Error closing modal in error callback:", error);
+                }
 
                 let errorMessage = 'Terjadi kesalahan saat memperbarui produk';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     errorMessage = xhr.responseJSON.message;
                 }
-                showAlert('danger', errorMessage, 'addProductModal');
+                showAlert('danger', errorMessage);
             }
         });
     }
@@ -992,8 +1139,8 @@ ${message}
     }).on('hidden.bs.modal', function () {
         console.log("Product Modal has been hidden");
         // Reset submit button and form state when modal is hidden
-        $('#add-product-form').data('submitting', false);
-        $('#add-product-form button[type="submit"]').prop('disabled', false);
+        $('#add-product-form-edit').data('submitting', false);
+        $('#add-product-form-edit button[type="submit"]').prop('disabled', false);
     });
 
     // Initialize page

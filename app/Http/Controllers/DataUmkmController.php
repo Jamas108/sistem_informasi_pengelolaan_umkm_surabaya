@@ -34,7 +34,8 @@ class DataUmkmController extends Controller
 
         // Filter out UMKM with status 'ditolak'
         $dataumkms = Umkm::with('pelakuUmkm', 'produkUmkm')
-            ->where('status', '!=', 'DITOLAK')
+            ->where('status', '!=', 'DITOLAK',)
+            ->where('status', '!=', 'Menunggu Verifikasi',)
             ->get();
 
         $userRole = Auth::user()->role;

@@ -12,8 +12,37 @@ $(document).ready(function () {
         }
     });
 
+    // Modal handling functions
+    window.showModal = function(modalId) {
+        console.log("Showing modal: " + modalId);
+
+        // Clean up any existing modal artifacts first
+        $('.modal-backdrop').remove();
+        $('body').removeClass('modal-open');
+        $('.modal').removeClass('show').css('display', 'none');
+
+        // Now show the modal properly
+        $('#' + modalId).addClass('show').css('display', 'block');
+        $('body').addClass('modal-open');
+        $('<div class="modal-backdrop fade show"></div>').appendTo('body');
+
+        // Focus first input
+        setTimeout(function() {
+            $('#' + modalId).find('input:visible:first').focus();
+        }, 100);
+    };
+
+    window.hideModal = function(modalId) {
+        console.log("Hiding modal: " + modalId);
+
+        // Remove the modal elements
+        $('#' + modalId).removeClass('show').css('display', 'none');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+    };
+
     // Add UMKM Button Click Event
-    $('#add-umkm-btn').off('click').on('click', function() {
+    $('#add-umkm-btn').off('click').on('click', function () {
         addNewUmkm();
     });
 
@@ -23,7 +52,7 @@ $(document).ready(function () {
         console.log("Add product button clicked for UMKM ID:", umkmId);
 
         // Reset form fields
-        $('#add-product-form')[0].reset();
+        $('#add-product-form-edit')[0].reset();
         $('#product_id').val('');
         $('#add_product_umkm_id').val(umkmId);
         $('#editing_mode').val('add');
@@ -38,8 +67,8 @@ $(document).ready(function () {
         // Update modal title
         $('#addProductModalLabel').text('Tambah Produk');
 
-        // Show modal with robust fallback approach
-        showModalWithFallback('addProductModal');
+        // Show modal with our consistent method
+        window.showModal('addProductModal');
     });
 
     // Edit Product Button Click Event
@@ -68,8 +97,8 @@ $(document).ready(function () {
         // Update modal title
         $('#addProductModalLabel').text('Edit Produk');
 
-        // Show modal with robust fallback
-        showModalWithFallback('addProductModal');
+        // Show modal with our consistent method
+        window.showModal('addProductModal');
     });
 
     // Delete Product Button Click Event - FIX: Remove redundant confirmation
@@ -101,7 +130,7 @@ $(document).ready(function () {
     });
 
     // Product Form Submit Handler
-    $('#add-product-form').off('submit').on('submit', function (e) {
+    $('#add-product-form-edit').off('submit').on('submit', function (e) {
         e.preventDefault();
         console.log("Product form submitted");
 
@@ -113,9 +142,12 @@ $(document).ready(function () {
 
         $(this).data('submitting', true);
 
+        // Hide modal first before processing
+        window.hideModal('addProductModal');
+
         // Validate form
         if (!validateProductForm()) {
-            showAlert('warning', 'Mohon lengkapi semua field yang wajib diisi', 'addProductModal');
+            showAlert('warning', 'Mohon lengkapi semua field yang wajib diisi');
             $(this).data('submitting', false);
             return;
         }
@@ -134,26 +166,22 @@ $(document).ready(function () {
             if (isTemp) {
                 // For temp product - update in the DOM only
                 updateTempProduct(productId, umkmId, jenisProduk, tipeProduk, status);
-                hideModal('addProductModal');
                 showAlert('success', 'Produk berhasil diperbarui (lokal)');
                 $(this).data('submitting', false);
             } else {
                 // For real product - send to server via API
                 updateServerProduct(productId, jenisProduk, tipeProduk, status);
-                $(this).data('submitting', false);
             }
         } else {
             // Add new product
             if (isTemp) {
                 // For temp UMKM - add to DOM only
                 addTempProduct(umkmId, jenisProduk, tipeProduk, status);
-                hideModal('addProductModal');
                 showAlert('success', 'Produk berhasil ditambahkan (lokal)');
                 $(this).data('submitting', false);
             } else {
                 // For real UMKM - send to server via API
                 addServerProduct(umkmId, jenisProduk, tipeProduk, status);
-                // Note: The submitting flag is reset inside the completion of the AJAX call
             }
         }
     });
@@ -349,24 +377,22 @@ $(document).ready(function () {
         });
 
         // Re-enable the add button after a short delay
-        setTimeout(function() {
+        setTimeout(function () {
             $('#add-umkm-btn').prop('disabled', false);
         }, 500);
     }
 
     // Function to update UMKM numbering after deletion
     function updateUmkmNumbers() {
-        $('.umkm-form-entry').each(function(index) {
+        $('.umkm-form-entry').each(function (index) {
             $(this).find('.umkm-number').text('UMKM ' + (index + 1));
         });
     }
 
     // Function to add a product to the server via API
     function addServerProduct(umkmId, jenisProduk, tipeProduk, status) {
-        // Show loading indicator
-
         // Disable submit button during request
-        $('#add-product-form button[type="submit"]').prop('disabled', true);
+        $('#add-product-form-edit button[type="submit"]').prop('disabled', true);
 
         $.ajax({
             url: '/store-product',
@@ -378,9 +404,9 @@ $(document).ready(function () {
                 status: status
             },
             success: function (response) {
-                hideLoading();
-                $('#add-product-form').data('submitting', false);
-                $('#add-product-form button[type="submit"]').prop('disabled', false);
+                // Reset form submission state
+                $('#add-product-form-edit').data('submitting', false);
+                $('#add-product-form-edit button[type="submit"]').prop('disabled', false);
 
                 if (response.success) {
                     // Get the product table
@@ -394,64 +420,58 @@ $(document).ready(function () {
                     // Add new row to the table
                     const rowCount = productTable.find('tr').length + 1;
                     const newRow = `
-                        <tr id="product-${response.data.id}" data-product-id="${response.data.id}">
-                            <td class="text-center">${rowCount}</td>
-                            <td>${response.data.jenis_produk}</td>
-                            <td>${response.data.tipe_produk}</td>
-                            <td>
-                                ${response.data.status === 'AKTIF' ?
+                    <tr id="product-${response.data.id}" data-product-id="${response.data.id}">
+                        <td class="text-center">${rowCount}</td>
+                        <td>${response.data.jenis_produk}</td>
+                        <td>${response.data.tipe_produk}</td>
+                        <td>
+                            ${response.data.status === 'AKTIF' ?
                             '<span class="badge badge-success">AKTIF</span>' :
                             '<span class="badge badge-danger">TIDAK AKTIF</span>'}
-                            </td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-warning edit-product-btn"
-                                    data-product-id="${response.data.id}"
-                                    data-umkm-id="${umkmId}"
-                                    data-jenis-produk="${response.data.jenis_produk}"
-                                    data-tipe-produk="${response.data.tipe_produk}"
-                                    data-status="${response.data.status}">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-danger delete-product-btn"
-                                    data-product-id="${response.data.id}"
-                                    data-umkm-id="${umkmId}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-warning edit-product-btn"
+                                data-product-id="${response.data.id}"
+                                data-umkm-id="${umkmId}"
+                                data-jenis-produk="${response.data.jenis_produk}"
+                                data-tipe-produk="${response.data.tipe_produk}"
+                                data-status="${response.data.status}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger delete-product-btn"
+                                data-product-id="${response.data.id}"
+                                data-umkm-id="${umkmId}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
                     productTable.append(newRow);
-
-                    // Hide modal
-                    hideModal('addProductModal');
 
                     // Show success alert
                     showAlert('success', 'Produk berhasil ditambahkan');
                 } else {
                     // Show error message
-                    showAlert('danger', 'Gagal menambahkan produk: ' + response.message, 'addProductModal');
+                    showAlert('danger', 'Gagal menambahkan produk: ' + response.message);
                 }
             },
             error: function (xhr) {
-                hideLoading();
-                $('#add-product-form').data('submitting', false);
-                $('#add-product-form button[type="submit"]').prop('disabled', false);
+                $('#add-product-form-edit').data('submitting', false);
+                $('#add-product-form-edit button[type="submit"]').prop('disabled', false);
 
                 let errorMessage = 'Terjadi kesalahan saat menyimpan produk';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     errorMessage = xhr.responseJSON.message;
                 }
-                showAlert('danger', errorMessage, 'addProductModal');
+                showAlert('danger', errorMessage);
             }
         });
     }
 
     // Function to update a product on the server via API
     function updateServerProduct(productId, jenisProduk, tipeProduk, status) {
-        // Show loading indicator
-
         // Disable submit button during request
-        $('#add-product-form button[type="submit"]').prop('disabled', true);
+        $('#add-product-form-edit button[type="submit"]').prop('disabled', true);
 
         $.ajax({
             url: `/update-product/${productId}`,
@@ -462,9 +482,9 @@ $(document).ready(function () {
                 status: status
             },
             success: function (response) {
-                hideLoading();
-                $('#add-product-form').data('submitting', false);
-                $('#add-product-form button[type="submit"]').prop('disabled', false);
+                // Reset form submission state
+                $('#add-product-form-edit').data('submitting', false);
+                $('#add-product-form-edit button[type="submit"]').prop('disabled', false);
 
                 if (response.success) {
                     // Update row in the table
@@ -488,26 +508,23 @@ $(document).ready(function () {
                         .data('status', response.data.status)
                         .attr('data-status', response.data.status);
 
-                    // Hide modal
-                    hideModal('addProductModal');
-
                     // Show success alert
                     showAlert('success', 'Produk berhasil diperbarui');
                 } else {
                     // Show error message
-                    showAlert('danger', 'Gagal memperbarui produk: ' + response.message, 'addProductModal');
+                    showAlert('danger', 'Gagal memperbarui produk: ' + response.message);
                 }
             },
             error: function (xhr) {
-                hideLoading();
-                $('#add-product-form').data('submitting', false);
-                $('#add-product-form button[type="submit"]').prop('disabled', false);
+                // Reset form submission state
+                $('#add-product-form-edit').data('submitting', false);
+                $('#add-product-form-edit button[type="submit"]').prop('disabled', false);
 
                 let errorMessage = 'Terjadi kesalahan saat memperbarui produk';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     errorMessage = xhr.responseJSON.message;
                 }
-                showAlert('danger', errorMessage, 'addProductModal');
+                showAlert('danger', errorMessage);
             }
         });
     }
@@ -549,6 +566,7 @@ $(document).ready(function () {
         } else {
             // For existing products in the database - delete via API
             // Show loading indicator
+            showLoading("Menghapus produk...");
 
             $.ajax({
                 url: `/delete-product/${productId}`,
@@ -704,82 +722,22 @@ $(document).ready(function () {
         });
     }
 
-    // Function to show modal with fallback methods
-    function showModalWithFallback(modalId) {
-        console.log("Attempting to show modal:", modalId);
-
-        try {
-            // Method 1: jQuery Bootstrap
-            if (typeof $.fn.modal === 'function') {
-                $('#' + modalId).modal('show');
-                console.log('Modal opened with jQuery Bootstrap');
-                return;
-            }
-
-            // Method 2: Bootstrap 5
-            const modalElement = document.getElementById(modalId);
-            if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                const modalInstance = new bootstrap.Modal(modalElement);
-                modalInstance.show();
-                console.log('Modal opened with Bootstrap 5 JS');
-                return;
-            }
-
-            // Method 3: Manual DOM manipulation
-            $('#' + modalId).addClass('show');
-            $('#' + modalId).css('display', 'block');
-            $('body').addClass('modal-open');
-            $('<div class="modal-backdrop fade show"></div>').appendTo('body');
-            console.log('Modal opened with manual DOM manipulation');
-        } catch (error) {
-            console.error('Error showing modal:', error);
-            alert('Gagal membuka modal. Silakan coba lagi.');
-        }
-    }
-
-    // Function to hide modal
-    function hideModal(modalId) {
-        try {
-            // Method 1: jQuery Bootstrap
-            if (typeof $.fn.modal === 'function') {
-                $('#' + modalId).modal('hide');
-                return;
-            }
-
-            // Method 2: Bootstrap 5
-            const modalElement = document.getElementById(modalId);
-            if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                if (modalInstance) modalInstance.hide();
-                return;
-            }
-
-            // Method 3: Manual DOM manipulation
-            $('#' + modalId).removeClass('show');
-            $('#' + modalId).css('display', 'none');
-            $('body').removeClass('modal-open');
-            $('.modal-backdrop').remove();
-        } catch (error) {
-            console.error('Error hiding modal:', error);
-        }
-    }
-
     // Function to show loading indicator
     function showLoading(message = 'Memproses...') {
         // Create loading overlay if it doesn't exist
         if ($('#loading-overlay').length === 0) {
             $('body').append(`
-    <div id="loading-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center; display: none;">
-        <div class="card p-4 shadow-sm">
-            <div class="text-center">
-                <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="sr-only">Loading...</span>
+                <div id="loading-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center; display: none;">
+                    <div class="card p-4 shadow-sm">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <p class="loading-message mb-0 font-weight-bold">${message}</p>
+                        </div>
+                    </div>
                 </div>
-                <p class="loading-message mb-0 font-weight-bold">${message}</p>
-            </div>
-        </div>
-    </div>
-`);
+            `);
         } else {
             $('#loading-overlay .loading-message').text(message);
         }
@@ -802,13 +760,13 @@ $(document).ready(function () {
         }
 
         const alertHTML = `
-<div class="alert alert-${type} alert-dismissible fade show" role="alert">
-${message}
-<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-</button>
-</div>
-`;
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `;
 
         if (modalId) {
             $(`#${modalId} .modal-body`).prepend(alertHTML);
@@ -856,32 +814,32 @@ ${message}
                     // Populate table with products
                     response.data.forEach(function (product, index) {
                         const productRow = `
-                <tr id="product-${product.id}" data-product-id="${product.id}">
-                    <td class="text-center">${index + 1}</td>
-                    <td>${product.jenis_produk}</td>
-                    <td>${product.tipe_produk}</td>
-                    <td>
-                        ${product.status === 'AKTIF' ?
-                                '<span class="badge badge-success">AKTIF</span>' :
-                                '<span class="badge badge-danger">TIDAK AKTIF</span>'}
-                    </td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-sm btn-warning edit-product-btn"
-                            data-product-id="${product.id}"
-                            data-umkm-id="${umkmId}"
-                            data-jenis-produk="${product.jenis_produk}"
-                            data-tipe-produk="${product.tipe_produk}"
-                            data-status="${product.status}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger delete-product-btn"
-                            data-product-id="${product.id}"
-                            data-umkm-id="${umkmId}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
+                            <tr id="product-${product.id}" data-product-id="${product.id}">
+                                <td class="text-center">${index + 1}</td>
+                                <td>${product.jenis_produk}</td>
+                                <td>${product.tipe_produk}</td>
+                                <td>
+                                    ${product.status === 'AKTIF' ?
+                                    '<span class="badge badge-success">AKTIF</span>' :
+                                    '<span class="badge badge-danger">TIDAK AKTIF</span>'}
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-warning edit-product-btn"
+                                        data-product-id="${product.id}"
+                                        data-umkm-id="${umkmId}"
+                                        data-jenis-produk="${product.jenis_produk}"
+                                        data-tipe-produk="${product.tipe_produk}"
+                                        data-status="${product.status}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-danger delete-product-btn"
+                                        data-product-id="${product.id}"
+                                        data-umkm-id="${umkmId}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
                         productTable.append(productRow);
                     });
                 } else {
@@ -900,11 +858,29 @@ ${message}
     // Add event handler for close button in modal
     $(document).on('click', '[data-dismiss="modal"]', function () {
         const modalId = $(this).closest('.modal').attr('id');
-        hideModal(modalId);
+        window.hideModal(modalId);
+    });
+
+    // Add event handler for Escape key to close modals
+    $(document).on('keydown', function (event) {
+        if (event.key === 'Escape') {
+            // Find any visible modal
+            const visibleModal = $('.modal.show').attr('id');
+            if (visibleModal) {
+                window.hideModal(visibleModal);
+            }
+        }
+    });
+
+    // Save all products for all UMKMs before form submission
+    $('form').on('submit', function () {
+        // Add hidden field to indicate that the form includes product data
+        $(this).append('<input type="hidden" name="has_product_data" value="1">');
+        return true;
     });
 
     // Success alert management script
-    $(document).ready(function () {
+    function initSuccessAlerts() {
         // Function to show success alert after form submission
         function showSuccessAlert(message) {
             // Remove any existing alerts first
@@ -912,13 +888,13 @@ ${message}
 
             // Create alert HTML
             const alertHTML = `
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle mr-2"></i> ${message}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        `;
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle mr-2"></i> ${message}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            `;
 
             // Insert alert at the top of the content area
             $('.container-fluid:first').prepend(alertHTML);
@@ -958,43 +934,10 @@ ${message}
                 $('.alert').alert('close');
             }, 5000);
         }
-    });
+    }
 
-    // Add event handler for Escape key to close modals
-    $(document).on('keydown', function (event) {
-        if (event.key === 'Escape') {
-            // Find any visible modal
-            const visibleModal = $('.modal.show').attr('id');
-            if (visibleModal) {
-                hideModal(visibleModal);
-            }
-        }
-    });
-
-    // Save all products for all UMKMs before form submission
-    $('form').on('submit', function () {
-        // Add hidden field to indicate that the form includes product data
-        $(this).append('<input type="hidden" name="has_product_data" value="1">');
-
-        // Return true to continue with form submission
-        return true;
-    });
-
-    // Modal debugging and event handlers
-    $('#addProductModal').on('show.bs.modal', function () {
-        console.log("Product Modal is about to be shown");
-    }).on('shown.bs.modal', function () {
-        console.log("Product Modal has been shown");
-        // Focus on the first input field
-        $(this).find('input:visible:first').focus();
-    }).on('hide.bs.modal', function () {
-        console.log("Product Modal is about to be hidden");
-    }).on('hidden.bs.modal', function () {
-        console.log("Product Modal has been hidden");
-        // Reset submit button and form state when modal is hidden
-        $('#add-product-form').data('submitting', false);
-        $('#add-product-form button[type="submit"]').prop('disabled', false);
-    });
+    // Initialize success alerts
+    initSuccessAlerts();
 
     // Initialize page
     loadExistingProducts();

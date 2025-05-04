@@ -56,9 +56,9 @@ class ApprovalUMKMController extends Controller
 
         // Menampilkan view yang berbeda berdasarkan role
         if ($userRole === 'adminkantor') {
-            return view('adminkantor.approval.show', compact('dataumkms', 'pageTitle'));
+            return view('adminkantor.approval.show', compact('dataumkm'));
         } elseif ($userRole === 'adminlapangan') {
-            return view('adminkantor.approval.show', compact('dataumkms', 'pageTitle'));
+            return view('adminkantor.approval.show', compact('dataumkm'));
         }
     }
 

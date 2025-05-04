@@ -22,7 +22,7 @@ class Intervensi extends Model
     protected $casts = [
         'tanggal_intervensi' => 'date',
         'omset' => 'decimal:2',
-        'dokumentasi_kegiatan' => 'array' // Jika dokumentasi disimpan sebagai JSON
+        'dokumentasi_kegiatan' => 'array' // This should be enough on its own
     ];
 
     // Relasi ke UMKM
@@ -49,6 +49,8 @@ class Intervensi extends Model
         return $query->where('kegiatan_id', $kegiatanId);
     }
 
+    /*
+    // Comment out these methods since we're using the array cast
     // Mutator untuk dokumentasi kegiatan
     public function setDokumentasiKegiatanAttribute($value)
     {
@@ -66,4 +68,5 @@ class Intervensi extends Model
             ? json_decode($value, true)
             : $value;
     }
+    */
 }

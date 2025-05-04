@@ -807,9 +807,13 @@
                                                 <div id="dokumentasi-preview" class="dokumentasi-preview mt-3">
                                                     @if ($intervensi->dokumentasi_kegiatan)
                                                         @php
-                                                            $dokumentasis =
-                                                                json_decode($intervensi->dokumentasi_kegiatan, true) ??
-                                                                [];
+                                                            // Check if dokumentasi_kegiatan is already an array or a JSON string
+                                                            $dokumentasis = is_array($intervensi->dokumentasi_kegiatan)
+                                                                ? $intervensi->dokumentasi_kegiatan
+                                                                : json_decode(
+                                                                        $intervensi->dokumentasi_kegiatan,
+                                                                        true,
+                                                                    ) ?? [];
                                                         @endphp
                                                         @forelse ($dokumentasis as $dok)
                                                             <div class="dokumentasi-item position-relative">

@@ -255,11 +255,6 @@ $(document).ready(function() {
         const tipeProduct = $('#product-tipe').val();
         const statusProduct = $('#product-status').val();
 
-        if (!jenisProduct || !tipeProduct || !statusProduct) {
-            showFormAlert('warning', 'Semua field produk harus diisi', $('#product-form'));
-            return;
-        }
-
         const productData = {
             id: productId,
             jenis_produk: jenisProduct,

@@ -416,35 +416,6 @@
                                                     <div class="row mb-3">
                                                         <div class="col-md-6">
                                                             <div class="form-group row">
-                                                                <label for="jenis_produk_{{ $index }}"
-                                                                    class="col-sm-4 col-form-label font-weight-bold">Jenis
-                                                                    Produk</label>
-                                                                <div class="col-sm-8">
-                                                                    <input type="text" class="form-control"
-                                                                        id="jenis_produk_{{ $index }}"
-                                                                        name="umkm[{{ $index }}][jenis_produk]"
-                                                                        value="{{ $umkm->jenis_produk }}">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group row">
-                                                                <label for="tipe_produk_{{ $index }}"
-                                                                    class="col-sm-4 col-form-label font-weight-bold">Tipe
-                                                                    Produk</label>
-                                                                <div class="col-sm-8">
-                                                                    <input type="text" class="form-control"
-                                                                        id="tipe_produk_{{ $index }}"
-                                                                        name="umkm[{{ $index }}][tipe_produk]"
-                                                                        value="{{ $umkm->tipe_produk }}">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group row">
                                                                 <label for="pengelolaan_usaha_{{ $index }}"
                                                                     class="col-sm-4 col-form-label font-weight-bold">Pengelolaan
                                                                     Usaha</label>
@@ -453,15 +424,12 @@
                                                                         id="pengelolaan_usaha_{{ $index }}"
                                                                         name="umkm[{{ $index }}][pengelolaan_usaha]">
                                                                         <option value="">-- Pilih --</option>
-                                                                        <option value="Perseorangan"
-                                                                            {{ $umkm->pengelolaan_usaha == 'Perseorangan' ? 'selected' : '' }}>
-                                                                            Perseorangan</option>
-                                                                        <option value="Kelompok"
-                                                                            {{ $umkm->pengelolaan_usaha == 'Kelompok' ? 'selected' : '' }}>
-                                                                            Kelompok</option>
-                                                                        <option value="Badan Usaha"
-                                                                            {{ $umkm->pengelolaan_usaha == 'Badan Usaha' ? 'selected' : '' }}>
-                                                                            Badan Usaha</option>
+                                                                        <option value="PERSEORANGAN / MANDIRI"
+                                                                            {{ $umkm->pengelolaan_usaha == 'PERSEORANGAN / MANDIRI' ? 'selected' : '' }}>
+                                                                            PERSEORANGAN / MANDIRI</option>
+                                                                        <option value="KELOMPOK / SUBKON / KERJASAMA"
+                                                                            {{ $umkm->pengelolaan_usaha == 'KELOMPOK / SUBKON / KERJASAMA' ? 'selected' : '' }}>
+                                                                            KELOMPOK / SUBKON / KERJASAMA</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -476,18 +444,15 @@
                                                                         id="klasifikasi_kinerja_usaha_{{ $index }}"
                                                                         name="umkm[{{ $index }}][klasifikasi_kinerja_usaha]">
                                                                         <option value="">-- Pilih --</option>
-                                                                        <option value="Sangat Baik"
-                                                                            {{ $umkm->klasifikasi_kinerja_usaha == 'Sangat Baik' ? 'selected' : '' }}>
-                                                                            Sangat Baik</option>
-                                                                        <option value="Baik"
-                                                                            {{ $umkm->klasifikasi_kinerja_usaha == 'Baik' ? 'selected' : '' }}>
-                                                                            Baik</option>
-                                                                        <option value="Cukup"
-                                                                            {{ $umkm->klasifikasi_kinerja_usaha == 'Cukup' ? 'selected' : '' }}>
-                                                                            Cukup</option>
-                                                                        <option value="Kurang"
-                                                                            {{ $umkm->klasifikasi_kinerja_usaha == 'Kurang' ? 'selected' : '' }}>
-                                                                            Kurang</option>
+                                                                        <option value="PEMULA"
+                                                                            {{ $umkm->klasifikasi_kinerja_usaha == 'PEMULA' ? 'selected' : '' }}>
+                                                                            PEMULA</option>
+                                                                        <option value="MADYA"
+                                                                            {{ $umkm->klasifikasi_kinerja_usaha == 'MADYA' ? 'selected' : '' }}>
+                                                                            MADYA</option>
+                                                                        <option value="MANDIRI"
+                                                                            {{ $umkm->klasifikasi_kinerja_usaha == 'MANDIRI' ? 'selected' : '' }}>
+                                                                            MANDIRI</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -518,27 +483,15 @@
                                                                         id="sektor_usaha_{{ $index }}"
                                                                         name="umkm[{{ $index }}][sektor_usaha]">
                                                                         <option value="">-- Pilih --</option>
-                                                                        <option value="Manufaktur"
-                                                                            {{ $umkm->sektor_usaha == 'Manufaktur' ? 'selected' : '' }}>
-                                                                            Manufaktur</option>
-                                                                        <option value="Jasa"
-                                                                            {{ $umkm->sektor_usaha == 'Jasa' ? 'selected' : '' }}>
-                                                                            Jasa</option>
-                                                                        <option value="Perdagangan"
-                                                                            {{ $umkm->sektor_usaha == 'Perdagangan' ? 'selected' : '' }}>
-                                                                            Perdagangan</option>
-                                                                        <option value="Pertanian"
-                                                                            {{ $umkm->sektor_usaha == 'Pertanian' ? 'selected' : '' }}>
-                                                                            Pertanian</option>
-                                                                        <option value="Peternakan"
-                                                                            {{ $umkm->sektor_usaha == 'Peternakan' ? 'selected' : '' }}>
-                                                                            Peternakan</option>
-                                                                        <option value="Perikanan"
-                                                                            {{ $umkm->sektor_usaha == 'Perikanan' ? 'selected' : '' }}>
-                                                                            Perikanan</option>
-                                                                        <option value="Lainnya"
-                                                                            {{ $umkm->sektor_usaha == 'Lainnya' ? 'selected' : '' }}>
-                                                                            Lainnya</option>
+                                                                        <option value="INDUSTRI"
+                                                                            {{ $umkm->sektor_usaha == 'INDUSTRI' ? 'selected' : '' }}>
+                                                                            INDUSTRI</option>
+                                                                        <option value="DAGANG"
+                                                                            {{ $umkm->sektor_usaha == 'DAGANG' ? 'selected' : '' }}>
+                                                                            DAGANG</option>
+                                                                        <option value="JASA"
+                                                                            {{ $umkm->sektor_usaha == 'JASA' ? 'selected' : '' }}>
+                                                                            JASA</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -570,6 +523,74 @@
 
                                                     <input type="hidden" name="umkm[{{ $index }}][id]"
                                                         value="{{ $umkm->id }}">
+                                                    <div class="products-section mt-4 pt-3 border-top">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-3">
+                                                            <h5 class="m-0 font-weight-bold text-primary">Produk UMKM</h5>
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-primary add-product-btn"
+                                                                data-umkm-id="{{ $umkm->id }}">
+                                                                <i class="fas fa-plus-circle"></i> Tambah Produk
+                                                            </button>
+                                                        </div>
+
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered table-striped"
+                                                                id="products-table-{{ $umkm->id }}">
+                                                                <thead class="bg-light">
+                                                                    <tr>
+                                                                        <th class="text-center" width="5%">No</th>
+                                                                        <th width="35%">Jenis Produk</th>
+                                                                        <th width="35%">Tipe Produk</th>
+                                                                        <th width="10%">Status</th>
+                                                                        <th class="text-center" width="15%">Aksi</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @forelse($umkm->produkUmkm as $index => $produk)
+                                                                        <tr id="product-{{ $produk->id }}"
+                                                                            data-product-id="{{ $produk->id }}">
+                                                                            <td class="text-center">{{ $index + 1 }}
+                                                                            </td>
+                                                                            <td>{{ $produk->jenis_produk }}</td>
+                                                                            <td>{{ $produk->tipe_produk }}</td>
+                                                                            <td>
+                                                                                @if ($produk->status == 'AKTIF')
+                                                                                    <span
+                                                                                        class="badge badge-success">AKTIF</span>
+                                                                                @else
+                                                                                    <span class="badge badge-danger">TIDAK
+                                                                                        AKTIF</span>
+                                                                                @endif
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                <button type="button"
+                                                                                    class="btn btn-sm btn-warning edit-product-btn"
+                                                                                    data-product-id="{{ $produk->id }}"
+                                                                                    data-umkm-id="{{ $umkm->id }}"
+                                                                                    data-jenis-produk="{{ $produk->jenis_produk }}"
+                                                                                    data-tipe-produk="{{ $produk->tipe_produk }}"
+                                                                                    data-status="{{ $produk->status }}">
+                                                                                    <i class="fas fa-edit"></i>
+                                                                                </button>
+                                                                                <button type="button"
+                                                                                    class="btn btn-sm btn-danger delete-product-btn"
+                                                                                    data-product-id="{{ $produk->id }}"
+                                                                                    data-umkm-id="{{ $umkm->id }}">
+                                                                                    <i class="fas fa-trash"></i>
+                                                                                </button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    @empty
+                                                                        <tr>
+                                                                            <td colspan="5" class="text-center">Belum
+                                                                                ada produk untuk UMKM ini</td>
+                                                                        </tr>
+                                                                    @endforelse
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -585,229 +606,64 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="omset" role="tabpanel" aria-labelledby="omset-tab">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-header bg-gradient-primary text-white py-3">
-                                        <h5 class="m-0 font-weight-bold">Data Omset UMKM</h5>
-                                    </div>
-                                    <div class="card-body p-4">
-                                        <!-- Form for adding omset data -->
-                                        <div id="omset-form-container" class="mb-4">
-                                            <!-- UMKM Selection -->
-                                            <div class="row mb-3">
-                                                <label for="umkm_id"
-                                                    class="col-sm-3 col-form-label font-weight-bold">Pilih UMKM</label>
-                                                <div class="col-sm-9">
-                                                    <select class="form-control" id="umkm_id" name="omset[umkm_id]">
-                                                        <option value="">-- Pilih UMKM --</option>
-                                                        @foreach ($pelakuUmkm->dataUmkm as $umkm)
-                                                            <option value="{{ $umkm->id }}">
-                                                                {{ $umkm->nama_usaha }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <!-- Jangka Waktu -->
-                                            <div class="row mb-3">
-                                                <label for="jangka_waktu"
-                                                    class="col-sm-3 col-form-label font-weight-bold">Jangka
-                                                    Waktu</label>
-                                                <div class="col-sm-9">
-                                                    <input type="date" class="form-control" id="jangka_waktu"
-                                                        name="omset[jangka_waktu]">
-                                                </div>
-                                            </div>
-
-                                            <!-- Nilai Omset -->
-                                            <div class="row mb-3">
-                                                <label for="omset"
-                                                    class="col-sm-3 col-form-label font-weight-bold">Nilai
-                                                    Omset</label>
-                                                <div class="col-sm-9">
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Rp.</span>
-                                                        </div>
-                                                        <input type="text" class="form-control currency-input"
-                                                            id="total_omset" name="omset[total_omset]" placeholder="0">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Keterangan -->
-                                            <div class="row mb-3">
-                                                <label for="keterangan"
-                                                    class="col-sm-3 col-form-label font-weight-bold">Keterangan</label>
-                                                <div class="col-sm-9">
-                                                    <select class="form-control" id="keterangan"
-                                                        name="omset[keterangan]">
-                                                        <option value="">-- Pilih Status --</option>
-                                                        <option value="AKTIF">AKTIF</option>
-                                                        <option value="TIDAK AKTIF">TIDAK AKTIF</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="row mt-4">
-                                                <div class="col-12 text-center">
-                                                    <button type="button" class="btn btn-md btn-success"
-                                                        id="tambah-data-omset">
-                                                        <i class="fas fa-plus-circle mr-2"></i> Tambah Data Omset
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Table of existing omset data -->
-                                        <div class="mt-5">
-                                            <div class="card border-left-primary shadow">
-                                                <div class="card-body">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-bordered" id="table-omset"
-                                                            width="100%" cellspacing="0">
-                                                            <thead class="bg-light">
-                                                                <tr>
-                                                                    <th class="text-center" width="5%">NO</th>
-                                                                    <th width="15%">UMKM</th>
-                                                                    <th width="15%">Jangka Waktu</th>
-                                                                    <th width="20%">Nilai Omset</th>
-                                                                    <th width="15%">Keterangan</th>
-
-                                                                    <th class="text-center" width="10%">Aksi</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                @if (isset($omsetData) && count($omsetData) > 0)
-                                                                    @foreach ($omsetData as $index => $item)
-                                                                        <tr>
-                                                                            <td class="text-center">
-                                                                                {{ $index + 1 }}</td>
-                                                                            <td>{{ $item->dataUmkm->nama_usaha }}</td>
-                                                                            <td>{{ date('d-m-Y', strtotime($item->jangka_waktu)) }}
-                                                                            </td>
-                                                                            <td>Rp.
-                                                                                {{ number_format($item->omset, 0, ',', '.') }}
-                                                                            </td>
-                                                                            <td>
-                                                                                @if ($item->keterangan == 'AKTIF')
-                                                                                    <span
-                                                                                        class="badge badge-success">AKTIF</span>
-                                                                                @elseif ($item->keterangan == 'TIDAK AKTIF')
-                                                                                    <span class="badge badge-danger">TIDAK
-                                                                                        AKTIF</span>
-                                                                                @endif
-                                                                            </td>
-                                                                            <td class="text-center">
-                                                                                <button type="button"
-                                                                                    class="btn btn-warning btn-sm edit-omset"
-                                                                                    data-id="{{ $item->id }}">
-                                                                                    <i class="fas fa-edit"></i> Edit
-                                                                                </button>
-                                                                            </td>
-                                                                        </tr>
-                                                                    @endforeach
-                                                                @else
-                                                                    <tr>
-                                                                        <td colspan="6" class="text-center">Belum
-                                                                            ada data omset</td>
-                                                                    </tr>
-                                                                @endif
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                        <!-- Modal for editing omset -->
-                                        <div class="modal fade" id="editOmsetModal" tabindex="-1" role="dialog"
-                                            aria-labelledby="editOmsetModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header bg-gradient-primary text-white">
-                                                        <h5 class="modal-title" id="editOmsetModalLabel">Edit Data
-                                                            Omset</h5>
-                                                        <button type="button" class="close text-white"
-                                                            data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form id="edit-omset-form">
-                                                            <input type="hidden" id="edit_omset_id" name="id">
-
-                                                            <div class="form-group row mb-3">
-                                                                <label for="edit_umkm_id"
-                                                                    class="col-sm-3 col-form-label">UMKM</label>
-                                                                <div class="col-sm-9">
-                                                                    <select class="form-control" id="edit_umkm_id"
-                                                                        name="umkm_id">
-                                                                        @foreach ($pelakuUmkm->dataUmkm as $umkm)
-                                                                            <option value="{{ $umkm->id }}">
-                                                                                {{ $umkm->nama_usaha }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="form-group row mb-3">
-                                                                <label for="edit_jangka_waktu"
-                                                                    class="col-sm-3 col-form-label">Jangka
-                                                                    Waktu</label>
-                                                                <div class="col-sm-9">
-                                                                    <input type="date" class="form-control"
-                                                                        id="edit_jangka_waktu" name="jangka_waktu">
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="form-group row mb-3">
-                                                                <label for="edit_omset"
-                                                                    class="col-sm-3 col-form-label">Nilai Omset</label>
-                                                                <div class="col-sm-9">
-                                                                    <div class="input-group">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text">Rp.</span>
-                                                                        </div>
-                                                                        <input type="text"
-                                                                            class="form-control currency-input"
-                                                                            id="edit_omset" name="omset">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="form-group row mb-3">
-                                                                <label for="edit_keterangan"
-                                                                    class="col-sm-3 col-form-label">Keterangan</label>
-                                                                <div class="col-sm-9">
-                                                                    <select class="form-control" id="edit_keterangan"
-                                                                        name="keterangan">
-                                                                        <option value="AKTIF">AKTIF</option>
-                                                                        <option value="TIDAK AKTIF">TIDAK AKTIF
-                                                                        </option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-dismiss="modal">Batal</button>
-                                                        <button type="button" class="btn btn-primary"
-                                                            id="save-edit-omset">Simpan Perubahan</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-
                     </form>
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-gradient-primary text-white">
+                        <h5 class="modal-title" id="addProductModalLabel">Tambah Produk</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="add-product-form-edit">
+                            @csrf
+                            <input type="hidden" id="add_product_umkm_id" name="umkm_id">
+                            <input type="hidden" id="product_id" name="id" value="">
+                            <input type="hidden" id="editing_mode" value="add">
+                            <input type="hidden" id="is_temp_product" value="0">
+
+                            <div class="form-group">
+                                <label for="add_product_jenis" class="font-weight-bold">Jenis Produk</label>
+                                <input type="text" class="form-control" id="add_product_jenis" name="jenis_produk" required>
+                                <div class="invalid-feedback">Jenis produk wajib diisi</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="add_product_tipe" class="font-weight-bold">Tipe Produk</label>
+                                <select class="form-control" id="add_product_tipe" name="tipe_produk" required>
+                                    <option value="Makanan dan Minuman">Makanan dan Minuman</option>
+                                    <option value="Makanan">Makanan</option>
+                                    <option value="Minuman">Minuman</option>
+                                    <option value="Fashion">Fashion</option>
+                                    <option value="Handycraft">Handycraft</option>
+                                    <option value="Lainya">Lainya</option>
+                                </select>
+                                <div class="invalid-feedback">Tipe produk wajib diisi</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="add_product_status" class="font-weight-bold">Status</label>
+                                <select class="form-control" id="add_product_status" name="status" required>
+                                    <option value="AKTIF">AKTIF</option>
+                                    <option value="TIDAK AKTIF">TIDAK AKTIF</option>
+                                </select>
+                                <div class="invalid-feedback">Status wajib dipilih</div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" form="add-product-form-edit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
+
 @endsection

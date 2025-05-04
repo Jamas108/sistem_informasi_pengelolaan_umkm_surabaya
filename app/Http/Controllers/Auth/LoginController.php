@@ -78,6 +78,38 @@ class LoginController extends Controller
         ])->withInput($request->only('username', 'remember'));
     }
 
+    public function loginadmin(Request $request)
+    {
+        return view('auth.admin.login');
+    }
+
+    public function adminprocesslogin (Request $request)
+    {
+        // Validasi input dari form login
+        $request->validate([
+            'username' => 'required|string|exists:users,username', // Pastikan username ada di tabel users
+            'password' => 'required|string',
+        ], [
+            'username.exists' => 'Username tidak ditemukan, silakan periksa kembali.',
+        ]);
+
+        // Data login
+        $credentials = [
+            'username' => $request->username,
+            'password' => $request->password,
+        ];
+
+        // Coba login dengan kredensial yang diberikan
+        if (Auth::attempt($credentials, $request->remember)) {
+            return redirect()->intended($this->redirectPath()); // Arahkan sesuai peran
+        }
+
+        // Jika login gagal, kembali ke halaman login dengan error
+        return back()->withErrors([
+            'password' => 'Password salah, silakan coba lagi.',
+        ])->withInput($request->only('username', 'remember'));
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();

@@ -90,8 +90,6 @@ $(document).ready(function() {
                     <select class="form-control" id="status_${umkmCounter}" name="umkm[${umkmCounter}][status]" required>
                         <option value="">-- Pilih --</option>
                         <option value="AKTIF">AKTIF</option>
-                        <option value="CUKUP AKTIF">CUKUP AKTIF</option>
-                        <option value="KURANG AKTIF">KURANG AKTIF</option>
                         <option value="TIDAK AKTIF">TIDAK AKTIF</option>
                     </select>
                 </div>

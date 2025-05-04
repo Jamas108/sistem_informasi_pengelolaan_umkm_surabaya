@@ -40,6 +40,8 @@ Route::redirect('/', '/login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/adminlogin', [App\Http\Controllers\Auth\LoginController::class, 'loginadmin'])->name('adminlogin');
+Route::post('/adminlogin', [App\Http\Controllers\Auth\LoginController::class, 'adminprocesslogin'])->name('loginadmin');
 
 
 // ROUTE REDIRECT DASHBOARD BERDASARKAN ROLE

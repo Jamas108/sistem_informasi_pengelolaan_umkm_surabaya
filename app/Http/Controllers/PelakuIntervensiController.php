@@ -297,13 +297,25 @@ class PelakuIntervensiController extends Controller
 
             // Handle dokumentasi upload for both Sedang Berlangsung and Selesai status
             if (($status === 'Sedang Berlangsung' || $status === 'Selesai') && $request->hasFile('dokumentasi_kegiatan')) {
-                $dokumentasiPaths = [];
+                // Handle existing dokumentasi - safely get as array no matter the storage format
+                if (!empty($intervensi->dokumentasi_kegiatan)) {
+                    // Safe handling of dokumentasi_kegiatan, checking if it's already an array
+                    $existingDokumentasis = is_array($intervensi->dokumentasi_kegiatan)
+                        ? $intervensi->dokumentasi_kegiatan
+                        : (is_string($intervensi->dokumentasi_kegiatan)
+                            ? json_decode($intervensi->dokumentasi_kegiatan, true)
+                            : []);
 
-                // Delete existing dokumentasi if any
-                if ($intervensi->dokumentasi_kegiatan) {
-                    $existingDokumentasis = json_decode($intervensi->dokumentasi_kegiatan, true) ?? [];
+                    // Make sure $existingDokumentasis is an array
+                    if (!is_array($existingDokumentasis)) {
+                        $existingDokumentasis = [$existingDokumentasis];
+                    }
+
+                    // Delete existing dokumentasi files
                     foreach ($existingDokumentasis as $existingDok) {
-                        Storage::disk('public')->delete($existingDok);
+                        if (!empty($existingDok) && is_string($existingDok)) {
+                            Storage::disk('public')->delete($existingDok);
+                        }
                     }
                 }
 
@@ -311,8 +323,8 @@ class PelakuIntervensiController extends Controller
                 $file = $request->file('dokumentasi_kegiatan')[0];
                 $path = $file->store('dokumentasi_intervensi', 'public');
 
-                // Add to update data
-                $updateData['dokumentasi_kegiatan'] = json_encode([$path]);
+                // Add to update data - store as an array with a single path
+                $updateData['dokumentasi_kegiatan'] = [$path];
             }
 
             // Update the intervention only if there's data to update

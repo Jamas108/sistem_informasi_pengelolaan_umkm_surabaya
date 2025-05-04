@@ -1725,7 +1725,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="add-product-form">
+                <form id="add-product-form-edit">
                     @csrf
                     <input type="hidden" id="add_product_umkm_id" name="umkm_id">
                     <input type="hidden" id="product_id" name="id" value="">
@@ -1763,7 +1763,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                <button type="submit" form="add-product-form" class="btn btn-primary">Simpan</button>
+                <button type="submit" form="add-product-form-edit" class="btn btn-primary">Simpan</button>
             </div>
         </div>
     </div>

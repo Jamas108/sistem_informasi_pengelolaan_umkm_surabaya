@@ -47,21 +47,6 @@ class ManajemenUserController extends Controller
         $validator = Validator::make($request->all(), [
             'username' => ['required', 'string', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-
-            // Data Pelaku UMKM
-            'nama_lengkap' => ['required', 'string', 'max:255'],
-            'nik' => ['required', 'string', 'max:16', 'unique:pelaku_umkm,nik'], // Ubah menjadi string
-            'no_kk' => ['required', 'string', 'max:16'], // Ubah menjadi string
-            'tempat_lahir' => ['required', 'string', 'max:255'],
-            'tgl_lahir' => ['required', 'date'],
-            'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
-            'alamat_sesuai_ktp' => ['required', 'string', 'max:255'],
-            'kelurahan' => ['required', 'string', 'max:255'],
-            'rt' => ['required', 'integer'],
-            'rw' => ['required', 'integer'],
-            'no_telp' => ['required', 'string', 'max:15'],
-            'pendidikan_terakhir' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'string', 'in:adminkantor,adminlapangan'],
         ]);
 
         if ($validator->fails()) {
@@ -86,25 +71,6 @@ class ManajemenUserController extends Controller
                     'nik' => $request->nik,
                     'password' => Hash::make($request->password),
                     'role' => $request->role,
-                ]);
-
-                // Simpan ke tabel pelaku_umkm dengan FK users_id
-                PelakuUmkm::create([
-                    'users_id' => $user->id,
-                    'nama_lengkap' => $request->nama_lengkap,
-                    'nik' => $request->nik,
-                    'no_kk' => $request->no_kk,
-                    'tempat_lahir' => $request->tempat_lahir,
-                    'tgl_lahir' => $request->tgl_lahir,
-                    'jenis_kelamin' => $request->jenis_kelamin,
-                    'status_hubungan_keluarga' => $request->status_hubungan_keluarga ?? null,
-                    'status_perkawinan' => $request->status_perkawinan ?? null,
-                    'alamat_sesuai_ktp' => $request->alamat_sesuai_ktp,
-                    'kelurahan' => $request->kelurahan,
-                    'rt' => $request->rt,
-                    'rw' => $request->rw,
-                    'no_telp' => $request->no_telp,
-                    'pendidikan_terakhir' => $request->pendidikan_terakhir,
                 ]);
 
                 // Log berhasil tambah user
