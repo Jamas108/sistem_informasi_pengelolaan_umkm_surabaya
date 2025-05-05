@@ -1091,8 +1091,6 @@ ${message}
             // Clear the flag immediately to prevent showing alert on refresh
             localStorage.removeItem('formSubmitted');
 
-            // Show success alert
-            showSuccessAlert('Data UMKM berhasil diperbarui!');
         }
 
         // If there's a PHP session flash message, it means it's already handled by the backend

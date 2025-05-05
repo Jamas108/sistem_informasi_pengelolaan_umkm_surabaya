@@ -172,7 +172,7 @@ class PelakuKelolaUmkmController extends Controller
         // Find the PelakuUmkm record associated with the logged-in user
         $pelakuUmkm = PelakuUmkm::where('users_id', $user->id)->firstOrFail();
 
-        return view('pelakuumkm.kelolaumkm.edit', compact('pelakuUmkm'));
+        return view('pelakuumkm.kelolaumkm.show', compact('pelakuUmkm'));
     }
 
     /**

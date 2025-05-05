@@ -196,7 +196,7 @@ $(document).ready(function () {
         $('.digit-counter').remove();
 
         // Add counters
-        $('#nik, #no_kk').each(function() {
+        $('#nik, #no_kk').each(function () {
             const field = $(this);
             const value = field.val() || '';
             const digitsOnly = value.replace(/\D/g, '');
@@ -206,7 +206,7 @@ $(document).ready(function () {
         });
 
         // Handle input event for live validation
-        $('#nik, #no_kk').off('input.digitValidation').on('input.digitValidation', function() {
+        $('#nik, #no_kk').off('input.digitValidation').on('input.digitValidation', function () {
             const field = $(this);
             const fieldId = field.attr('id');
             const fieldLabel = fieldId === 'nik' ? 'NIK' : 'No KK';
@@ -269,7 +269,7 @@ $(document).ready(function () {
         });
 
         // Handle blur event - show validation on field exit
-        $('#nik, #no_kk').off('blur.digitValidation').on('blur.digitValidation', function() {
+        $('#nik, #no_kk').off('blur.digitValidation').on('blur.digitValidation', function () {
             const field = $(this);
             field.data('userInteracted', true);
 
@@ -281,12 +281,12 @@ $(document).ready(function () {
         });
 
         // Handle paste events
-        $('#nik, #no_kk').off('paste.digitValidation').on('paste.digitValidation', function() {
+        $('#nik, #no_kk').off('paste.digitValidation').on('paste.digitValidation', function () {
             const field = $(this);
             field.data('userInteracted', true);
 
             // Short delay to allow paste to complete
-            setTimeout(function() {
+            setTimeout(function () {
                 field.trigger('input.digitValidation');
             }, 10);
         });
@@ -342,13 +342,13 @@ $(document).ready(function () {
     }
 
     // Handle tab click event with improved feedback
-    $('#umkm-tab').on('click', function(e) {
+    $('#umkm-tab').on('click', function (e) {
         if ($(this).hasClass('disabled')) {
             e.preventDefault();
             e.stopPropagation();
 
             // Mark all fields as interacted with to trigger validation
-            $('#pelaku input, #pelaku select').each(function() {
+            $('#pelaku input, #pelaku select').each(function () {
                 $(this).data('userInteracted', true);
                 // Trigger input event for NIK/KK fields to show validation
                 if ($(this).attr('id') === 'nik' || $(this).attr('id') === 'no_kk') {
@@ -403,7 +403,7 @@ $(document).ready(function () {
                 $(alertHTML).insertBefore($('#myTab'));
 
                 // Auto dismiss after 5 seconds
-                setTimeout(function() {
+                setTimeout(function () {
                     $('#validation-alert').alert('close');
                 }, 5000);
 
@@ -427,7 +427,7 @@ $(document).ready(function () {
     });
 
     // Form submission validation
-    $('form').on('submit', function(e) {
+    $('form').on('submit', function (e) {
         const nik = $('#nik').val();
         const noKk = $('#no_kk').val();
         let hasError = false;
@@ -640,22 +640,31 @@ $(document).ready(function () {
         });
     }
 
+    // === Bootstrap 5 Modal Functions ===
+
     // Function to detect Bootstrap version
     function detectBootstrapVersion() {
         return typeof bootstrap !== 'undefined' ? 5 : 4;
     }
 
-    // Function to show modal based on Bootstrap version
+    // Function to properly show a Bootstrap 5 modal
     function showModal(modalId) {
         console.log(`Attempting to show modal: #${modalId}`);
+        const modalElement = document.getElementById(modalId);
+
+        if (!modalElement) {
+            console.error(`Modal element with ID ${modalId} not found`);
+            return false;
+        }
 
         try {
             if (detectBootstrapVersion() === 5) {
-                const modalElement = document.getElementById(modalId);
+                // Create a new modal instance using Bootstrap 5
                 const modal = new bootstrap.Modal(modalElement);
                 modal.show();
                 console.log(`Modal #${modalId} shown using Bootstrap 5`);
             } else {
+                // Fallback to jQuery for Bootstrap 4
                 $(`#${modalId}`).modal('show');
                 console.log(`Modal #${modalId} shown using Bootstrap 4`);
             }
@@ -666,22 +675,18 @@ $(document).ready(function () {
         }
     }
 
-    // Function to hide modal based on Bootstrap version
+    // Function to properly hide a Bootstrap 5 modal
     function hideModal(modalId) {
-        const bootstrapVersion = detectBootstrapVersion();
+        console.log(`Attempting to hide modal: #${modalId}`);
+        const modalElement = document.getElementById(modalId);
 
-        if (bootstrapVersion === 5) {
-            const modalElement = document.getElementById(modalId);
-            const modalInstance = bootstrap.Modal.getInstance(modalElement);
-            if (modalInstance) {
-                modalInstance.hide();
-            }
-        } else {
-            $(`#${modalId}`).modal('hide');
+        if (!modalElement) {
+            console.error(`Modal element with ID ${modalId} not found`);
+            return;
         }
     }
 
-    // Product Modal Open
+    // Handle product modal button click using Bootstrap 5
     $(document).on('click', '.manage-products-btn', function () {
         const umkmId = $(this).data('umkm-id');
         console.log('Product button clicked for UMKM ID:', umkmId);
@@ -695,6 +700,7 @@ $(document).ready(function () {
         // Load existing products for this UMKM
         refreshProductTable(umkmId);
 
+        // Update modal title with UMKM name
         // Update modal title with UMKM name
         const umkmName = $(`#nama_usaha_${umkmId}`).val() || `UMKM #${umkmId}`;
         $('#productModalLabel').text(`Produk untuk ${umkmName}`);
@@ -768,11 +774,6 @@ $(document).ready(function () {
         // Update hidden fields
         createHiddenProductFields(umkmId);
 
-        // Show success message
-        showFormAlert('success',
-            `Produk berhasil ${editingMode === 'edit' ? 'diperbarui' : 'ditambahkan'}!`, $(
-                '.modal-body'));
-
         // Update the product count badge
         updateProductCountBadge(umkmId);
     });
@@ -786,20 +787,22 @@ $(document).ready(function () {
         let alertHTML;
         if (detectBootstrapVersion() === 5) {
             alertHTML = `
-                       <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                           ${message}
-                           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                       </div>
-                   `;
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+            <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
         } else {
             alertHTML = `
-                       <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                           ${message}
-                           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                               <span aria-hidden="true">&times;</span>
-                           </button>
-                       </div>
-                   `;
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    `;
         }
 
         // Insert the alert at the beginning of the container
@@ -807,8 +810,16 @@ $(document).ready(function () {
 
         // Auto dismiss after 5 seconds
         setTimeout(function () {
-            container.find('.alert').alert('close');
-        }, 5000);
+            const dismissButton = detectBootstrapVersion() === 5 ?
+                container.find('.alert .btn-close') :
+                container.find('.alert .close');
+
+            if (dismissButton.length > 0) {
+                dismissButton.click();
+            } else {
+                container.find('.alert').remove();
+            }
+        }, 30000);
     }
 
     // Generate a unique product ID
@@ -827,34 +838,34 @@ $(document).ready(function () {
         // If no products, show a message
         if (products.length === 0) {
             tableBody.html(`
-                       <tr>
-                           <td colspan="4" class="text-center">Belum ada produk untuk UMKM ini</td>
-                       </tr>
-                   `);
+        <tr>
+            <td colspan="4" class="text-center">Belum ada produk untuk UMKM ini</td>
+        </tr>
+    `);
             return;
         }
 
         // Add each product to the table
         products.forEach(function (product, index) {
             const row = `
-                       <tr>
-                           <td>${product.jenis_produk}</td>
-                           <td>${product.tipe_produk}</td>
-                           <td>
-                               <span class="badge ${detectBootstrapVersion() === 5 ? 'bg-' : 'badge-'}${product.status === 'AKTIF' ? 'success' : 'danger'} text-white">
-                                   ${product.status}
-                               </span>
-                           </td>
-                           <td>
-                               <button type="button" class="btn btn-sm btn-warning edit-product" data-product-id="${product.id}">
-                                   <i class="fas fa-edit"></i>
-                               </button>
-                               <button type="button" class="btn btn-sm btn-danger delete-product" data-product-id="${product.id}">
-                                   <i class="fas fa-trash"></i>
-                               </button>
-                           </td>
-                       </tr>
-                   `;
+        <tr>
+            <td>${product.jenis_produk}</td>
+            <td>${product.tipe_produk}</td>
+            <td>
+                <span class="badge ${detectBootstrapVersion() === 5 ? 'bg-' : 'badge-'}${product.status === 'AKTIF' ? 'success' : 'danger'} text-white">
+                    ${product.status}
+                </span>
+            </td>
+            <td>
+                <button type="button" class="btn btn-sm btn-warning edit-product" data-product-id="${product.id}">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-danger delete-product" data-product-id="${product.id}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `;
             tableBody.append(row);
         });
     }
@@ -900,24 +911,38 @@ $(document).ready(function () {
 
             // Update hidden fields
             createHiddenProductFields(umkmId);
-
-            // Show success message
-            showFormAlert('success', 'Produk berhasil dihapus!', $('.modal-body'));
         }
     });
 
     // Apply products button
     $('#apply-products').click(function () {
+        console.log("Apply products button clicked");
         const umkmId = $('#current-umkm-id').val();
 
         // Update hidden fields
         createHiddenProductFields(umkmId);
 
-        // Close the modal
+        // Close the modal using proper Bootstrap 5 method
         hideModal('productModal');
 
         // Show success message
         showFormAlert('success', 'Data produk berhasil diterapkan!', $('#umkm'));
+    });
+
+    // Handle all Bootstrap 5 modal close buttons
+    $(document).on('click', '.btn-close, [data-bs-dismiss="modal"]', function () {
+        console.log("Close button clicked");
+        const modalId = $(this).closest('.modal').attr('id');
+        hideModal(modalId);
+    });
+
+    // Fix for Bootstrap 5 modal backdrop issues
+    $(document).on('hidden.bs.modal', '.modal', function () {
+        console.log("Modal hidden event triggered");
+        // Remove any remaining backdrops that might be stuck
+        $('.modal-backdrop').remove();
+        $('body').removeClass('modal-open');
+        $('body').css('padding-right', '');
     });
 
     // Create hidden fields for the form submission
@@ -931,10 +956,10 @@ $(document).ready(function () {
         // Add hidden fields for each product
         products.forEach(function (product, index) {
             hiddenFieldsContainer.append(`
-                       <input type="hidden" name="umkm[${umkmId}][products][${index}][jenis_produk]" value="${product.jenis_produk}">
-                       <input type="hidden" name="umkm[${umkmId}][products][${index}][tipe_produk]" value="${product.tipe_produk}">
-                       <input type="hidden" name="umkm[${umkmId}][products][${index}][status]" value="${product.status}">
-                   `);
+        <input type="hidden" name="umkm[${umkmId}][products][${index}][jenis_produk]" value="${product.jenis_produk}">
+        <input type="hidden" name="umkm[${umkmId}][products][${index}][tipe_produk]" value="${product.tipe_produk}">
+        <input type="hidden" name="umkm[${umkmId}][products][${index}][status]" value="${product.status}">
+    `);
         });
     }
 
@@ -961,10 +986,13 @@ $(document).ready(function () {
         }
     }
 
-    // Close modal buttons
-    $(document).on('click', '.modal-close-btn, [data-dismiss="modal"], [data-bs-dismiss="modal"]',
-        function () {
-            const modalId = $(this).closest('.modal').attr('id');
-            hideModal(modalId);
-        });
+    // Check if Bootstrap 5 JS is loaded when DOM is ready
+    console.log("DOM Ready - Bootstrap version check:", typeof bootstrap !== 'undefined' ? "Bootstrap 5 detected" : "Bootstrap 5 not found");
+
+    // If Bootstrap 5 JS is not detected, log a warning
+    if (typeof bootstrap === 'undefined') {
+        console.warn("WARNING: Bootstrap 5 JavaScript is not loaded! Modal functions may not work correctly.");
+        console.warn("Please include Bootstrap 5 bundle JS in your layout before this script:");
+        console.warn('<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>');
+    }
 });

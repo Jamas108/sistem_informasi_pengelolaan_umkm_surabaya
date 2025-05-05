@@ -121,7 +121,7 @@
                                         </td>
                                         <td>
                                             <div class="d-flex justify-content-center gap-2">
-                                                <a href="#" class="btn btn-sm btn-outline-primary"
+                                                <a href="{{route('pelakukelolaumkm.show', $umkm->pelakuUmkm->id)}}" class="btn btn-sm btn-outline-primary"
                                                     data-bs-toggle="tooltip" title="Lihat Detail">
                                                     <i class="fas fa-eye"></i>
                                                 </a>

@@ -1,20 +1,30 @@
     @extends('layouts.app')
     @push('scripts')
+        <!-- Make sure Bootstrap 5 JS is included -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+        </script>
+
+        <!-- Your existing UMKM script -->
         <script type="text/javascript" src="{{ URL::asset('js/umkm-create.js') }}"></script>
-        <script type="text/javascript" src="{{ URL::asset('js/produk-umkm.js') }}"></script>
+
+        <!-- Additional Bootstrap 5 Modal Handling -->
         <script>
             $(document).ready(function() {
                 // Cek apakah jQuery berfungsi
                 console.log("jQuery is working!");
 
-                // Panggil file JSON dari direktori public
+                // Cek apakah Bootstrap 5 tersedia
+                console.log("Bootstrap version check:", typeof bootstrap !== 'undefined' ? "Bootstrap 5 detected" :
+                    "Bootstrap 5 not found");
+
+                // === Kelurahan dropdown initialization ===
                 $.getJSON("{{ asset('data/kelurahan_sby.json') }}")
                     .done(function(data) {
                         var kelurahanSelect = $("#kelurahan");
-                        kelurahanSelect.empty(); // Kosongkan opsi terlebih dahulu
+                        kelurahanSelect.empty();
                         kelurahanSelect.append('<option value="">Pilih Kelurahan...</option>');
 
-                        // Loop untuk menambahkan data ke dropdown
                         $.each(data, function(key, entry) {
                             kelurahanSelect.append($('<option></option>').attr('value', entry.nama).text(
                                 entry.nama));
@@ -25,6 +35,105 @@
                     .fail(function(jqxhr, textStatus, error) {
                         console.error("Gagal mengambil data JSON:", textStatus, error);
                     });
+
+                // === Dedicated Bootstrap 5 Modal Handling ===
+
+                // Function to properly show a Bootstrap 5 modal
+                window.showModal = function(modalId) {
+                    const modalElement = document.getElementById(modalId);
+                    if (!modalElement) {
+                        console.error(`Modal element with ID ${modalId} not found`);
+                        return;
+                    }
+
+                    try {
+                        // Create a new modal instance
+                        const modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+                        console.log(`Modal ${modalId} shown successfully`);
+                    } catch (error) {
+                        console.error(`Error showing modal ${modalId}:`, error);
+                    }
+                }
+
+                // Function to properly hide a Bootstrap 5 modal
+                window.hideModal = function(modalId) {
+                    const modalElement = document.getElementById(modalId);
+                    if (!modalElement) {
+                        console.error(`Modal element with ID ${modalId} not found`);
+                        return;
+                    }
+
+                    try {
+                        // Get the existing modal instance
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        if (modalInstance) {
+                            modalInstance.hide();
+                            console.log(`Modal ${modalId} hidden successfully`);
+                        } else {
+                            console.warn(`No modal instance found for ${modalId}`);
+                        }
+                    } catch (error) {
+                        console.error(`Error hiding modal ${modalId}:`, error);
+                    }
+                }
+
+                // Override the manage-products-btn click handler
+                $(document).on('click', '.manage-products-btn', function() {
+                    const umkmId = $(this).data('umkm-id');
+                    console.log('Product button clicked for UMKM ID:', umkmId);
+
+                    // Set the current UMKM ID to the modal
+                    $('#current-umkm-id').val(umkmId);
+
+                    // Reset the form
+                    resetProductForm();
+
+                    // Load existing products
+                    refreshProductTable(umkmId);
+
+                    // Update modal title with UMKM name
+                    const umkmName = $(`#nama_usaha_${umkmId}`).val() || `UMKM #${umkmId}`;
+                    $('#productModalLabel').text(`Produk untuk ${umkmName}`);
+
+                    // Show the modal using our custom function
+                    showModal('productModal');
+                });
+
+                // Handle all close buttons properly
+
+                // Close (X) button
+                $(document).on('click', '.btn-close', function() {
+                    const modalId = $(this).closest('.modal').attr('id');
+                    hideModal(modalId);
+                });
+
+                // Elements with data-bs-dismiss="modal" attribute
+                $(document).on('click', '[data-bs-dismiss="modal"]', function() {
+                    const modalId = $(this).closest('.modal').attr('id');
+                    hideModal(modalId);
+                });
+
+                // Override Apply Products button
+                $(document).on('click', '#apply-products', function() {
+                    const umkmId = $('#current-umkm-id').val();
+
+                    // Update hidden fields
+                    createHiddenProductFields(umkmId);
+
+                    // Close the modal
+                    hideModal('productModal');
+
+                    // Show success message
+                    showFormAlert('success', 'Data produk berhasil diterapkan!', $('#umkm'));
+                });
+
+                // Fix for modal backdrop issues
+                $(document).on('hidden.bs.modal', '.modal', function() {
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open');
+                    $('body').css('padding-right', '');
+                });
             });
         </script>
     @endpush
@@ -71,8 +180,8 @@
                             <!-- Tab Navigation -->
                             <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link active" id="pelaku-tab" data-toggle="tab" href="#pelaku" role="tab"
-                                        aria-controls="pelaku" aria-selected="true">Data Pelaku UMKM</a>
+                                    <a class="nav-link active" id="pelaku-tab" data-toggle="tab" href="#pelaku"
+                                        role="tab" aria-controls="pelaku" aria-selected="true">Data Pelaku UMKM</a>
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <a class="nav-link" id="umkm-tab" data-toggle="tab" href="#umkm" role="tab"
@@ -122,12 +231,14 @@
                                         <div class="row mb-3">
                                             <label for="tanggal_lahir" class="col-sm-2 col-form-label">Tanggal Lahir</label>
                                             <div class="col-sm-10">
-                                                <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir">
+                                                <input type="date" class="form-control" id="tgl_lahir"
+                                                    name="tgl_lahir">
                                             </div>
                                         </div>
 
                                         <div class="row mb-3">
-                                            <label for="jenis_kelamin" class="col-sm-2 col-form-label">Jenis Kelamin</label>
+                                            <label for="jenis_kelamin" class="col-sm-2 col-form-label">Jenis
+                                                Kelamin</label>
                                             <div class="col-sm-10">
                                                 <select class="form-control" id="jenis_kelamin" name="jenis_kelamin">
                                                     <option value="">-- Pilih Jenis Kelamin --</option>
@@ -159,7 +270,8 @@
                                         </div>
 
                                         <div class="row mb-3">
-                                            <label for="status" class="col-sm-2 col-form-label">Status Perkawinan</label>
+                                            <label for="status" class="col-sm-2 col-form-label">Status
+                                                Perkawinan</label>
                                             <div class="col-sm-10">
                                                 <select class="form-control" id="status_perkawinan"
                                                     name="status_perkawinan">
@@ -181,7 +293,8 @@
                                                 KTP</label>
                                             <div class="col-sm-10">
                                                 <input type="text" class="form-control" id="alamat_sesuai_ktp"
-                                                    name="alamat_sesuai_ktp" placeholder="Masukan Alamat KTP Pemilik UMKM">
+                                                    name="alamat_sesuai_ktp"
+                                                    placeholder="Masukan Alamat KTP Pemilik UMKM">
                                             </div>
                                         </div>
 
@@ -230,7 +343,8 @@
                                                     name="pendidikan_terakhir">
                                                     <option value="">-- Pilih Pendidikan Terakhir --</option>
                                                     <option value="TIDAK/BELUM SEKOLAH">TIDAK/BELUM SEKOLAH</option>
-                                                    <option value="BELUM TAMAT SD/SEDERAJAT">BELUM TAMAT SD/SEDERAJAT</option>
+                                                    <option value="BELUM TAMAT SD/SEDERAJAT">BELUM TAMAT SD/SEDERAJAT
+                                                    </option>
                                                     <option value="TAMAT SD/SEDERAJAT">TAMAT SD/SEDERAJAT</option>
                                                     <option value="SLTP/SEDERAJAT">SLTP/SEDERAJAT</option>
                                                     <option value="SLTA/SEDERAJAT">SLTA/SEDERAJAT</option>
@@ -249,7 +363,8 @@
                                             <label for="pendidikan_terakhir" class="col-sm-2 col-form-label">Status
                                                 Keaktifan</label>
                                             <div class="col-sm-10">
-                                                <select class="form-control" id="status_keaktifan" name="status_keaktifan">
+                                                <select class="form-control" id="status_keaktifan"
+                                                    name="status_keaktifan">
                                                     <option value="">-- Pilih Status Keaktifan --</option>
                                                     <option value="AKTIF">AKTIF</option>
                                                     <option value="TIDAK AKTIF">TIDAK AKTIF</option>
@@ -261,7 +376,8 @@
                                     </div>
 
                                     <!-- Tab 2: Data UMKM (Modified for Multiple Entries) -->
-                                    <div class="tab-pane fade" id="umkm" role="tabpanel" aria-labelledby="umkm-tab">
+                                    <div class="tab-pane fade" id="umkm" role="tabpanel"
+                                        aria-labelledby="umkm-tab">
                                         <div class="mb-3">
                                             <h5>Data UMKM</h5>
                                         </div>
@@ -312,17 +428,17 @@
         </a>
 
 
-        <!-- Replace your current Product Modal with this updated version -->
-        <!-- Modal Kelola Produk yang Diperbaiki -->
-        <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <!-- Bootstrap 5 Modal -->
+        <!-- Bootstrap 5 Modal -->
+        <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header bg-gradient-primary text-white">
                         <h5 class="modal-title" id="productModalLabel">Produk UMKM</h5>
-                        <!-- Bootstrap 5 close button - akan otomatis disembunyikan jika menggunakan Bootstrap 4 -->
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <!-- Bootstrap 5 close button -->
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> <i
+                                class="fas fa-times"></i></button>
                     </div>
                     <div class="modal-body">
                         <!-- Hidden field for UMKM ID reference -->
@@ -398,35 +514,11 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-success" id="apply-products">Terapkan</button>
-                        <button type="button" class="btn btn-secondary modal-close-btn">Tutup</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Add this script to detect Bootstrap version and adjust the modal buttons accordingly -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Detect Bootstrap version
-                if (typeof bootstrap !== 'undefined') {
-                    // Bootstrap 5
-                    document.querySelectorAll('[data-dismiss="modal"]').forEach(function(el) {
-                        el.classList.add('d-none');
-                    });
-                    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(el) {
-                        el.classList.remove('d-none');
-                    });
-                } else {
-                    // Bootstrap 4
-                    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(el) {
-                        el.classList.add('d-none');
-                    });
-                    document.querySelectorAll('[data-dismiss="modal"]').forEach(function(el) {
-                        el.classList.remove('d-none');
-                    });
-                }
-            });
-        </script>
 
         <!-- Logout Modal-->
         <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
