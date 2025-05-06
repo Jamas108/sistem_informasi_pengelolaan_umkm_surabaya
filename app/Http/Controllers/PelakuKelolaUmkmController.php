@@ -256,10 +256,70 @@ class PelakuKelolaUmkmController extends Controller
     }
 
     /**
+    /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
+   /**
+ * Remove the specified resource from storage.
+ */
+public function destroy(string $id)
+{
+    // Log delete attempt
+    Log::info('Attempting to delete UMKM', ['umkm_id' => $id]);
+
+    // Begin transaction to ensure data consistency
+    DB::beginTransaction();
+
+    try {
+        // Find the UMKM by ID
+        $umkm = Umkm::findOrFail($id);
+
+        // Get user and check authorization
+        $user = Auth::user();
+        $pelakuUmkm = PelakuUmkm::where('users_id', $user->id)->first();
+
+        // Verify ownership
+        if ($pelakuUmkm->id !== $umkm->pelaku_umkm_id) {
+            Log::warning('Unauthorized deletion attempt', [
+                'user_id' => $user->id,
+                'umkm_id' => $id
+            ]);
+            return redirect()->route('pelakukelolaumkm.index')
+                ->with('status', 'Anda tidak memiliki akses untuk menghapus UMKM ini')
+                ->with('status_type', 'danger');
+        }
+
+        // First, delete all products associated with this UMKM
+        $deletedProductsCount = ProdukUmkm::where('umkm_id', $id)->delete();
+        Log::info('Deleted associated products', [
+            'umkm_id' => $id,
+            'products_deleted' => $deletedProductsCount
+        ]);
+
+        // Now delete the UMKM itself
+        $umkm->delete();
+        Log::info('UMKM deleted successfully', ['umkm_id' => $id]);
+
+        // Commit all changes
+        DB::commit();
+
+        // Redirect with success message
+        return redirect()->route('pelakukelolaumkm.index')
+            ->with('status', 'UMKM berhasil dihapus')
+            ->with('status_type', 'success');
+    } catch (\Exception $e) {
+        // Rollback in case of any exceptions
+        DB::rollBack();
+        Log::error('Error deleting UMKM', [
+            'umkm_id' => $id,
+            'exception' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        // Redirect with error message
+        return redirect()->route('pelakukelolaumkm.index')
+            ->with('status', 'Terjadi kesalahan: ' . $e->getMessage())
+            ->with('status_type', 'danger');
     }
+}
 }

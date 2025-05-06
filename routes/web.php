@@ -149,6 +149,7 @@ Route::resource('manajemenuser', ManajemenUserController::class);
 // ----- ROUTE UNTUK PELAKU UMKM ------ //
 //ROUTE UNTUK KELOLA UMKM OLEH ROLE PELAKU
 Route::resource('pelakukelolaumkm', PelakuKelolaUmkmController::class);
+// Add this alongside your existing routes
 Route::resource('pelakukelolaintervensi', PelakuIntervensiController::class);
 Route::resource('pelakukegiatan', PelakuKegiatanController::class);
 Route::resource('profil', ProfilController::class);

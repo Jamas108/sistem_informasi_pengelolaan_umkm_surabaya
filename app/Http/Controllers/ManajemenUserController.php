@@ -19,8 +19,8 @@ class ManajemenUserController extends Controller
     public function index()
     {
         $pageTitle = 'Manajemen User';
-        $datauser = User::whereIn('role', ['adminkantor', 'adminlapangan'])->get();
-        return view('adminkantor.manajemen_user.index', compact('datauser', 'pageTitle'));
+        $user = User::whereIn('role', ['adminkantor', 'adminlapangan'])->get();
+        return view('adminkantor.manajemen_user.index', compact('user', 'pageTitle'));
     }
 
     /**
@@ -108,13 +108,8 @@ class ManajemenUserController extends Controller
     {
         $pageTitle = 'Detail User';
         $user = User::findOrFail($id);
-        $detailUser = PelakuUmkm::where('users_id', $id)->first();
 
-        if (!$detailUser) {
-            return redirect()->route('manajemenuser.index')->with('error', 'Data detail user tidak ditemukan');
-        }
-
-        return view('adminkantor.manajemen_user.show', compact('user', 'detailUser', 'pageTitle'));
+        return view('adminkantor.manajemen_user.show', compact('user', 'pageTitle'));
     }
 
     /**
@@ -197,9 +192,6 @@ class ManajemenUserController extends Controller
         try {
             DB::transaction(function () use ($id) {
                 $user = User::findOrFail($id);
-
-                // Hapus data dari tabel pelaku_umkm
-                PelakuUmkm::where('users_id', $id)->delete();
 
                 // Hapus data dari tabel users
                 $user->delete();

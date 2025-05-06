@@ -323,47 +323,7 @@ class IntervensiController extends Controller
             // Get kegiatan data
             $kegiatan = Kegiatan::findOrFail($validated['kegiatan_id']);
 
-            // Check if kegiatan status allows registration (only Pendaftaran status)
-            if ($kegiatan->status_kegiatan !== 'Pendaftaran') {
-                $errorMessage = "";
-
-                if ($kegiatan->status_kegiatan === 'Belum Dimulai') {
-                    $errorMessage = 'Maaf, pendaftaran untuk kegiatan ini belum dibuka.';
-                } else if ($kegiatan->status_kegiatan === 'Sedang Berlangsung') {
-                    $errorMessage = 'Maaf, kegiatan ini sedang berlangsung dan tidak menerima pendaftaran baru.';
-                } else if ($kegiatan->status_kegiatan === 'Selesai') {
-                    $errorMessage = 'Maaf, kegiatan ini telah selesai dan tidak menerima pendaftaran.';
-                } else {
-                    $errorMessage = 'Maaf, pendaftaran untuk kegiatan ini tidak tersedia.';
-                }
-
-                Log::warning('Kegiatan status invalid', [
-                    'kegiatan_id' => $validated['kegiatan_id'],
-                    'status' => $kegiatan->status_kegiatan
-                ]);
-                return response()->json([
-                    'success' => false,
-                    'message' => $errorMessage
-                ], 422);
-            }
-
-            // Count existing interventions for this kegiatan
-            $existingInterventions = Intervensi::where('kegiatan_id', $kegiatan->id)->count();
-
-            // Check if kuota has been reached
-            if ($existingInterventions >= $kegiatan->kuota_pendaftaran) {
-                // Return error message about quota being full
-                Log::warning('Kegiatan quota reached', [
-                    'kegiatan_id' => $validated['kegiatan_id'],
-                    'kuota' => $kegiatan->kuota_pendaftaran,
-                    'existing' => $existingInterventions
-                ]);
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Maaf, kuota kegiatan sudah penuh. Tidak dapat mendaftar.'
-                ], 422);
-            }
-
+           
             // Generate unique registration number using the same format as PelakuIntervensiController
             $registrationNumber = $this->generateUniqueRegistrationNumber(
                 $validated['kegiatan_id'],

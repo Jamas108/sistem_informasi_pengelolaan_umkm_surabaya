@@ -201,6 +201,7 @@
                                         <!-- Container for UMKM entries -->
                                         <div id="umkm-entries-container">
                                             @foreach ($pelakuUmkm->dataUmkm as $index => $umkm)
+                                            @if ($umkm->status !== 'DITOLAK')
                                                 <div class="umkm-form-show border rounded p-4 mb-4 shadow-sm"
                                                     id="umkm-entry-show-{{ $index }}"
                                                     data-umkm-id="{{ $umkm->id }}">
@@ -347,6 +348,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @endif
                                             @endforeach
                                         </div>
                                     </div>

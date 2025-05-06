@@ -133,15 +133,18 @@
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                 @endif
-                                                <form action="" method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                        data-bs-toggle="tooltip" title="Hapus UMKM"
-                                                        onclick="return confirm('Anda yakin ingin menghapus UMKM ini?')">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
+
+                                                @if ($umkm->status == 'DITOLAK')
+                                                    <form action="{{ route('pelakukelolaumkm.destroy', $umkm->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                            data-bs-toggle="tooltip" title="Hapus UMKM"
+                                                            onclick="return confirm('Anda yakin ingin menghapus UMKM ini?')">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -205,11 +208,10 @@
                                                     title="Edit UMKM">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form action="" method="POST" class="d-inline">
+                                                <form action="{{ route('pelakukelolaumkm.destroy', $umkm->id) }}" method="POST" class="d-inline">
                                                     @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                        data-bs-toggle="tooltip" title="Hapus UMKM"
+                                                    <!-- Remove the @method('DELETE') line since we're using POST directly -->
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Hapus UMKM"
                                                         onclick="return confirm('Anda yakin ingin menghapus UMKM ini?')">
                                                         <i class="fas fa-trash"></i>
                                                     </button>

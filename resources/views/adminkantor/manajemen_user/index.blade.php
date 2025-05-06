@@ -107,7 +107,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($datauser as $manajemenuser)
+                                    @foreach ($user as $manajemenuser)
                                         <tr>
                                             <td class="text-center">{{ $loop->iteration }}</td>
 
