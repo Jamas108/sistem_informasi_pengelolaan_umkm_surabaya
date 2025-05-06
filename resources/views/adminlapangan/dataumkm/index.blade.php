@@ -6,14 +6,17 @@
             background: linear-gradient(to right, #4e73e0, #224abe);
             color: white;
         }
+
         .table-hover tbody tr:hover {
             background-color: rgba(78, 115, 223, 0.1);
             cursor: pointer;
         }
+
         .btn-action {
             margin-right: 0.25rem;
             margin-bottom: 0.25rem;
         }
+
         .status-badge {
             font-size: 0.8rem;
             padding: 0.35rem 0.5rem;
@@ -39,12 +42,10 @@
                         previous: "Sebelumnya"
                     }
                 },
-                columnDefs: [
-                    { 
-                        targets: [-1], 
-                        orderable: false 
-                    }
-                ]
+                columnDefs: [{
+                    targets: [-1],
+                    orderable: false
+                }]
             });
 
             // Konfirmasi penghapusan
@@ -67,12 +68,6 @@
                         <i class="fas fa-store-alt mr-2 text-primary"></i>Data UMKM
                     </h1>
                     <div class="btn-group" role="group" aria-label="Data Actions">
-                        <a href="#" class="btn btn-success btn-icon-split">
-                            <span class="icon text-white-50">
-                                <i class="fas fa-file-export"></i>
-                            </span>
-                            <span class="text">Export Data</span>
-                        </a>
                         <a href="{{ route('dataumkm.create') }}" class="btn btn-primary btn-icon-split ml-2">
                             <span class="icon text-white-50">
                                 <i class="fas fa-plus"></i>
@@ -86,10 +81,12 @@
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                         <h6 class="m-0 font-weight-bold">Daftar UMKM Terdaftar</h6>
                         <div class="dropdown no-arrow">
-                            <a href="#" class="dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a href="#" class="dropdown-toggle" role="button" id="dropdownMenuLink"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-ellipsis-v fa-sm fa-fw text-white"></i>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                aria-labelledby="dropdownMenuLink">
                                 <a class="dropdown-item" href="{{ route('dataumkm.create') }}">Tambah Data Baru</a>
                                 <a class="dropdown-item" href="#">Cetak Laporan</a>
                             </div>
@@ -101,27 +98,27 @@
                                 <thead class="thead-light">
                                     <tr>
                                         <th class="text-center">No</th>
-                                        <th>NIK Pemilik</th>
-                                        <th>Nama Pemilik</th>
-                                        <th>Nama Usaha</th>
-                                        <th>Jenis Produk</th>
-                                        <th>Klasifikasi</th>
+                                        <th>NIK</th>
+                                        <th>Nama Lengkap</th>
+                                        <th>Kelurahan</th>
                                         <th>Alamat</th>
-                                        <th>Status</th>
+                                        {{-- <th></th>
+                                        <th>Alamat</th>
+                                        <th>Status</th> --}}
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($dataumkms as $dataumkm)
-                                    <tr>
-                                        <td class="text-center">{{ $loop->iteration }}</td>
-                                        <td>{{ $dataumkm->pelakuUmkm->nik }}</td>
-                                        <td>{{ $dataumkm->pelakuUmkm->nama_lengkap }}</td>
-                                        <td>{{ $dataumkm->nama_usaha }}</td>
-                                        <td>{{ $dataumkm->jenis_produk }}</td>
-                                        <td>{{ $dataumkm->klasifikasi_kinerja_usaha }}</td>
-                                        <td>{{ $dataumkm->alamat }}</td>
-                                        <td>
+                                    @foreach ($datapelakuumkms as $pelakuumkm)
+                                        <tr>
+                                            <td class="text-center">{{ $loop->iteration }}</td>
+                                            <td>{{ $pelakuumkm->nik }}</td>
+                                            <td>{{ $pelakuumkm->nama_lengkap }}</td>
+                                            <td>{{ $pelakuumkm->kelurahan }}</td>
+                                            <td>{{ $pelakuumkm->alamat_sesuai_ktp }}</td>
+                                            {{-- <td>{{ $pelakuumkm-> }}</td>
+                                        <td>{{ $pelakuumkm->alamat }}</td> --}}
+                                            {{-- <td>
                                             @switch($dataumkm->status)
                                                 @case('AKTIF')
                                                     <span class="badge badge-success status-badge">AKTIF</span>
@@ -132,22 +129,20 @@
                                                 @default
                                                     <span class="badge badge-secondary status-badge">{{ $dataumkm->status }}</span>
                                             @endswitch
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="btn-group btn-group-sm text-center" role="group">
-                                                <a href="{{ route('dataumkm.show', $dataumkm->pelakuUmkm->id) }}" 
-                                                   class="btn btn-sm btn-info btn-action mr-2" 
-                                                   title="Lihat Detail">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <a href="{{ route('dataumkm.edit', $dataumkm->pelakuUmkm->id) }}" 
-                                                   class="btn btn-sm btn-warning btn-action" 
-                                                   title="Edit Data">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                        </td> --}}
+                                            <td class="text-center">
+                                                <div class="btn-group btn-group-sm text-center" role="group">
+                                                    <a href="{{ route('dataumkm.show', $pelakuumkm->id) }}"
+                                                        class="btn btn-sm btn-info btn-action mr-2" title="Lihat Detail">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{{ route('dataumkm.edit', $pelakuumkm->id) }}"
+                                                        class="btn btn-sm btn-warning btn-action" title="Edit Data">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>

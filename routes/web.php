@@ -138,6 +138,10 @@ Route::get('exportomset', [OmsetController::class, 'index'])
     ->name('exportomset.index');
 Route::get('exportumkm', [DataUmkmController::class, 'ExportUmkmIndex'])
     ->name('exportumkm.index');
+// Tambahkan route ini di web.php
+Route::get('exportexcelumkm', [DataUmkmController::class, 'exportUmkm'])->name('dataumkm.export');
+// Tambahkan route ini di web.php
+Route::get('exportexcelintervensi', [IntervensiController::class, 'ExportIntervensi'])->name('intervensi.exportexcel');
 
 // ROUTE HALAMAN KELOLA USER //
 Route::resource('manajemenuser', ManajemenUserController::class);

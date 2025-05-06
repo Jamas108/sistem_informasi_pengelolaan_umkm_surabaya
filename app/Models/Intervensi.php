@@ -16,7 +16,8 @@ class Intervensi extends Model
         'kegiatan_id',
         'omset',
         'dokumentasi_kegiatan',
-        'no_pendaftaran_kegiatan'
+        'no_pendaftaran_kegiatan',
+        'created_at'
     ];
 
     protected $casts = [
@@ -47,6 +48,11 @@ class Intervensi extends Model
     public function scopeByKegiatan($query, $kegiatanId)
     {
         return $query->where('kegiatan_id', $kegiatanId);
+    }
+
+    public static function getTotalOmsetByUmkm($umkmId)
+    {
+        return self::where('umkm_id', $umkmId)->sum('omset');
     }
 
     /*

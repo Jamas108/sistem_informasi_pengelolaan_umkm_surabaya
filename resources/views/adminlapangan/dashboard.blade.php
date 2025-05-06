@@ -402,7 +402,7 @@
                                                 <th>Pemilik</th>
                                                 <th>Sektor</th>
                                                 <th>Terakhir Update</th>
-                                                <th>Aksi</th>
+                                            
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -413,12 +413,7 @@
                                                     <td>{{ $umkm->sektor_usaha }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($umkm->updated_at)->diffForHumans() }}
                                                     </td>
-                                                    <td>
-                                                        <a href="{{ route('dataumkm.show', $umkm->id) }}"
-                                                            class="btn btn-sm btn-info">
-                                                            <i class="fas fa-eye"></i>
-                                                        </a>
-                                                    </td>
+
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -431,19 +426,7 @@
 
                 <!-- Perbandingan Omset dan Aktivitas -->
                 <div class="row">
-                    <!-- Chart Perbandingan Omset Sebelum dan Sesudah Intervensi -->
-                    <div class="col-lg-6 mb-4">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Efek Intervensi pada Omset</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="chart-bar">
-                                    <canvas id="intervensiOmsetChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <!-- Aktivitas Terakhir -->
                     {{-- <div class="col-lg-6 mb-4">

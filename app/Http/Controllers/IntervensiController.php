@@ -12,13 +12,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Exports\IntervensiExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class IntervensiController extends Controller
 {
     public function index()
     {
         $dataintervensis = Intervensi::with('kegiatan','dataUmkm')->get();
-        return view('adminkantor.export.intervensi', compact('dataintervensis'));
+    $kegiatans = Kegiatan::all(); // Tambahkan ini untuk dropdown filter
+
+    return view('adminkantor.export.intervensi', compact('dataintervensis', 'kegiatans'));
     }
 
     /**
@@ -323,7 +327,7 @@ class IntervensiController extends Controller
             // Get kegiatan data
             $kegiatan = Kegiatan::findOrFail($validated['kegiatan_id']);
 
-           
+
             // Generate unique registration number using the same format as PelakuIntervensiController
             $registrationNumber = $this->generateUniqueRegistrationNumber(
                 $validated['kegiatan_id'],
@@ -553,6 +557,37 @@ class IntervensiController extends Controller
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
+        }
+    }
+    public function exportIntervensi(Request $request)
+    {
+        try {
+            $kegiatanId = $request->input('kegiatan_id');
+
+            // Log export attempt
+            Log::info('Starting Intervensi data export', [
+                'kegiatan_id' => $kegiatanId
+            ]);
+
+            // Filename akan berbeda tergantung ada filter atau tidak
+            $filename = 'data_intervensi';
+            if ($kegiatanId) {
+                $kegiatan = Kegiatan::find($kegiatanId);
+                if ($kegiatan) {
+                    $filename .= '_' . Str::slug($kegiatan->nama_kegiatan);
+                }
+            }
+            $filename .= '_' . date('YmdHis') . '.xlsx';
+
+            return Excel::download(new IntervensiExport($kegiatanId), $filename);
+        } catch (\Exception $e) {
+            Log::error('Error exporting Intervensi data', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat mengekspor data: ' . $e->getMessage());
         }
     }
 }

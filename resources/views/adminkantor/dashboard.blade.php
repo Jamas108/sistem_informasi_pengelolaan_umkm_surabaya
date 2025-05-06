@@ -336,7 +336,6 @@
                                             <tr>
                                                 <th>Nama Usaha</th>
                                                 <th>Pemilik</th>
-                                                <th>Jenis Produk</th>
                                                 <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -346,10 +345,9 @@
                                                 <tr>
                                                     <td>{{ $umkm->nama_usaha }}</td>
                                                     <td>{{ $umkm->pelakuUmkm->nama_lengkap }}</td>
-                                                    <td>{{ $umkm->jenis_produk }}</td>
                                                     <td>
                                                         <span
-                                                            class="badge badge-{{ $umkm->status == 'aktif' ? 'success' : 'warning' }}">
+                                                            class="badge badge-{{ $umkm->status == 'AKTIF' ? 'success' : 'warning' }}">
                                                             {{ ucfirst($umkm->status) }}
                                                         </span>
                                                     </td>

@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Exports\UmkmCompleteExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DataUmkmController extends Controller
 {
@@ -512,4 +514,21 @@ class DataUmkmController extends Controller
             ], 500);
         }
     }
+
+    public function exportUmkm()
+{
+    try {
+        Log::info('Starting UMKM data export');
+
+        return Excel::download(new UmkmCompleteExport(), 'data_umkm_' . date('YmdHis') . '.xlsx');
+    } catch (\Exception $e) {
+        Log::error('Error exporting UMKM data', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return redirect()->back()
+            ->with('error', 'Terjadi kesalahan saat mengekspor data: ' . $e->getMessage());
+    }
+}
 }

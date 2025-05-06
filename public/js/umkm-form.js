@@ -216,7 +216,7 @@ $(document).ready(function () {
 
     function addNewUmkmEdit() {
         // Prevent multiple rapid clicks
-        $('#add-umkm-btn-edit').prop('disabled', true);
+        $('#add-umkm-btn-edit').prop('disabled', false);
 
         // Increment the counter once
         window.umkmCounter++;

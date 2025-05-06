@@ -35,7 +35,7 @@ class PesertaPendaftaranController extends Controller
                 'intervensis' => $intervensis
             ]);
         } elseif ($userRole === 'adminlapangan') {
-            return view('adminkantor.datakegiatan.peserta-kegiatan', [
+            return view('adminlapangan.datakegiatan.peserta-kegiatan', [
                 'kegiatan' => $kegiatan,
                 'intervensis' => $intervensis
             ]);

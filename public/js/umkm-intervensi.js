@@ -280,8 +280,6 @@ $(document).ready(function () {
             });
         });
 
-        // Modify the existing populateModalEditDropdowns function
-        // Function to populate modal edit dropdowns
         function populateModalEditDropdowns(response) {
             console.log('Respons data untuk edit modal:', response);
             console.log('UMKM dalam respons:', response.umkms);
@@ -403,7 +401,7 @@ $(document).ready(function () {
             if (!pelakuId) {
                 // Fallback alert method
                 alert('Error: Tidak dapat menentukan ID Pelaku UMKM');
-                $button.html('<i class="fas fa-edit"></i> Edit');
+                $button.html('<i class="fas fa-edit"></i>');
                 return;
             }
 
@@ -414,7 +412,7 @@ $(document).ready(function () {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function (response) {
-                    $button.html('<i class="fas fa-edit"></i> Edit');
+                    $button.html('<i class="fas fa-edit"></i>');
 
                     if (response.success) {
                         populateModalEditDropdowns(response);
@@ -456,7 +454,7 @@ $(document).ready(function () {
                     }
                 },
                 error: function (xhr) {
-                    $button.html('<i class="fas fa-edit"></i> Edit');
+                    $button.html('<i class="fas fa-edit"></i>');
 
                     // Tangani berbagai tipe error
                     let errorMessage = 'Terjadi kesalahan saat memuat data';

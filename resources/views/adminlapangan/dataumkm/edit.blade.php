@@ -1,23 +1,11 @@
 @extends('layouts.app')
 @push('scripts')
-    <script src="{{ asset('js/umkm-form.js') }}"></script>
-    <script src="{{ asset('js/umkm-legalitas.js') }}"></script>
-    <script src="{{ asset('js/umkm-omset.js') }}"></script>
-    <script src="{{ asset('js/umkm-intervensi.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/umkm-form.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/umkm-legalitas.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/umkm-intervensi.js') }}"></script>
     <script>
         $(document).ready(function() {
             // This initializes umkmCounter for both inline script and the external script
-            window.umkmCounter = $('.umkm-form-entry').length > 0 ? $('.umkm-form-entry').length : 0;
-
-            // Your other event handlers and functions can stay here...
-        });
-        $(document).ready(function() {
-            // This initializes umkmCounter for both inline script and the external script
-            window.umkmCounter = $('.umkm-form-entry').length > 0 ? $('.umkm-form-entry').length : 0;
-
-            // Manual test for Bootstrap and jQuery
-            console.log("Document ready in main script");
-            console.log("jQuery version:", $.fn.jquery);
 
             // Test modal functionality directly
             $('#test-modal-btn').on('click', function() {
@@ -178,7 +166,8 @@
                     <div class="bg-white justify-content-between rounded shadow p-4">
                         <!-- Alert Container -->
                         @if (session('status'))
-                            <div class="alert alert-{{ session('status_type') }} alert-dismissible fade show" role="alert">
+                            <div class="alert alert-{{ session('status_type') }} alert-dismissible fade show"
+                                role="alert">
                                 {{ session('status') }}
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
@@ -191,24 +180,24 @@
                         <!-- Tab Navigation -->
                         <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active" id="pelaku-tab" data-toggle="tab" href="#pelaku" role="tab"
-                                    aria-controls="pelaku" aria-selected="true">Data Pelaku UMKM</a>
+                                <a class="nav-link active" id="pelaku-tab" data-toggle="tab" href="#pelaku"
+                                    role="tab" aria-controls="pelaku" aria-selected="true">Data Pelaku UMKM</a>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link" id="umkm-tab" data-toggle="tab" href="#umkm" role="tab"
                                     aria-controls="umkm" aria-selected="false">Data UMKM</a>
                             </li>
-                            <li class="nav-item" role="presentation">
+                            {{-- <li class="nav-item" role="presentation">
                                 <a class="nav-link" id="omset-tab" data-toggle="tab" href="#omset" role="tab"
                                     aria-controls="omset" aria-selected="false">Omset</a>
+                            </li> --}}
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="legalitas-tab" data-toggle="tab" href="#legalitas"
+                                    role="tab" aria-controls="legalitas" aria-selected="false">Legalitas</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="legalitas-tab" data-toggle="tab" href="#legalitas" role="tab"
-                                    aria-controls="legalitas" aria-selected="false">Legalitas</a>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="intervensi-tab" data-toggle="tab" href="#intervensi" role="tab"
-                                    aria-controls="intervensi" aria-selected="false">Intervensi</a>
+                                <a class="nav-link" id="intervensi-tab" data-toggle="tab" href="#intervensi"
+                                    role="tab" aria-controls="intervensi" aria-selected="false">Intervensi</a>
                             </li>
                         </ul>
 
@@ -217,6 +206,26 @@
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
+                            @if (session('error'))
+                                <div class="alert alert-danger">
+                                    {{ session('error') }}
+                                </div>
+                            @endif
+
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                            <!-- Debug Form Values -->
+                            <div style="display: none;" id="debug-form-values">
+                                <pre>{{ json_encode($pelakuUmkm->toArray(), JSON_PRETTY_PRINT) }}</pre>
+                            </div>
                             <div class="tab-content" id="myTabContent">
                                 <!-- Tab 1: Data Pelaku UMKM -->
                                 <!-- Tab 1: Data Pelaku UMKM (Revised) -->
@@ -231,14 +240,15 @@
                                                 <label for="nik_pemilik"
                                                     class="col-sm-3 col-form-label font-weight-bold">NIK Pemilik</label>
                                                 <div class="col-sm-9">
-                                                    <input type="number" class="form-control" id="nik" name="nik"
-                                                        value="{{ $pelakuUmkm->nik }}">
+                                                    <input type="number" class="form-control" id="nik"
+                                                        name="nik" value="{{ $pelakuUmkm->nik }}">
                                                 </div>
                                             </div>
 
                                             <div class="row mb-3">
                                                 <label for="nama_pemilik"
-                                                    class="col-sm-3 col-form-label font-weight-bold">Nama Pemilik</label>
+                                                    class="col-sm-3 col-form-label font-weight-bold">Nama
+                                                    Pemilik</label>
                                                 <div class="col-sm-9">
                                                     <input type="text" class="form-control" id="nama_lengkap"
                                                         name="nama_lengkap" value="{{ $pelakuUmkm->nama_lengkap }}">
@@ -247,7 +257,8 @@
 
                                             <div class="row mb-3">
                                                 <label for="no_kk_pemilik"
-                                                    class="col-sm-3 col-form-label font-weight-bold">No KK Pemilik</label>
+                                                    class="col-sm-3 col-form-label font-weight-bold">No KK
+                                                    Pemilik</label>
                                                 <div class="col-sm-9">
                                                     <input type="number" class="form-control" id="no_kk"
                                                         name="no_kk" value="{{ $pelakuUmkm->no_kk }}">
@@ -256,7 +267,8 @@
 
                                             <div class="row mb-3">
                                                 <label for="tempat_lahir"
-                                                    class="col-sm-3 col-form-label font-weight-bold">Tempat Lahir</label>
+                                                    class="col-sm-3 col-form-label font-weight-bold">Tempat
+                                                    Lahir</label>
                                                 <div class="col-sm-9">
                                                     <input type="text" class="form-control" id="tempat_lahir"
                                                         name="tempat_lahir" value="{{ $pelakuUmkm->tempat_lahir }}">
@@ -265,7 +277,8 @@
 
                                             <div class="row mb-3">
                                                 <label for="tanggal_lahir"
-                                                    class="col-sm-3 col-form-label font-weight-bold">Tanggal Lahir</label>
+                                                    class="col-sm-3 col-form-label font-weight-bold">Tanggal
+                                                    Lahir</label>
                                                 <div class="col-sm-9">
                                                     <input type="date" class="form-control" id="tgl_lahir"
                                                         name="tgl_lahir" value="{{ $pelakuUmkm->tgl_lahir }}">
@@ -274,9 +287,11 @@
 
                                             <div class="row mb-3">
                                                 <label for="jenis_kelamin"
-                                                    class="col-sm-3 col-form-label font-weight-bold">Jenis Kelamin</label>
+                                                    class="col-sm-3 col-form-label font-weight-bold">Jenis
+                                                    Kelamin</label>
                                                 <div class="col-sm-9">
-                                                    <select class="form-control" id="jenis_kelamin" name="jenis_kelamin">
+                                                    <select class="form-control" id="jenis_kelamin"
+                                                        name="jenis_kelamin">
                                                         <option value="Laki-laki"
                                                             {{ $pelakuUmkm->jenis_kelamin == 'LAKI - LAKI' ? 'selected' : '' }}>
                                                             Laki-laki</option>
@@ -474,7 +489,7 @@
                                             </div>
 
                                             <div class="d-flex justify-content-center mt-4 pt-3 border-top">
-                                                <button type="submit" class="btn btn-success btn-md mr-3">
+                                                <button type="submit" class="btn btn-success btn-md main-submit-btn">
                                                     <i class="fas fa-save mr-2"></i> Simpan Data Pelaku
                                                 </button>
                                             </div>
@@ -484,7 +499,8 @@
 
                                 <!-- Tab 2: Data UMKM (Modified for Multiple Entries) -->
                                 <!-- Tab 2: Data UMKM (Enhanced Professional Design) -->
-                                <div class="tab-pane fade" id="umkm" role="tabpanel" aria-labelledby="umkm-tab">
+                                <div class="tab-pane fade" id="umkm" role="tabpanel"
+                                    aria-labelledby="umkm-tab">
                                     <div class="card border-0 shadow-sm">
                                         <div class="card-header bg-gradient-primary text-white py-3">
                                             <h5 class="m-0 font-weight-bold">Data UMKM</h5>
@@ -493,210 +509,254 @@
                                             <!-- Container for UMKM entries -->
                                             <div id="umkm-entries-container">
                                                 @foreach ($pelakuUmkm->dataUmkm as $index => $umkm)
-                                                    <div class="umkm-form-entry border rounded p-4 mb-4 shadow-sm"
-                                                        id="umkm-entry-{{ $index }}"
-                                                        data-umkm-id="{{ $index }}">
-                                                        <div
-                                                            class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                                                            <h5 class="m-0 umkm-number font-weight-bold text-primary">UMKM
-                                                                {{ $loop->iteration }}</h5>
-                                                            @if ($loop->count > 1)
-                                                            @endif
-                                                        </div>
+                                                    @if ($umkm->status !== 'DITOLAK')
+                                                        <div class="umkm-form-entry border rounded p-4 mb-4 shadow-sm"
+                                                            id="umkm-entry-{{ $index }}"
+                                                            data-umkm-id="{{ $index }}">
+                                                            <div
+                                                                class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                                                                <h5
+                                                                    class="m-0 umkm-number font-weight-bold text-primary">
+                                                                    UMKM
+                                                                    {{ $loop->iteration }}</h5>
+                                                                @if ($loop->count > 1)
+                                                                @endif
+                                                            </div>
 
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-6">
-                                                                <div class="form-group row">
-                                                                    <label for="nama_usaha_{{ $index }}"
-                                                                        class="col-sm-4 col-form-label font-weight-bold">Nama
-                                                                        Usaha</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="text" class="form-control"
-                                                                            id="nama_usaha_{{ $index }}"
-                                                                            name="umkm[{{ $index }}][nama_usaha]"
-                                                                            value="{{ $umkm->nama_usaha }}">
+                                                            <div class="row mb-3">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group row">
+                                                                        <label for="nama_usaha_{{ $index }}"
+                                                                            class="col-sm-4 col-form-label font-weight-bold">Nama
+                                                                            Usaha</label>
+                                                                        <div class="col-sm-8">
+                                                                            <input type="text" class="form-control"
+                                                                                id="nama_usaha_{{ $index }}"
+                                                                                name="umkm[{{ $index }}][nama_usaha]"
+                                                                                value="{{ $umkm->nama_usaha }}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group row">
+                                                                        <label for="alamat_usaha_{{ $index }}"
+                                                                            class="col-sm-4 col-form-label font-weight-bold">Alamat
+                                                                            Usaha</label>
+                                                                        <div class="col-sm-8">
+                                                                            <input type="text" class="form-control"
+                                                                                id="alamat_usaha_{{ $index }}"
+                                                                                name="umkm[{{ $index }}][alamat]"
+                                                                                value="{{ $umkm->alamat }}">
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group row">
-                                                                    <label for="alamat_usaha_{{ $index }}"
-                                                                        class="col-sm-4 col-form-label font-weight-bold">Alamat
-                                                                        Usaha</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="text" class="form-control"
-                                                                            id="alamat_usaha_{{ $index }}"
-                                                                            name="umkm[{{ $index }}][alamat]"
-                                                                            value="{{ $umkm->alamat }}">
+
+
+                                                            <div class="row mb-3">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group row">
+                                                                        <label
+                                                                            for="pengelolaan_usaha_{{ $index }}"
+                                                                            class="col-sm-4 col-form-label font-weight-bold">Pengelolaan
+                                                                            Usaha</label>
+                                                                        <div class="col-sm-8">
+                                                                            <select class="form-control"
+                                                                                id="pengelolaan_usaha_{{ $index }}"
+                                                                                name="umkm[{{ $index }}][pengelolaan_usaha]">
+                                                                                <option value="">-- Pilih --
+                                                                                </option>
+                                                                                <option value="PERSEORANGAN / MANDIRI"
+                                                                                    {{ $umkm->pengelolaan_usaha == 'PERSEORANGAN / MANDIRI' ? 'selected' : '' }}>
+                                                                                    PERSEORANGAN / MANDIRI</option>
+                                                                                <option
+                                                                                    value="KELOMPOK / SUBKON / KERJASAMA"
+                                                                                    {{ $umkm->pengelolaan_usaha == 'KELOMPOK / SUBKON / KERJASAMA' ? 'selected' : '' }}>
+                                                                                    KELOMPOK / SUBKON / KERJASAMA
+                                                                                </option>
+                                                                            </select>
+                                                                        </div>
                                                                     </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group row">
+                                                                        <label
+                                                                            for="klasifikasi_kinerja_usaha_{{ $index }}"
+                                                                            class="col-sm-4 col-form-label font-weight-bold">Klasifikasi
+                                                                            Kinerja</label>
+                                                                        <div class="col-sm-8">
+                                                                            <select class="form-control"
+                                                                                id="klasifikasi_kinerja_usaha_{{ $index }}"
+                                                                                name="umkm[{{ $index }}][klasifikasi_kinerja_usaha]">
+                                                                                <option value="">-- Pilih --
+                                                                                </option>
+                                                                                <option value="PEMULA"
+                                                                                    {{ $umkm->klasifikasi_kinerja_usaha == 'PEMULA' ? 'selected' : '' }}>
+                                                                                    PEMULA</option>
+                                                                                <option value="MADYA"
+                                                                                    {{ $umkm->klasifikasi_kinerja_usaha == 'MADYA' ? 'selected' : '' }}>
+                                                                                    MADYA</option>
+                                                                                <option value="MANDIRI"
+                                                                                    {{ $umkm->klasifikasi_kinerja_usaha == 'MANDIRI' ? 'selected' : '' }}>
+                                                                                    MANDIRI</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mb-3">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group row">
+                                                                        <label
+                                                                            for="jumlah_tenaga_kerja_{{ $index }}"
+                                                                            class="col-sm-4 col-form-label font-weight-bold">Jumlah
+                                                                            Tenaga Kerja</label>
+                                                                        <div class="col-sm-8">
+                                                                            <input type="number" class="form-control"
+                                                                                id="jumlah_tenaga_kerja_{{ $index }}"
+                                                                                name="umkm[{{ $index }}][jumlah_tenaga_kerja]"
+                                                                                value="{{ $umkm->jumlah_tenaga_kerja }}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group row">
+                                                                        <label for="sektor_usaha_{{ $index }}"
+                                                                            class="col-sm-4 col-form-label font-weight-bold">Sektor
+                                                                            Usaha</label>
+                                                                        <div class="col-sm-8">
+                                                                            <select class="form-control"
+                                                                                id="sektor_usaha_{{ $index }}"
+                                                                                name="umkm[{{ $index }}][sektor_usaha]">
+                                                                                <option value="">-- Pilih --
+                                                                                </option>
+                                                                                <option value="INDUSTRI"
+                                                                                    {{ $umkm->sektor_usaha == 'INDUSTRI' ? 'selected' : '' }}>
+                                                                                    INDUSTRI</option>
+                                                                                <option value="DAGANG"
+                                                                                    {{ $umkm->sektor_usaha == 'DAGANG' ? 'selected' : '' }}>
+                                                                                    DAGANG</option>
+                                                                                <option value="JASA"
+                                                                                    {{ $umkm->sektor_usaha == 'JASA' ? 'selected' : '' }}>
+                                                                                    JASA</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mb-3">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group row">
+                                                                        <label for="status_{{ $index }}"
+                                                                            class="col-sm-4 col-form-label font-weight-bold">Status
+                                                                            Keaktifan</label>
+                                                                        <div class="col-sm-8">
+                                                                            <select class="form-control"
+                                                                                id="status_{{ $index }}"
+                                                                                name="umkm[{{ $index }}][status]">
+                                                                                <option value="">-- Pilih --
+                                                                                </option>
+                                                                                <option value="AKTIF"
+                                                                                    {{ $umkm->status == 'AKTIF' ? 'selected' : '' }}>
+                                                                                    AKTIF</option>
+                                                                                <option value="TIDAK AKTIF"
+                                                                                    {{ $umkm->status == 'TIDAK AKTIF' ? 'selected' : '' }}>
+                                                                                    TIDAK AKTIF</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <input type="hidden"
+                                                                name="umkm[{{ $index }}][id]"
+                                                                value="{{ $umkm->id }}">
+                                                            <div class="products-section mt-4 pt-3 border-top">
+                                                                <div
+                                                                    class="d-flex justify-content-between align-items-center mb-3">
+                                                                    <h5 class="m-0 font-weight-bold text-primary">
+                                                                        Produk UMKM</h5>
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-primary add-product-btn"
+                                                                        data-umkm-id="{{ $umkm->id }}">
+                                                                        <i class="fas fa-plus-circle"></i> Tambah
+                                                                        Produk
+                                                                    </button>
+                                                                </div>
+
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-bordered table-striped"
+                                                                        id="products-table-{{ $umkm->id }}">
+                                                                        <thead class="bg-light">
+                                                                            <tr>
+                                                                                <th class="text-center"
+                                                                                    width="5%">No</th>
+                                                                                <th width="35%">Jenis Produk</th>
+                                                                                <th width="35%">Tipe Produk</th>
+                                                                                <th width="10%">Status</th>
+                                                                                <th class="text-center"
+                                                                                    width="15%">Aksi</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @forelse($umkm->produkUmkm as $index => $produk)
+                                                                                <tr id="product-{{ $produk->id }}"
+                                                                                    data-product-id="{{ $produk->id }}">
+                                                                                    <td class="text-center">
+                                                                                        {{ $index + 1 }}</td>
+                                                                                    <td>{{ $produk->jenis_produk }}
+                                                                                    </td>
+                                                                                    <td>{{ $produk->tipe_produk }}</td>
+                                                                                    <td>
+                                                                                        @if ($produk->status == 'AKTIF')
+                                                                                            <span
+                                                                                                class="badge badge-success">AKTIF</span>
+                                                                                        @else
+                                                                                            <span
+                                                                                                class="badge badge-danger">TIDAK
+                                                                                                AKTIF</span>
+                                                                                        @endif
+                                                                                    </td>
+                                                                                    <td class="text-center">
+                                                                                        <button type="button"
+                                                                                            class="btn btn-sm btn-warning edit-product-btn"
+                                                                                            data-product-id="{{ $produk->id }}"
+                                                                                            data-umkm-id="{{ $umkm->id }}"
+                                                                                            data-jenis-produk="{{ $produk->jenis_produk }}"
+                                                                                            data-tipe-produk="{{ $produk->tipe_produk }}"
+                                                                                            data-status="{{ $produk->status }}">
+                                                                                            <i class="fas fa-edit"></i>
+                                                                                        </button>
+                                                                                        <button type="button"
+                                                                                            class="btn btn-sm btn-danger delete-product-btn"
+                                                                                            data-product-id="{{ $produk->id }}"
+                                                                                            data-umkm-id="{{ $umkm->id }}">
+                                                                                            <i
+                                                                                                class="fas fa-trash"></i>
+                                                                                        </button>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            @empty
+                                                                                <tr>
+                                                                                    <td colspan="5"
+                                                                                        class="text-center">Belum ada
+                                                                                        produk untuk UMKM ini</td>
+                                                                                </tr>
+                                                                            @endforelse
+                                                                        </tbody>
+                                                                    </table>
                                                                 </div>
                                                             </div>
                                                         </div>
-
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-6">
-                                                                <div class="form-group row">
-                                                                    <label for="jenis_produk_{{ $index }}"
-                                                                        class="col-sm-4 col-form-label font-weight-bold">Jenis
-                                                                        Produk</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="text" class="form-control"
-                                                                            id="jenis_produk_{{ $index }}"
-                                                                            name="umkm[{{ $index }}][jenis_produk]"
-                                                                            value="{{ $umkm->jenis_produk }}">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group row">
-                                                                    <label for="tipe_produk_{{ $index }}"
-                                                                        class="col-sm-4 col-form-label font-weight-bold">Tipe
-                                                                        Produk</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="text" class="form-control"
-                                                                            id="tipe_produk_{{ $index }}"
-                                                                            name="umkm[{{ $index }}][tipe_produk]"
-                                                                            value="{{ $umkm->tipe_produk }}">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-6">
-                                                                <div class="form-group row">
-                                                                    <label for="pengelolaan_usaha_{{ $index }}"
-                                                                        class="col-sm-4 col-form-label font-weight-bold">Pengelolaan
-                                                                        Usaha</label>
-                                                                    <div class="col-sm-8">
-                                                                        <select class="form-control"
-                                                                            id="pengelolaan_usaha_{{ $index }}"
-                                                                            name="umkm[{{ $index }}][pengelolaan_usaha]">
-                                                                            <option value="">-- Pilih --</option>
-                                                                            <option value="Perseorangan"
-                                                                                {{ $umkm->pengelolaan_usaha == 'Perseorangan' ? 'selected' : '' }}>
-                                                                                Perseorangan</option>
-                                                                            <option value="Kelompok"
-                                                                                {{ $umkm->pengelolaan_usaha == 'Kelompok' ? 'selected' : '' }}>
-                                                                                Kelompok</option>
-                                                                            <option value="Badan Usaha"
-                                                                                {{ $umkm->pengelolaan_usaha == 'Badan Usaha' ? 'selected' : '' }}>
-                                                                                Badan Usaha</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group row">
-                                                                    <label
-                                                                        for="klasifikasi_kinerja_usaha_{{ $index }}"
-                                                                        class="col-sm-4 col-form-label font-weight-bold">Klasifikasi
-                                                                        Kinerja</label>
-                                                                    <div class="col-sm-8">
-                                                                        <select class="form-control"
-                                                                            id="klasifikasi_kinerja_usaha_{{ $index }}"
-                                                                            name="umkm[{{ $index }}][klasifikasi_kinerja_usaha]">
-                                                                            <option value="">-- Pilih --</option>
-                                                                            <option value="Sangat Baik"
-                                                                                {{ $umkm->klasifikasi_kinerja_usaha == 'Sangat Baik' ? 'selected' : '' }}>
-                                                                                Sangat Baik</option>
-                                                                            <option value="Baik"
-                                                                                {{ $umkm->klasifikasi_kinerja_usaha == 'Baik' ? 'selected' : '' }}>
-                                                                                Baik</option>
-                                                                            <option value="Cukup"
-                                                                                {{ $umkm->klasifikasi_kinerja_usaha == 'Cukup' ? 'selected' : '' }}>
-                                                                                Cukup</option>
-                                                                            <option value="Kurang"
-                                                                                {{ $umkm->klasifikasi_kinerja_usaha == 'Kurang' ? 'selected' : '' }}>
-                                                                                Kurang</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-6">
-                                                                <div class="form-group row">
-                                                                    <label for="jumlah_tenaga_kerja_{{ $index }}"
-                                                                        class="col-sm-4 col-form-label font-weight-bold">Jumlah
-                                                                        Tenaga Kerja</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="number" class="form-control"
-                                                                            id="jumlah_tenaga_kerja_{{ $index }}"
-                                                                            name="umkm[{{ $index }}][jumlah_tenaga_kerja]"
-                                                                            value="{{ $umkm->jumlah_tenaga_kerja }}">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group row">
-                                                                    <label for="sektor_usaha_{{ $index }}"
-                                                                        class="col-sm-4 col-form-label font-weight-bold">Sektor
-                                                                        Usaha</label>
-                                                                    <div class="col-sm-8">
-                                                                        <select class="form-control"
-                                                                            id="sektor_usaha_{{ $index }}"
-                                                                            name="umkm[{{ $index }}][sektor_usaha]">
-                                                                            <option value="">-- Pilih --</option>
-                                                                            <option value="Manufaktur"
-                                                                                {{ $umkm->sektor_usaha == 'Manufaktur' ? 'selected' : '' }}>
-                                                                                Manufaktur</option>
-                                                                            <option value="Jasa"
-                                                                                {{ $umkm->sektor_usaha == 'Jasa' ? 'selected' : '' }}>
-                                                                                Jasa</option>
-                                                                            <option value="Perdagangan"
-                                                                                {{ $umkm->sektor_usaha == 'Perdagangan' ? 'selected' : '' }}>
-                                                                                Perdagangan</option>
-                                                                            <option value="Pertanian"
-                                                                                {{ $umkm->sektor_usaha == 'Pertanian' ? 'selected' : '' }}>
-                                                                                Pertanian</option>
-                                                                            <option value="Peternakan"
-                                                                                {{ $umkm->sektor_usaha == 'Peternakan' ? 'selected' : '' }}>
-                                                                                Peternakan</option>
-                                                                            <option value="Perikanan"
-                                                                                {{ $umkm->sektor_usaha == 'Perikanan' ? 'selected' : '' }}>
-                                                                                Perikanan</option>
-                                                                            <option value="Lainnya"
-                                                                                {{ $umkm->sektor_usaha == 'Lainnya' ? 'selected' : '' }}>
-                                                                                Lainnya</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-6">
-                                                                <div class="form-group row">
-                                                                    <label for="status_{{ $index }}"
-                                                                        class="col-sm-4 col-form-label font-weight-bold">Status
-                                                                        Keaktifan</label>
-                                                                    <div class="col-sm-8">
-                                                                        <select class="form-control"
-                                                                            id="status_{{ $index }}"
-                                                                            name="umkm[{{ $index }}][status]">
-                                                                            <option value="">-- Pilih --</option>
-                                                                            <option value="AKTIF"
-                                                                                {{ $umkm->status == 'AKTIF' ? 'selected' : '' }}>
-                                                                                AKTIF</option>
-                                                                            <option value="TIDAK AKTIF"
-                                                                                {{ $umkm->status == 'TIDAK AKTIF' ? 'selected' : '' }}>
-                                                                                TIDAK AKTIF</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <input type="hidden" name="umkm[{{ $index }}][id]"
-                                                            value="{{ $umkm->id }}">
-                                                    </div>
+                                                    @endif
                                                 @endforeach
                                             </div>
 
                                             <div class="d-sm-flex align-items-center justify-content-center my-4">
-                                                <button type="button" class="btn btn-primary btn-md" id="add-umkm-btn">
+                                                <button type="button" class="btn btn-primary btn-md"
+                                                    id="add-umkm-btn-edit">
                                                     <i class="fas fa-plus-circle mr-2"></i> Tambah UMKM Baru
                                                 </button>
                                                 <button type="submit" class="btn btn-success btn-md ml-2">
@@ -706,7 +766,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="omset" role="tabpanel" aria-labelledby="omset-tab">
+                                {{-- <div class="tab-pane fade" id="omset" role="tabpanel"
+                                    aria-labelledby="omset-tab">
                                     <div class="card border-0 shadow-sm">
                                         <div class="card-header bg-gradient-primary text-white py-3">
                                             <h5 class="m-0 font-weight-bold">Data Omset UMKM</h5>
@@ -717,7 +778,8 @@
                                                 <!-- UMKM Selection -->
                                                 <div class="row mb-3">
                                                     <label for="umkm_id"
-                                                        class="col-sm-3 col-form-label font-weight-bold">Pilih UMKM</label>
+                                                        class="col-sm-3 col-form-label font-weight-bold">Pilih
+                                                        UMKM</label>
                                                     <div class="col-sm-9">
                                                         <select class="form-control" id="umkm_id"
                                                             name="omset[umkm_id]">
@@ -797,7 +859,8 @@
                                                                         <th width="20%">Nilai Omset</th>
                                                                         <th width="15%">Keterangan</th>
 
-                                                                        <th class="text-center" width="10%">Aksi</th>
+                                                                        <th class="text-center" width="10%">Aksi
+                                                                        </th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -806,7 +869,8 @@
                                                                             <tr>
                                                                                 <td class="text-center">
                                                                                     {{ $index + 1 }}</td>
-                                                                                <td>{{ $item->dataUmkm->nama_usaha }}</td>
+                                                                                <td>{{ $item->dataUmkm->nama_usaha }}
+                                                                                </td>
                                                                                 <td>{{ date('d-m-Y', strtotime($item->jangka_waktu)) }}
                                                                                 </td>
                                                                                 <td>Rp.
@@ -826,14 +890,16 @@
                                                                                     <button type="button"
                                                                                         class="btn btn-warning btn-sm edit-omset"
                                                                                         data-id="{{ $item->id }}">
-                                                                                        <i class="fas fa-edit"></i> Edit
+                                                                                        <i class="fas fa-edit"></i>
+                                                                                        Edit
                                                                                     </button>
                                                                                 </td>
                                                                             </tr>
                                                                         @endforeach
                                                                     @else
                                                                         <tr>
-                                                                            <td colspan="6" class="text-center">Belum
+                                                                            <td colspan="6" class="text-center">
+                                                                                Belum
                                                                                 ada data omset</td>
                                                                         </tr>
                                                                     @endif
@@ -846,8 +912,9 @@
 
 
                                             <!-- Modal for editing omset -->
-                                            <div class="modal fade" id="editOmsetModal" tabindex="-1" role="dialog"
-                                                aria-labelledby="editOmsetModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="editOmsetModal" tabindex="-1"
+                                                role="dialog" aria-labelledby="editOmsetModalLabel"
+                                                aria-hidden="true">
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header bg-gradient-primary text-white">
@@ -860,7 +927,8 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             <form id="edit-omset-form">
-                                                                <input type="hidden" id="edit_omset_id" name="id">
+                                                                <input type="hidden" id="edit_omset_id"
+                                                                    name="id">
 
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_umkm_id"
@@ -882,17 +950,20 @@
                                                                         Waktu</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="date" class="form-control"
-                                                                            id="edit_jangka_waktu" name="jangka_waktu">
+                                                                            id="edit_jangka_waktu"
+                                                                            name="jangka_waktu">
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_omset"
-                                                                        class="col-sm-3 col-form-label">Nilai Omset</label>
+                                                                        class="col-sm-3 col-form-label">Nilai
+                                                                        Omset</label>
                                                                     <div class="col-sm-9">
                                                                         <div class="input-group">
                                                                             <div class="input-group-prepend">
-                                                                                <span class="input-group-text">Rp.</span>
+                                                                                <span
+                                                                                    class="input-group-text">Rp.</span>
                                                                             </div>
                                                                             <input type="text"
                                                                                 class="form-control currency-input"
@@ -905,8 +976,8 @@
                                                                     <label for="edit_keterangan"
                                                                         class="col-sm-3 col-form-label">Keterangan</label>
                                                                     <div class="col-sm-9">
-                                                                        <select class="form-control" id="edit_keterangan"
-                                                                            name="keterangan">
+                                                                        <select class="form-control"
+                                                                            id="edit_keterangan" name="keterangan">
                                                                             <option value="AKTIF">AKTIF</option>
                                                                             <option value="TIDAK AKTIF">TIDAK AKTIF
                                                                             </option>
@@ -926,7 +997,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <!-- Tab 5: Legalitas UMKM -->
                                 <div class="tab-pane fade" id="legalitas" role="tabpanel"
                                     aria-labelledby="legalitas-tab">
@@ -944,7 +1015,8 @@
                                                         name="legalitas[umkm_id]">
                                                         <option value="">-- Pilih UMKM --</option>
                                                         @foreach ($pelakuUmkm->dataUmkm as $umkm)
-                                                            <option value="{{ $umkm->id }}">{{ $umkm->nama_usaha }}
+                                                            <option value="{{ $umkm->id }}">
+                                                                {{ $umkm->nama_usaha }}
                                                             </option>
                                                         @endforeach
                                                     </select>
@@ -955,7 +1027,8 @@
                                             <div id="legalitas-container">
                                                 <div class="row mb-3">
                                                     <label for="no_sk_nib"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK NIB</label>
+                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
+                                                        NIB</label>
                                                     <div class="col-sm-9">
                                                         <input type="text" class="form-control" id="no_sk_nib"
                                                             name="legalitas[no_sk_nib]"
@@ -965,7 +1038,8 @@
 
                                                 <div class="row mb-3">
                                                     <label for="no_sk_siup"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK SIUP</label>
+                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
+                                                        SIUP</label>
                                                     <div class="col-sm-9">
                                                         <input type="text" class="form-control" id="no_sk_siup"
                                                             name="legalitas[no_sk_siup]"
@@ -975,7 +1049,8 @@
 
                                                 <div class="row mb-3">
                                                     <label for="no_sk_tdp"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK TDP</label>
+                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
+                                                        TDP</label>
                                                     <div class="col-sm-9">
                                                         <input type="text" class="form-control" id="no_sk_tdp"
                                                             name="legalitas[no_sk_tdp]"
@@ -985,7 +1060,8 @@
 
                                                 <div class="row mb-3">
                                                     <label for="no_sk_pirt"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK PIRT</label>
+                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
+                                                        PIRT</label>
                                                     <div class="col-sm-9">
                                                         <input type="text" class="form-control" id="no_sk_pirt"
                                                             name="legalitas[no_sk_pirt]"
@@ -995,7 +1071,8 @@
 
                                                 <div class="row mb-3">
                                                     <label for="no_sk_bpom"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK BPOM</label>
+                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
+                                                        BPOM</label>
                                                     <div class="col-sm-9">
                                                         <input type="text" class="form-control" id="no_sk_bpom"
                                                             name="legalitas[no_sk_bpom]"
@@ -1027,7 +1104,8 @@
 
                                                 <div class="row mb-3">
                                                     <label for="no_sk_haki"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK HAKI</label>
+                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
+                                                        HAKI</label>
                                                     <div class="col-sm-9">
                                                         <input type="text" class="form-control" id="no_sk_haki"
                                                             name="legalitas[no_sk_haki]"
@@ -1041,7 +1119,8 @@
                                                         Keterangan</label>
                                                     <div class="col-sm-9">
                                                         <input type="text" class="form-control"
-                                                            id="no_surat_keterangan" name="legalitas[no_surat_keterangan]"
+                                                            id="no_surat_keterangan"
+                                                            name="legalitas[no_surat_keterangan]"
                                                             value="{{ $pelakuUmkm->legalitas->no_surat_keterangan ?? '' }}">
                                                     </div>
                                                 </div>
@@ -1058,11 +1137,13 @@
                                                     <div class="card border-left-primary shadow">
                                                         <div class="card-body">
                                                             <div class="table-responsive">
-                                                                <table class="table table-bordered" id="table-legalitas"
-                                                                    width="100%" cellspacing="0">
+                                                                <table class="table table-bordered"
+                                                                    id="table-legalitas" width="100%"
+                                                                    cellspacing="0">
                                                                     <thead class="bg-light">
                                                                         <tr>
-                                                                            <th class="text-center" width="5%">NO</th>
+                                                                            <th class="text-center" width="5%">NO
+                                                                            </th>
                                                                             <th>UMKM</th>
                                                                             <th>No NIB</th>
                                                                             <th>No SIUP</th>
@@ -1084,10 +1165,12 @@
                                                                                         {{ $index + 1 }}</td>
                                                                                     <td>{{ $item->dataUmkm->nama_usaha ?? 'Tidak ada' }}
                                                                                     </td>
-                                                                                    <td>{{ $item->no_sk_nib ?: '-' }}</td>
+                                                                                    <td>{{ $item->no_sk_nib ?: '-' }}
+                                                                                    </td>
                                                                                     <td>{{ $item->no_sk_siup ?: '-' }}
                                                                                     </td>
-                                                                                    <td>{{ $item->no_sk_tdp ?: '-' }}</td>
+                                                                                    <td>{{ $item->no_sk_tdp ?: '-' }}
+                                                                                    </td>
                                                                                     <td>{{ $item->no_sk_pirt ?: '-' }}
                                                                                     </td>
                                                                                     <td>{{ $item->no_sk_bpom ?: '-' }}
@@ -1101,18 +1184,20 @@
                                                                                     <td>{{ $item->no_surat_keterangan ?: '-' }}
                                                                                     </td>
                                                                                     <td class="text-center">
+
                                                                                         <button type="button"
                                                                                             class="btn btn-warning btn-sm edit-legalitas"
                                                                                             data-id="{{ $item->id }}">
                                                                                             <i class="fas fa-edit"></i>
-                                                                                            Edit
+
                                                                                         </button>
                                                                                     </td>
                                                                                 </tr>
                                                                             @endforeach
                                                                         @else
                                                                             <tr>
-                                                                                <td colspan="7" class="text-center">
+                                                                                <td colspan="7"
+                                                                                    class="text-center">
                                                                                     Belum ada data legalitas</td>
                                                                             </tr>
                                                                         @endif
@@ -1130,7 +1215,8 @@
                                                     <div class="modal-dialog modal-lg" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header bg-gradient-primary text-white">
-                                                                <h5 class="modal-title" id="editLegalitasModalLabel">Edit
+                                                                <h5 class="modal-title" id="editLegalitasModalLabel">
+                                                                    Edit
                                                                     Data Legalitas</h5>
                                                                 <button type="button" class="close text-white"
                                                                     data-dismiss="modal" aria-label="Close">
@@ -1150,8 +1236,10 @@
                                                                                 id="edit_legalitas_umkm_id"
                                                                                 name="umkm_id">
                                                                                 @foreach ($pelakuUmkm->dataUmkm as $umkm)
-                                                                                    <option value="{{ $umkm->id }}">
-                                                                                        {{ $umkm->nama_usaha }}</option>
+                                                                                    <option
+                                                                                        value="{{ $umkm->id }}">
+                                                                                        {{ $umkm->nama_usaha }}
+                                                                                    </option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -1173,7 +1261,8 @@
                                                                             SIUP</label>
                                                                         <div class="col-sm-9">
                                                                             <input type="text" class="form-control"
-                                                                                id="edit_no_sk_siup" name="no_sk_siup">
+                                                                                id="edit_no_sk_siup"
+                                                                                name="no_sk_siup">
                                                                         </div>
                                                                     </div>
 
@@ -1193,7 +1282,8 @@
                                                                             PIRT</label>
                                                                         <div class="col-sm-9">
                                                                             <input type="text" class="form-control"
-                                                                                id="edit_no_sk_pirt" name="no_sk_pirt">
+                                                                                id="edit_no_sk_pirt"
+                                                                                name="no_sk_pirt">
                                                                         </div>
                                                                     </div>
 
@@ -1203,7 +1293,8 @@
                                                                             BPOM</label>
                                                                         <div class="col-sm-9">
                                                                             <input type="text" class="form-control"
-                                                                                id="edit_no_sk_bpom" name="no_sk_bpom">
+                                                                                id="edit_no_sk_bpom"
+                                                                                name="no_sk_bpom">
                                                                         </div>
                                                                     </div>
 
@@ -1213,7 +1304,8 @@
                                                                             HALAL</label>
                                                                         <div class="col-sm-9">
                                                                             <input type="text" class="form-control"
-                                                                                id="edit_no_sk_halal" name="no_sk_halal">
+                                                                                id="edit_no_sk_halal"
+                                                                                name="no_sk_halal">
                                                                         </div>
                                                                     </div>
 
@@ -1223,7 +1315,8 @@
                                                                             MEREK</label>
                                                                         <div class="col-sm-9">
                                                                             <input type="text" class="form-control"
-                                                                                id="edit_no_sk_merek" name="no_sk_merek">
+                                                                                id="edit_no_sk_merek"
+                                                                                name="no_sk_merek">
                                                                         </div>
                                                                     </div>
 
@@ -1233,7 +1326,8 @@
                                                                             HAKI</label>
                                                                         <div class="col-sm-9">
                                                                             <input type="text" class="form-control"
-                                                                                id="edit_no_sk_haki" name="no_sk_haki">
+                                                                                id="edit_no_sk_haki"
+                                                                                name="no_sk_haki">
                                                                         </div>
                                                                     </div>
 
@@ -1276,7 +1370,8 @@
                                                 <!-- UMKM Selection for Intervensi -->
                                                 <div class="row mb-3">
                                                     <label for="intervensi_umkm_id"
-                                                        class="col-sm-3 col-form-label font-weight-bold">Pilih UMKM</label>
+                                                        class="col-sm-3 col-form-label font-weight-bold">Pilih
+                                                        UMKM</label>
                                                     <div class="col-sm-9">
                                                         <select class="form-control" id="intervensi_umkm_id"
                                                             name="intervensi[umkm_id]">
@@ -1291,37 +1386,13 @@
 
                                                 <div class="row mb-3">
                                                     <label for="intervensi_umkm_id"
-                                                        class="col-sm-3 col-form-label font-weight-bold">Pilih UMKM</label>
+                                                        class="col-sm-3 col-form-label font-weight-bold">Pilih
+                                                        UMKM</label>
                                                     <div class="col-sm-9">
-                                                        <select class="form-control" id="kegiatan_id" name="kegiatan_id"
-                                                            required>
+                                                        <select class="form-control" id="kegiatan_id"
+                                                            name="kegiatan_id">
                                                             <option value="">Pilih Kegiatan Intervensi</option>
                                                             @foreach ($kegiatans as $kegiatan)
-                                                                @php
-                                                                    $existingInterventions = \App\Models\Intervensi::where(
-                                                                        'kegiatan_id',
-                                                                        $kegiatan->id,
-                                                                    )->count();
-                                                                    $quotaPercentage =
-                                                                        ($existingInterventions /
-                                                                            $kegiatan->kuota_pendaftaran) *
-                                                                        100;
-                                                                    $isQuotaFull =
-                                                                        $existingInterventions >=
-                                                                        $kegiatan->kuota_pendaftaran;
-                                                                    $status = $kegiatan->status_kegiatan;
-                                                                    $isRegistrationAllowed = $status === 'Pendaftaran';
-
-                                                                    // Prepare status label
-                                                                    $statusLabel = '';
-                                                                    if ($status === 'Belum Dimulai') {
-                                                                        $statusLabel = '- Pendaftaran Belum Dibuka';
-                                                                    } elseif ($status === 'Sedang Berlangsung') {
-                                                                        $statusLabel = '- Kegiatan Sedang Berlangsung';
-                                                                    } elseif ($status === 'Selesai') {
-                                                                        $statusLabel = '- Kegiatan Telah Selesai';
-                                                                    }
-                                                                @endphp
                                                                 <option value="{{ $kegiatan->id }}"
                                                                     data-jenis="{{ $kegiatan->jenis_kegiatan }}"
                                                                     data-lokasi="{{ $kegiatan->lokasi_kegiatan }}"
@@ -1329,15 +1400,9 @@
                                                                     data-tanggal-selesai="{{ $kegiatan->tanggal_mulai }}"
                                                                     data-jam-mulai="{{ $kegiatan->jam_mulai }}"
                                                                     data-jam-selesai="{{ $kegiatan->jam_selesai }}"
-                                                                    data-kuota="{{ $kegiatan->kuota_pendaftaran }}"
-                                                                    data-sisa="{{ $kegiatan->kuota_pendaftaran - $existingInterventions }}"
-                                                                    data-status="{{ $status }}"
-                                                                    {{ $isQuotaFull || !$isRegistrationAllowed ? 'disabled' : '' }}
-                                                                    {{ old('kegiatan_id') == $kegiatan->id ? 'selected' : '' }}>
+                                                                    data-kuota="{{ $kegiatan->kuota_pendaftaran }}">
                                                                     {{ $kegiatan->nama_kegiatan }}
-                                                                    ({{ $existingInterventions }}/{{ $kegiatan->kuota_pendaftaran }}
-                                                                    Slot)
-                                                                    {{ $statusLabel }}
+
                                                                 </option>
                                                             @endforeach
                                                         </select>
@@ -1349,21 +1414,22 @@
                                                         class="col-sm-3 col-form-label font-weight-bold">Kegiatan
                                                         Intervensi</label>
                                                     <div class="col-sm-9">
-                                                        <input type="text" class="form-control" id="jenis_kegiatan"
-                                                            name="jenis_kegiatan" value="{{ old('jenis_kegiatan') }}"
-                                                            readonly>
+                                                        <input type="text" class="form-control"
+                                                            id="jenis_kegiatan" name="jenis_kegiatan"
+                                                            value="{{ old('jenis_kegiatan') }}" readonly>
                                                     </div>
                                                 </div>
 
                                                 <div class="row mb-3">
                                                     <label for="lokasi_kegiatan"
-                                                        class="col-sm-3 col-form-label font-weight-bold">Lokasi Kegiatan
+                                                        class="col-sm-3 col-form-label font-weight-bold">Lokasi
+                                                        Kegiatan
                                                         Intervensi
                                                     </label>
                                                     <div class="col-sm-9">
-                                                        <input type="text" class="form-control" id="lokasi_kegiatan"
-                                                            name="lokasi_kegiatan" value="{{ old('lokasi_kegiatan') }}"
-                                                            readonly>
+                                                        <input type="text" class="form-control"
+                                                            id="lokasi_kegiatan" name="lokasi_kegiatan"
+                                                            value="{{ old('lokasi_kegiatan') }}" readonly>
                                                     </div>
                                                 </div>
 
@@ -1380,12 +1446,13 @@
 
                                                 <div class="row mb-3">
                                                     <label for="tanggal_selesai"
-                                                        class="col-sm-3 col-form-label font-weight-bold">Tanggal Selesai
+                                                        class="col-sm-3 col-form-label font-weight-bold">Tanggal
+                                                        Selesai
                                                     </label>
                                                     <div class="col-sm-9">
-                                                        <input type="text" class="form-control" id="tanggal_selesai"
-                                                            name="tanggal_selesai" value="{{ old('tanggal_selesai') }}"
-                                                            readonly>
+                                                        <input type="text" class="form-control"
+                                                            id="tanggal_selesai" name="tanggal_selesai"
+                                                            value="{{ old('tanggal_selesai') }}" readonly>
                                                     </div>
                                                 </div>
 
@@ -1395,7 +1462,8 @@
                                                     </label>
                                                     <div class="col-sm-9">
                                                         <input type="text" class="form-control" id="jam_mulai"
-                                                            name="jam_mulai" value="{{ old('jam_mulai') }}" readonly>
+                                                            name="jam_mulai" value="{{ old('jam_mulai') }}"
+                                                            readonly>
                                                     </div>
                                                 </div>
 
@@ -1414,7 +1482,8 @@
                                                     <div class="col-12 text-center">
                                                         <button type="button" class="btn btn-md btn-success"
                                                             id="tambah-data-intervensi">
-                                                            <i class="fas fa-plus-circle mr-2"></i> Tambah Data Intervensi
+                                                            <i class="fas fa-plus-circle mr-2"></i> Tambah Data
+                                                            Intervensi
                                                         </button>
                                                     </div>
                                                 </div>
@@ -1436,13 +1505,15 @@
                                                                         <th width="10%">Status Kegiatan</th>
                                                                         <th width="10%">Tanggal</th>
 
-                                                                        <th class="text-center" width="10%">Aksi</th>
+                                                                        <th class="text-center" width="10%">Aksi
+                                                                        </th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <!-- Tabel akan diisi dari JavaScript -->
                                                                     <tr>
-                                                                        <td colspan="8" class="text-center">Belum ada
+                                                                        <td colspan="8" class="text-center">Belum
+                                                                            ada
                                                                             data intervensi</td>
                                                                     </tr>
                                                                 </tbody>
@@ -1451,7 +1522,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Edit Intervensi Modal -->
+                                            <!-- Edit Intervensi Modal (Updated) -->
                                             <div class="modal fade" id="editIntervensiModal" tabindex="-1"
                                                 role="dialog" aria-labelledby="editIntervensiModalLabel"
                                                 aria-hidden="true">
@@ -1473,11 +1544,14 @@
                                                                 <!-- UMKM Selection -->
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_umkm_id"
-                                                                        class="col-sm-3 col-form-label">UMKM</label>
+                                                                        class="col-sm-3 col-form-label font-weight-bold">UMKM</label>
                                                                     <div class="col-sm-9">
                                                                         <select class="form-control" id="edit_umkm_id"
                                                                             name="umkm_id">
-                                                                            <!-- Options will be populated dynamically via AJAX -->
+                                                                            @foreach ($pelakuUmkm->dataUmkm as $umkm)
+                                                                                <option value="{{ $umkm->id }}">
+                                                                                    {{ $umkm->nama_usaha }}</option>
+                                                                            @endforeach
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -1485,11 +1559,11 @@
                                                                 <!-- Kegiatan Selection -->
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_kegiatan_id"
-                                                                        class="col-sm-3 col-form-label">Kegiatan
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Kegiatan
                                                                         Intervensi</label>
                                                                     <div class="col-sm-9">
-                                                                        <select class="form-control" id="edit_kegiatan_id"
-                                                                            name="kegiatan_id">
+                                                                        <select class="form-control"
+                                                                            id="edit_kegiatan_id" name="kegiatan_id">
                                                                             <!-- Options will be populated dynamically via AJAX -->
                                                                         </select>
                                                                     </div>
@@ -1498,19 +1572,19 @@
                                                                 <!-- Auto-populated fields based on Kegiatan selection -->
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_jenis_kegiatan"
-                                                                        class="col-sm-3 col-form-label">Jenis
-                                                                        Kegiatan</label>
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Kegiatan
+                                                                        Intervensi</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
-                                                                            id="edit_jenis_kegiatan" name="jenis_kegiatan"
-                                                                            readonly>
+                                                                            id="edit_jenis_kegiatan"
+                                                                            name="jenis_kegiatan" readonly>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_lokasi_kegiatan"
-                                                                        class="col-sm-3 col-form-label">Lokasi
-                                                                        Kegiatan</label>
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Lokasi
+                                                                        Kegiatan Intervensi</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
                                                                             id="edit_lokasi_kegiatan"
@@ -1520,18 +1594,18 @@
 
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_tanggal_mulai"
-                                                                        class="col-sm-3 col-form-label">Tanggal
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Tanggal
                                                                         Mulai</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
-                                                                            id="edit_tanggal_mulai" name="tanggal_mulai"
-                                                                            readonly>
+                                                                            id="edit_tanggal_mulai"
+                                                                            name="tanggal_mulai" readonly>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_tanggal_selesai"
-                                                                        class="col-sm-3 col-form-label">Tanggal
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Tanggal
                                                                         Selesai</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
@@ -1542,16 +1616,19 @@
 
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_jam_mulai"
-                                                                        class="col-sm-3 col-form-label">Jam Mulai</label>
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Jam
+                                                                        Mulai</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
-                                                                            id="edit_jam_mulai" name="jam_mulai" readonly>
+                                                                            id="edit_jam_mulai" name="jam_mulai"
+                                                                            readonly>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_jam_selesai"
-                                                                        class="col-sm-3 col-form-label">Jam Selesai</label>
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Jam
+                                                                        Selesai</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
                                                                             id="edit_jam_selesai" name="jam_selesai"
@@ -1562,7 +1639,7 @@
                                                                 <!-- Read-only generated information -->
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_no_pendaftaran"
-                                                                        class="col-sm-3 col-form-label">Nomor
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Nomor
                                                                         Pendaftaran</label>
                                                                     <div class="col-sm-9">
                                                                         <input type="text" class="form-control"
@@ -1574,11 +1651,12 @@
                                                                 <!-- Optional fields for additional data -->
                                                                 <div class="form-group row mb-3">
                                                                     <label for="edit_omset"
-                                                                        class="col-sm-3 col-form-label">Omset</label>
+                                                                        class="col-sm-3 col-form-label font-weight-bold">Omset</label>
                                                                     <div class="col-sm-9">
                                                                         <div class="input-group">
                                                                             <div class="input-group-prepend">
-                                                                                <span class="input-group-text">Rp.</span>
+                                                                                <span
+                                                                                    class="input-group-text">Rp.</span>
                                                                             </div>
                                                                             <input type="text"
                                                                                 class="form-control currency-input"
@@ -1593,7 +1671,9 @@
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">Batal</button>
                                                             <button type="button" class="btn btn-primary"
-                                                                id="save-edit-intervensi">Simpan Perubahan</button>
+                                                                id="save-edit-intervensi">
+                                                                <i class="fas fa-save mr-2"></i> Simpan Perubahan
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1619,6 +1699,7 @@
         <!-- End of Footer -->
 
     </div>
+
     <!-- End of Content Wrapper -->
 
     </div>
@@ -1628,6 +1709,64 @@
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
+
+    <!-- Modal Tambah/Edit Produk -->
+    <!-- Modal Tambah/Edit Produk -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-primary text-white">
+                    <h5 class="modal-title" id="addProductModalLabel">Tambah Produk</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-product-form-edit">
+                        @csrf
+                        <input type="hidden" id="add_product_umkm_id" name="umkm_id">
+                        <input type="hidden" id="product_id" name="id" value="">
+                        <input type="hidden" id="editing_mode" value="add">
+                        <input type="hidden" id="is_temp_product" value="0">
+
+                        <div class="form-group">
+                            <label for="add_product_jenis" class="font-weight-bold">Jenis Produk</label>
+                            <input type="text" class="form-control" id="add_product_jenis" name="jenis_produk"
+                                required>
+                            <div class="invalid-feedback">Jenis produk wajib diisi</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="add_product_tipe" class="font-weight-bold">Tipe Produk</label>
+                            <select class="form-control" id="add_product_tipe" name="tipe_produk" required>
+                                <option value="Makanan dan Minuman">Makanan dan Minuman</option>
+                                <option value="Makanan">Makanan</option>
+                                <option value="Minuman">Minuman</option>
+                                <option value="Fashion">Fashion</option>
+                                <option value="Handycraft">Handycraft</option>
+                                <option value="Lainya">Lainya</option>
+                            </select>
+                            <div class="invalid-feedback">Tipe produk wajib diisi</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="add_product_status" class="font-weight-bold">Status</label>
+                            <select class="form-control" id="add_product_status" name="status" required>
+                                <option value="AKTIF">AKTIF</option>
+                                <option value="TIDAK AKTIF">TIDAK AKTIF</option>
+                            </select>
+                            <div class="invalid-feedback">Status wajib dipilih</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" form="add-product-form-edit" class="btn btn-primary">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

@@ -67,18 +67,7 @@
                         <i class="fas fa-store-alt mr-2 text-primary"></i>Data Intervensi
                     </h1>
                     <div class="btn-group" role="group" aria-label="Data Actions">
-                        <a href="#" class="btn btn-success btn-icon-split">
-                            <span class="icon text-white-50">
-                                <i class="fas fa-file-export"></i>
-                            </span>
-                            <span class="text">Export Data</span>
-                        </a>
-                        <a href="" class="btn btn-primary btn-icon-split ml-2">
-                            <span class="icon text-white-50">
-                                <i class="fas fa-plus"></i>
-                            </span>
-                            <span class="text">Tambah Data</span>
-                        </a>
+                      
                     </div>
                 </div>
 
@@ -89,12 +78,33 @@
                             <a href="#" class="dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-ellipsis-v fa-sm fa-fw text-white"></i>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                                <a class="dropdown-item" href="#">Cetak Laporan</a>
-                            </div>
+
                         </div>
                     </div>
                     <div class="card-body">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold">Export</h6>
+                            </div>
+                            <div class="card-body">
+                                <form action="{{ route('intervensi.exportexcel') }}" method="GET" class="form-inline">
+                                    <div class="form-group mr-3">
+                                        <label for="kegiatan_filter" class="mr-2">Nama Kegiatan:</label>
+                                        <select name="kegiatan_id" id="kegiatan_filter" class="form-control">
+                                            <option value="">Semua Kegiatan</option>
+                                            @foreach($kegiatans as $kegiatan)
+                                                <option value="{{ $kegiatan->id }}">{{ $kegiatan->nama_kegiatan }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-success mr-2">
+                                            <i class="fas fa-file-excel mr-1"></i> Export
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover table-striped" id="dataumkmtable">
                                 <thead class="thead-light">

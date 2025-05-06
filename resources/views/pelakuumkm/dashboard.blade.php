@@ -44,7 +44,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <h6 class="text-success text-uppercase fw-bold small mb-1">Omset (Tahunan)</h6>
-                                    <h4 class="fw-bold mb-0">Rp {{ number_format($omsetTahunan, 0, ',', '.') }}</h4>
+                                    <h4 class="fw-bold mb-0">Rp {{ number_format($totalOmset, 0, ',', '.') }}</h4>
                                 </div>
                                 <div class="avatar rounded-circle text-center text-white p-3"
                                     style="background-color: rgba(40, 167, 69, 0.1); width: 48px; height: 48px; line-height: 24px;">
@@ -95,7 +95,7 @@
             <!-- Grafik dan Status -->
             <div class="row g-3 mt-3">
                 <!-- Grafik Omset -->
-                <div class="col-xl-8 col-lg-7">
+                <div class="col-xl-12 col-lg-12">
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-white p-3 d-flex justify-content-between align-items-center">
                             <h5 class="mb-0 fw-bold text-primary">
@@ -111,49 +111,7 @@
                 </div>
 
                 <!-- Status Legalitas -->
-                <div class="col-xl-4 col-lg-5">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-white p-3 d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 fw-bold text-primary">
-                                <i class="fas fa-certificate me-2"></i>Status Legalitas
-                            </h5>
-                        </div>
-                        <div class="card-body p-3">
-                            <div class="progress-list">
-                                @php
-                                    $legalitasItems = [
-                                        'no_sk_nib' => 'NIB',
-                                        'no_sk_siup' => 'SIUP',
-                                        'no_sk_tdp' => 'TDP',
-                                        'no_sk_pirt' => 'PIRT',
-                                        'no_sk_bpom' => 'BPOM',
-                                        'no_sk_halal' => 'Halal',
-                                        'no_sk_merek' => 'Merek',
-                                        'no_sk_haki' => 'HAKI'
-                                    ];
-                                @endphp
 
-                                @foreach($legalitasItems as $key => $label)
-                                    @php
-                                        $status = isset($legalitas->$key) && !empty($legalitas->$key);
-                                    @endphp
-                                    <h6 class="small fw-semibold d-flex justify-content-between mb-2">
-                                        {{ $label }}
-                                        <span class="{{ $status ? 'text-success' : 'text-danger' }}">
-                                            {{ $status ? 'Lengkap' : 'Belum Lengkap' }}
-                                        </span>
-                                    </h6>
-                                    <div class="progress mb-3" style="height: 6px;">
-                                        <div class="progress-bar {{ $status ? 'bg-success' : 'bg-danger' }}" role="progressbar"
-                                            style="width: {{ $status ? '100%' : '0%' }}"
-                                            aria-valuenow="{{ $status ? '100' : '0' }}" aria-valuemin="0" aria-valuemax="100">
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Kegiatan Mendatang dan UMKM -->
@@ -256,7 +214,7 @@
             </div>
         </div>
 
-       
+
     </main>
 
     @push('scripts')

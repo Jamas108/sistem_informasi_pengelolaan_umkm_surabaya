@@ -131,11 +131,6 @@ class ManajemenUserController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
-        $detailUser = PelakuUmkm::where('users_id', $id)->first();
-
-        if (!$detailUser) {
-            return redirect()->route('manajemenuser.index')->with('error', 'Data detail user tidak ditemukan');
-        }
 
         // Validasi data
         $validator = Validator::make($request->all(), [
@@ -157,7 +152,7 @@ class ManajemenUserController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request, $user, $detailUser) {
+            DB::transaction(function () use ($request, $user) {
                 // Update tabel users
                 $user->username = $request->username;
                 $user->NIK = $request->nik;

@@ -377,20 +377,6 @@
                     <h1 class="h3 mb-0 text-gray-800">
                         <i class="fas fa-users mr-2 text-primary"></i>Daftar Peserta Kegiatan {{ $kegiatan->nama_kegiatan }}
                     </h1>
-                    <div class="btn-group" role="group" aria-label="Data Actions">
-                        <a href="{{ route('datakegiatan.index') }}" class="btn btn-secondary btn-icon-split">
-                            <span class="icon text-white-50">
-                                <i class="fas fa-arrow-left"></i>
-                            </span>
-                            <span class="text">Kembali</span>
-                        </a>
-                        <div class="ml-2">
-                            <a href="{{ route('datakegiatan.print-attendance', $kegiatan->id) }}" class="btn btn-primary"
-                                target="_blank">
-                                <i class="fas fa-file-export mr-2"></i>Cetak Daftar Hadir
-                            </a>
-                        </div>
-                    </div>
                 </div>
 
                 @if (session('success'))
@@ -432,43 +418,29 @@
                                 <thead class="thead-light">
                                     <tr>
                                         <th class="text-center" width="5%">No</th>
+                                        <th width="15%">No Pendaftaran</th>
                                         <th width="15%">Pemilik UMKM</th>
                                         <th width="15%">Nama UMKM</th>
-                                        <th width="12%">Jenis Produk</th>
                                         <th width="10%">No. Telepon</th>
                                         <th width="15%">Alamat UMKM</th>
                                         <th width="10%">Tgl Pendaftaran</th>
-                                        <th class="text-center" width="10%">Aksi</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($intervensis as $index => $intervensi)
                                         <tr>
                                             <td class="text-center">{{ $index + 1 }}</td>
+                                            <td>{{ $intervensi->no_pendaftaran_kegiatan }}</td>
                                             <td>
                                                 <strong>{{ $intervensi->dataUmkm->pelakuUmkm->nama_lengkap }}</strong>
                                             </td>
                                             <td>{{ $intervensi->dataUmkm->nama_usaha }}</td>
-                                            <td>{{ $intervensi->dataUmkm->jenis_produk ?? '-' }}</td>
+
                                             <td>{{ $intervensi->dataUmkm->pelakuUmkm->no_telp ?? '-' }}</td>
                                             <td>{{ $intervensi->dataUmkm->alamat ?? '-' }}</td>
                                             <td>{{ \Carbon\Carbon::parse($intervensi->created_at)->format('d M Y') }}</td>
-                                            <td>
-                                                <div class="action-buttons text-center">
-                                                    <!-- Delete Button -->
-                                                    <form action="{{ route('peserta.destroy', $intervensi->id) }}"
-                                                        method="POST" class="d-inline"
-                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus peserta ini dari kegiatan?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger"
-                                                            data-toggle="tooltip" data-placement="top"
-                                                            title="Hapus Peserta">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
+
                                         </tr>
                                     @endforeach
                                 </tbody>

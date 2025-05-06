@@ -47,7 +47,7 @@ class DashboardController extends Controller
         // Data untuk card statistics
         $totalUmkm = Umkm::count();
         $totalKegiatan = Kegiatan::count();
-        $rataRataOmset = Omset::avg('total_omset') ?? 0;
+        $rataRataOmset = Intervensi::avg('omset') ?? 0;
 
         // Hitung jumlah UMKM dengan legalitas lengkap (memiliki minimal 5 dokumen legalitas)
         $umkmLegalitasLengkap = DB::table('legalitas')
@@ -224,15 +224,13 @@ class DashboardController extends Controller
         $umkmId = $dataUmkm->first()->id;
 
         // Data omset
-        $omsetBulanan = Omset::where('umkm_id', $umkmId)
-            ->where('jangka_waktu', 'bulanan')
-            ->orderBy('created_at', 'desc')
+        $omsetBulanan = Intervensi::where('umkm_id', $umkmId)
+            ->where('omset')
             ->first()
             ->total_omset ?? 0;
 
-        $omsetTahunan = Omset::where('umkm_id', $umkmId)
-            ->where('jangka_waktu', 'tahunan')
-            ->orderBy('created_at', 'desc')
+        $omsetTahunan = Intervensi::where('umkm_id', $umkmId)
+            ->where('omset')
             ->first()
             ->total_omset ?? 0;
 
@@ -245,8 +243,14 @@ class DashboardController extends Controller
 
         if ($legalitas) {
             $fields = [
-                'no_sk_nib', 'no_sk_siup', 'no_sk_tdp', 'no_sk_pirt',
-                'no_sk_bpom', 'no_sk_halal', 'no_sk_merek', 'no_sk_haki'
+                'no_sk_nib',
+                'no_sk_siup',
+                'no_sk_tdp',
+                'no_sk_pirt',
+                'no_sk_bpom',
+                'no_sk_halal',
+                'no_sk_merek',
+                'no_sk_haki'
             ];
 
             foreach ($fields as $field) {
@@ -255,6 +259,8 @@ class DashboardController extends Controller
                 }
             }
         }
+
+        $totalOmset = Intervensi::getTotalOmsetByUmkm($umkmId);
 
         // Data untuk chart omset
         $chartOmset = $this->getOmsetChartData($umkmId);
@@ -273,6 +279,7 @@ class DashboardController extends Controller
             'kegiatanDiikuti',
             'jumlahLegalitas',
             'legalitas',
+            'totalOmset',
             'chartOmset',
             'kegiatanMendatang'
         ));
@@ -480,13 +487,12 @@ class DashboardController extends Controller
             $data['labels'][] = $month;
 
             // Cari omset untuk bulan tersebut
-            $omset = Omset::where('umkm_id', $umkmId)
-                ->where('jangka_waktu', 'bulanan')
+            $monthlyOmset = Intervensi::where('umkm_id', $umkmId)
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
-                ->first();
+                ->sum('omset');
 
-            $data['values'][] = $omset ? $omset->total_omset : 0;
+            $data['values'][] = $monthlyOmset ?: 0;
         }
 
         return $data;
