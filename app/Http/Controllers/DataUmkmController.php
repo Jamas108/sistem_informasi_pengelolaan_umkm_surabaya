@@ -32,19 +32,22 @@ class DataUmkmController extends Controller
     {
         $pageTitle = 'Data UMKM';
 
+        $datapelakuumkms = PelakuUmkm::all();
+
+
         // Filter out UMKM with status 'ditolak'
-        $dataumkms = Umkm::with('pelakuUmkm', 'produkUmkm')
-            ->where('status', '!=', 'DITOLAK',)
-            ->where('status', '!=', 'Menunggu Verifikasi',)
-            ->get();
+        // $dataumkms = Umkm::with('pelakuUmkm', 'produkUmkm')
+        //     ->where('status', '!=', 'DITOLAK',)
+        //     ->where('status', '!=', 'Menunggu Verifikasi',)
+        //     ->get();
 
         $userRole = Auth::user()->role;
 
         // Menampilkan view yang berbeda berdasarkan role
         if ($userRole === 'adminkantor') {
-            return view('adminkantor.dataumkm.index', compact('dataumkms', 'pageTitle'));
+            return view('adminkantor.dataumkm.index', compact('datapelakuumkms', 'pageTitle'));
         } elseif ($userRole === 'adminlapangan') {
-            return view('adminlapangan.dataumkm.index', compact('dataumkms', 'pageTitle'));
+            return view('adminlapangan.dataumkm.index', compact('datapelakuumkms', 'pageTitle'));
         }
     }
 

@@ -95,27 +95,27 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <th class="text-center">No</th>
-                                            <th>NIK Pemilik</th>
-                                            <th>Nama Pemilik</th>
-                                            <th>Nama Usaha</th>
-                                            <th>Jenis Produk</th>
-                                            <th>Klasifikasi</th>
+                                            <th>NIK</th>
+                                            <th>Nama Lengkap</th>
+                                            <th>Kelurahan</th>
                                             <th>Alamat</th>
-                                            <th>Status</th>
+                                            {{-- <th></th>
+                                            <th>Alamat</th>
+                                            <th>Status</th> --}}
                                             <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($dataumkms as $dataumkm)
+                                        @foreach ($datapelakuumkms as $pelakuumkm)
                                         <tr>
                                             <td class="text-center">{{ $loop->iteration }}</td>
-                                            <td>{{ $dataumkm->pelakuUmkm->nik }}</td>
-                                            <td>{{ $dataumkm->pelakuUmkm->nama_lengkap }}</td>
-                                            <td>{{ $dataumkm->nama_usaha }}</td>
-                                            <td>{{ $dataumkm->jenis_produk }}</td>
-                                            <td>{{ $dataumkm->klasifikasi_kinerja_usaha }}</td>
-                                            <td>{{ $dataumkm->alamat }}</td>
-                                            <td>
+                                            <td>{{ $pelakuumkm->nik }}</td>
+                                            <td>{{ $pelakuumkm->nama_lengkap }}</td>
+                                            <td>{{ $pelakuumkm->kelurahan }}</td>
+                                            <td>{{ $pelakuumkm->alamat_sesuai_ktp }}</td>
+                                            {{-- <td>{{ $pelakuumkm-> }}</td>
+                                            <td>{{ $pelakuumkm->alamat }}</td> --}}
+                                            {{-- <td>
                                                 @switch($dataumkm->status)
                                                     @case('AKTIF')
                                                         <span class="badge badge-success status-badge">AKTIF</span>
@@ -126,15 +126,15 @@
                                                     @default
                                                         <span class="badge badge-secondary status-badge">{{ $dataumkm->status }}</span>
                                                 @endswitch
-                                            </td>
+                                            </td> --}}
                                             <td class="text-center">
                                                 <div class="btn-group btn-group-sm text-center" role="group">
-                                                    <a href="{{ route('dataumkm.show', $dataumkm->pelakuUmkm->id) }}"
+                                                    <a href="{{ route('dataumkm.show', $pelakuumkm->id) }}"
                                                     class="btn btn-sm btn-info btn-action mr-2"
                                                     title="Lihat Detail">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a href="{{ route('dataumkm.edit', $dataumkm->pelakuUmkm->id) }}"
+                                                    <a href="{{ route('dataumkm.edit', $pelakuumkm->id) }}"
                                                     class="btn btn-sm btn-warning btn-action"
                                                     title="Edit Data">
                                                         <i class="fas fa-edit"></i>

@@ -21,6 +21,18 @@
                 console.log("Test modal button clicked");
                 $('#editOmsetModal').modal('show');
             });
+
+            // Show rejection reason when status changes to DITOLAK
+            $('#status').on('change', function() {
+                if ($(this).val() === 'DITOLAK') {
+                    $('#rejection-reason-container').removeClass('d-none');
+                } else {
+                    $('#rejection-reason-container').addClass('d-none');
+                }
+            });
+
+            // Trigger the change event on page load to show/hide rejection reason field
+            $('#status').trigger('change');
         });
 
         $(document).ready(function() {
@@ -45,12 +57,13 @@
     @include('layouts.pelakuumkm.sidebar')
 
     <main class="main-content">
-        <div class="bg-primary text-white py-3 px-4 shadow-sm mb-4">
+        <div class=" text-white py-3 px-4 shadow-sm mb-4" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
             <div class="container-fluid">
                 <div class="row align-items-center">
                     <div class="col">
                         <h4 class="fw-bold mb-0">
-                            <i class="fas fa-edit me-2"></i>Edit Data UMKM
+                            <i class="fas fa-edit me-2"></i>
+                            <span class="ml-1">Detail Data UMKM</span>
                         </h4>
                     </div>
                 </div>
@@ -68,562 +81,205 @@
                         </div>
                     @endif
 
-                    <!-- Tab Navigation -->
-                    <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="pelaku-tab" data-bs-toggle="tab" data-bs-target="#pelaku"
-                                type="button" role="tab" aria-controls="pelaku" aria-selected="true" style="color: black">
-                                <i class="fas fa-user me-1"></i> Data Pelaku UMKM
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="umkm-tab" data-bs-toggle="tab" data-bs-target="#umkm"
-                                type="button" role="tab" aria-controls="umkm" aria-selected="false" style="color: black">
-                                <i class="fas fa-store me-1"></i> Data UMKM
-                            </button>
-                        </li>
-                    </ul>
+                    <!-- Display Rejection Reason If Status is DITOLAK -->
+                    @if ($umkm->status == 'DITOLAK' && !empty($umkm->alasan_penolakan))
+                        <div class="alert alert-danger mb-4">
+                            <h5 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>UMKM ini ditolak
+                                dengan alasan:</h5>
+                            <p class="mb-0">{!! nl2br(e($umkm->alasan_penolakan)) !!}</p>
+                        </div>
+                    @endif
 
-                    <!-- Tab Content -->
-                    <form action="{{ route('pelakukelolaumkm.update', $pelakuUmkm->id) }}" method="POST"
+                    <form action="{{ route('pelakukelolaumkm.update', $umkm->id) }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
-                        <div class="tab-content" id="myTabContent">
-                            <!-- Tab 1: Data Pelaku UMKM -->
-                            <!-- Tab 1: Data Pelaku UMKM (Revised) -->
-                            <div class="tab-pane fade show active" id="pelaku" role="tabpanel"
-                                aria-labelledby="pelaku-tab">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-header bg-gradient-primary text-white py-3">
-                                        <h5 class="m-0 font-weight-bold">Data Pelaku UMKM</h5>
+
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-gradient-primary text-white py-3">
+                                <h5 class="m-0 font-weight-bold">Detail UMKM</h5>
+                            </div>
+                            <div class="card-body p-4">
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <label for="nama_usaha" class="col-sm-4 col-form-label font-weight-bold">Nama
+                                                Usaha</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" id="nama_usaha" name="nama_usaha"
+                                                    value="{{ $umkm->nama_usaha }}" disabled>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="card-body p-4">
-                                        <div class="row mb-3">
-                                            <label for="nik_pemilik" class="col-sm-3 col-form-label font-weight-bold">NIK
-                                                Pemilik</label>
-                                            <div class="col-sm-9">
-                                                <input type="number" class="form-control" id="nik" name="nik"
-                                                    value="{{ $pelakuUmkm->nik }}" disabled>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <label for="alamat_usaha"
+                                                class="col-sm-4 col-form-label font-weight-bold">Alamat
+                                                Usaha</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" id="alamat_usaha" name="alamat"
+                                                    value="{{ $umkm->alamat }}" disabled>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div class="row mb-3">
-                                            <label for="nama_pemilik" class="col-sm-3 col-form-label font-weight-bold">Nama
-                                                Pemilik</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="nama_lengkap"
-                                                    name="nama_lengkap" value="{{ $pelakuUmkm->nama_lengkap }}" disabled>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <label for="pengelolaan_usaha"
+                                                class="col-sm-4 col-form-label font-weight-bold">Pengelolaan
+                                                Usaha</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" id="jumlah_tenaga_kerja"
+                                                name="pengelolaan_usaha" value="{{ $umkm->pengelolaan_usaha }}"
+                                                disabled>
                                             </div>
                                         </div>
-
-                                        <div class="row mb-3">
-                                            <label for="no_kk_pemilik" class="col-sm-3 col-form-label font-weight-bold">No
-                                                KK Pemilik</label>
-                                            <div class="col-sm-9">
-                                                <input type="number" class="form-control" id="no_kk" name="no_kk"
-                                                    value="{{ $pelakuUmkm->no_kk }}" disabled>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <label for="klasifikasi_kinerja_usaha"
+                                                class="col-sm-4 col-form-label font-weight-bold">Klasifikasi
+                                                Kinerja</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" id="jumlah_tenaga_kerja"
+                                                    name="klasifikasi_kinerja_usaha" value="{{ $umkm->klasifikasi_kinerja_usaha }}"
+                                                    disabled>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div class="row mb-3">
-                                            <label for="tempat_lahir"
-                                                class="col-sm-3 col-form-label font-weight-bold">Tempat Lahir</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="tempat_lahir"
-                                                    name="tempat_lahir" value="{{ $pelakuUmkm->tempat_lahir }}" disabled>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <label for="jumlah_tenaga_kerja"
+                                                class="col-sm-4 col-form-label font-weight-bold">Jumlah
+                                                Tenaga Kerja</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" id="jumlah_tenaga_kerja"
+                                                    name="jumlah_tenaga_kerja" value="{{ $umkm->jumlah_tenaga_kerja }}"
+                                                    disabled>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <label for="sektor_usaha"
+                                                class="col-sm-4 col-form-label font-weight-bold">Sektor
+                                                Usaha</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" id="sektor_usaha"
+                                                name="sektor_usaha" value="{{ $umkm->sektor_usaha }}"
+                                                disabled>
 
-                                        <div class="row mb-3">
-                                            <label for="tanggal_lahir"
-                                                class="col-sm-3 col-form-label font-weight-bold">Tanggal Lahir</label>
-                                            <div class="col-sm-9">
-                                                <input type="date" class="form-control" id="tgl_lahir"
-                                                    name="tgl_lahir" value="{{ $pelakuUmkm->tgl_lahir }}" disabled>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div class="row mb-3">
-                                            <label for="jenis_kelamin"
-                                                class="col-sm-3 col-form-label font-weight-bold">Jenis Kelamin</label>
-                                            <div class="col-sm-9">
-                                                <select class="form-control" id="jenis_kelamin" name="jenis_kelamin" disabled>
-                                                    <option value="Laki-laki"
-                                                        {{ $pelakuUmkm->jenis_kelamin == 'LAKI - LAKI' ? 'selected' : '' }}>
-                                                        Laki-laki</option>
-                                                    <option value="Perempuan"
-                                                        {{ $pelakuUmkm->jenis_kelamin == 'PEREMPUAN' ? 'selected' : '' }}>
-                                                        Perempuan</option>
-                                                </select>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <label for="status" class="col-sm-4 col-form-label font-weight-bold">Status
+                                                Keaktifan</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" id="status"
+                                                name="status" value="{{ $umkm->status }}"
+                                                disabled>
+
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div class="row mb-3">
-                                            <label for="status_hub_keluarga"
-                                                class="col-sm-3 col-form-label font-weight-bold">Status Hub.
-                                                Keluarga</label>
-                                            <div class="col-sm-9">
-                                                <select class="form-control" id="status_hubungan_keluarga"
-                                                    name="status_hubungan_keluarga" disabled>
-                                                    <option value="">-- Pilih Status --</option>
-                                                    <option value="ANAK"
-                                                        {{ $pelakuUmkm->status_hubungan_keluarga == 'ANAK' ? 'selected' : '' }}>
-                                                        ANAK</option>
-                                                    <option value="CUCU"
-                                                        {{ $pelakuUmkm->status_hubungan_keluarga == 'CUCU' ? 'selected' : '' }}>
-                                                        CUCU</option>
-                                                    <option value="ISTRI"
-                                                        {{ $pelakuUmkm->status_hubungan_keluarga == 'ISTRI' ? 'selected' : '' }}>
-                                                        ISTRI</option>
-                                                    <option value="SUAMI"
-                                                        {{ $pelakuUmkm->status_hubungan_keluarga == 'SUAMI' ? 'selected' : '' }}>
-                                                        SUAMI</option>
-                                                    <option value="KEPALA KELUARGA"
-                                                        {{ $pelakuUmkm->status_hubungan_keluarga == 'KEPALA KELUARGA' ? 'selected' : '' }}>
-                                                        KEPALA KELUARGA</option>
-                                                    <option value="MENANTU"
-                                                        {{ $pelakuUmkm->status_hubungan_keluarga == 'MENANTU' ? 'selected' : '' }}>
-                                                        MENANTU</option>
-                                                    <option value="MERTUA"
-                                                        {{ $pelakuUmkm->status_hubungan_keluarga == 'MERTUA' ? 'selected' : '' }}>
-                                                        MERTUA</option>
-                                                    <option value="ORANG TUA"
-                                                        {{ $pelakuUmkm->status_hubungan_keluarga == 'ORANG TUA' ? 'selected' : '' }}>
-                                                        ORANG TUA</option>
-                                                    <option value="FAMILI LAIN"
-                                                        {{ $pelakuUmkm->status_hubungan_keluarga == 'FAMILI LAIN' ? 'selected' : '' }}>
-                                                        FAMILI LAIN</option>
-                                                    <option value="LAINYA"
-                                                        {{ $pelakuUmkm->status_hubungan_keluarga == 'LAINYA' ? 'selected' : '' }}>
-                                                        LAINYA</option>
-                                                </select>
+                                <!-- Rejection Reason Field - Hidden by default, shown when status is DITOLAK -->
+                                <div id="rejection-reason-container"
+                                    class="row mb-3 {{ $umkm->status == 'DITOLAK' ? '' : 'd-none' }}">
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
+                                            <label for="alasan_penolakan"
+                                                class="col-sm-2 col-form-label font-weight-bold">Alasan Penolakan</label>
+                                            <div class="col-sm-10">
+                                                <textarea class="form-control" id="alasan_penolakan" name="alasan_penolakan" rows="4" disabled>{{ $umkm->alasan_penolakan ?? '' }}</textarea>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div class="row mb-3">
-                                            <label for="status" class="col-sm-3 col-form-label font-weight-bold">Status
-                                                Perkawinan</label>
-                                            <div class="col-sm-9">
-                                                <select class="form-control" id="status_perkawinan"
-                                                    name="status_perkawinan" disabled>
-                                                    <option value="">-- Pilih --</option>
-                                                    <option value="KAWIN"
-                                                        {{ $pelakuUmkm->status_perkawinan == 'KAWIN' ? 'selected' : '' }}>
-                                                        KAWIN</option>
-                                                    <option value="KAWIN BELUM TERCATAT"
-                                                        {{ $pelakuUmkm->status_perkawinan == 'KAWIN BELUM TERCATAT' ? 'selected' : '' }}>
-                                                        KAWIN BELUM TERCATAT</option>
-                                                    <option value="KAWIN TERCATAT"
-                                                        {{ $pelakuUmkm->status_perkawinan == 'KAWIN TERCATAT' ? 'selected' : '' }}>
-                                                        KAWIN TERCATAT</option>
-                                                    <option value="BELUM KAWIN"
-                                                        {{ $pelakuUmkm->status_perkawinan == 'BELUM KAWIN' ? 'selected' : '' }}>
-                                                        BELUM KAWIN</option>
-                                                    <option value="CERAI BELUM TERCATAT"
-                                                        {{ $pelakuUmkm->status_perkawinan == 'CERAI BELUM TERCATAT' ? 'selected' : '' }}>
-                                                        CERAI BELUM TERCATAT</option>
-                                                    <option value="CERAI HIDUP"
-                                                        {{ $pelakuUmkm->status_perkawinan == 'CERAI HIDUP' ? 'selected' : '' }}>
-                                                        CERAI HIDUP</option>
-                                                    <option value="CERAI MATI"
-                                                        {{ $pelakuUmkm->status_perkawinan == 'CERAI MATI' ? 'selected' : '' }}>
-                                                        CERAI MATI</option>
-                                                    <option value="CERAI TERCATAT"
-                                                        {{ $pelakuUmkm->status_perkawinan == 'CERAI TERCATAT' ? 'selected' : '' }}>
-                                                        CERAI TERCATAT</option>
-                                                </select>
-                                            </div>
-                                        </div>
+                                <input type="hidden" name="id" value="{{ $umkm->id }}">
+                                <div class="products-section mt-4 pt-3 border-top">
 
-                                        <div class="row mb-3">
-                                            <label for="alamat_sesuai_ktp"
-                                                class="col-sm-3 col-form-label font-weight-bold">Alamat Sesuai
-                                                KTP</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="alamat_sesuai_ktp"
-                                                    name="alamat_sesuai_ktp"
-                                                    value="{{ $pelakuUmkm->alamat_sesuai_ktp }}" disabled>
-                                            </div>
-                                        </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped"
+                                            id="products-table-{{ $umkm->id }}">
+                                            <thead class="bg-light">
+                                                <tr>
+                                                    <th class="text-center" width="5%">No</th>
+                                                    <th width="35%">Jenis Produk</th>
+                                                    <th width="35%">Tipe Produk</th>
+                                                    <th width="10%">Status</th>
 
-                                        <div class="row mb-3">
-                                            <label for="kelurahan_sesuai_ktp"
-                                                class="col-sm-3 col-form-label font-weight-bold">Kelurahan Sesuai
-                                                KTP</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="kelurahan"
-                                                    name="kelurahan" value="{{ $pelakuUmkm->kelurahan }}" disabled>
-                                            </div>
-                                        </div>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($umkm->produkUmkm as $index => $produk)
+                                                    <tr id="product-{{ $produk->id }}"
+                                                        data-product-id="{{ $produk->id }}">
+                                                        <td class="text-center">{{ $index + 1 }}
+                                                        </td>
+                                                        <td>{{ $produk->jenis_produk }}</td>
+                                                        <td>{{ $produk->tipe_produk }}</td>
+                                                        <td>
+                                                            @if ($produk->status == 'AKTIF')
+                                                                <span class="badge badge-success">AKTIF</span>
+                                                            @else
+                                                                <span class="badge badge-danger">TIDAK
+                                                                    AKTIF</span>
+                                                            @endif
+                                                        </td>
 
-                                        <div class="row mb-3">
-                                            <label for="rw"
-                                                class="col-sm-3 col-form-label font-weight-bold">RW</label>
-                                            <div class="col-sm-9">
-                                                <input type="number" class="form-control" id="rw" name="rw"
-                                                    value="{{ $pelakuUmkm->rw }}" disabled>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <label for="rt"
-                                                class="col-sm-3 col-form-label font-weight-bold">RT</label>
-                                            <div class="col-sm-9">
-                                                <input type="number" class="form-control" id="rt" name="rt"
-                                                    value="{{ $pelakuUmkm->rt }}" disabled>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <label for="telp"
-                                                class="col-sm-3 col-form-label font-weight-bold">Telp</label>
-                                            <div class="col-sm-9">
-                                                <input type="number" class="form-control" id="no_telp" name="no_telp"
-                                                    value="{{ $pelakuUmkm->no_telp }}" disabled>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <label for="pendidikan_terakhir"
-                                                class="col-sm-3 col-form-label font-weight-bold">Pendidikan
-                                                Terakhir</label>
-                                            <div class="col-sm-9">
-                                                <select class="form-control" id="pendidikan_terakhir"
-                                                    name="pendidikan_terakhir" disabled>
-                                                    <option value="">-- Pilih --</option>
-                                                    <option value="TIDAK/BELUM SEKOLAH"
-                                                        {{ $pelakuUmkm->pendidikan_terakhir == 'TIDAK/BELUM SEKOLAH' ? 'selected' : '' }}>
-                                                        TIDAK/BELUM SEKOLAH</option>
-                                                    <option value="BELUM TAMAT SD/SEDERAJAT"
-                                                        {{ $pelakuUmkm->pendidikan_terakhir == 'BELUM TAMAT SD/SEDERAJAT' ? 'selected' : '' }}>
-                                                        BELUM TAMAT SD/SEDERAJAT</option>
-                                                    <option value="TAMAT SD/SEDERAJAT"
-                                                        {{ $pelakuUmkm->pendidikan_terakhir == 'TAMAT SD/SEDERAJAT' ? 'selected' : '' }}>
-                                                        TAMAT SD/SEDERAJAT</option>
-                                                    <option value="SLTP/SEDERAJAT"
-                                                        {{ $pelakuUmkm->pendidikan_terakhir == 'SLTP/SEDERAJAT' ? 'selected' : '' }}>
-                                                        SLTP/SEDERAJAT</option>
-                                                    <option value="SLTA/SEDERAJAT"
-                                                        {{ $pelakuUmkm->pendidikan_terakhir == 'SLTA/SEDERAJAT' ? 'selected' : '' }}>
-                                                        SLTA/SEDERAJAT</option>
-                                                    <option value="DIPLOMA I/II"
-                                                        {{ $pelakuUmkm->pendidikan_terakhir == 'DIPLOMA I/II' ? 'selected' : '' }}>
-                                                        DIPLOMA I/II</option>
-                                                    <option value="AKADEMI/DIPLOMA III/S. MUDA"
-                                                        {{ $pelakuUmkm->pendidikan_terakhir == 'AKADEMI/DIPLOMA III/S. MUDA' ? 'selected' : '' }}>
-                                                        AKADEMI/DIPLOMA III/S. MUDA</option>
-                                                    <option value="DIPLOMA IV/STRATA I"
-                                                        {{ $pelakuUmkm->pendidikan_terakhir == 'DIPLOMA IV/STRATA I' ? 'selected' : '' }}>
-                                                        DIPLOMA IV/STRATA I</option>
-                                                    <option value="STRATA II"
-                                                        {{ $pelakuUmkm->pendidikan_terakhir == 'STRATA II' ? 'selected' : '' }}>
-                                                        STRATA II</option>
-                                                    <option value="STRATA III"
-                                                        {{ $pelakuUmkm->pendidikan_terakhir == 'STRATA III' ? 'selected' : '' }}>
-                                                        STRATA III</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <label for="status_keaktifan"
-                                                class="col-sm-3 col-form-label font-weight-bold">Status Keaktifan
-                                                Pelaku UMKM</label>
-                                            <div class="col-sm-9">
-                                                <select class="form-control" id="status_keaktifan"
-                                                    name="status_keaktifan" disabled>
-                                                    <option value="">-- Pilih --</option>
-                                                    <option value="AKTIF"
-                                                        {{ $pelakuUmkm->status_keaktifan == 'AKTIF' ? 'selected' : '' }}>
-                                                        AKTIF</option>
-                                                    <option value="TIDAK AKTIF"
-                                                        {{ $pelakuUmkm->status_keaktifan == 'TIDAK AKTIF' ? 'selected' : '' }}>
-                                                        TIDAK AKTIF</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                       
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="5" class="text-center">Belum
+                                                            ada produk untuk UMKM ini</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Tab 2: Data UMKM (Modified for Multiple Entries) -->
-                            <!-- Tab 2: Data UMKM (Enhanced Professional Design) -->
-                            <div class="tab-pane fade" id="umkm" role="tabpanel" aria-labelledby="umkm-tab">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-header bg-gradient-primary text-white py-3">
-                                        <h5 class="m-0 font-weight-bold">Data UMKM</h5>
-                                    </div>
-                                    <div class="card-body p-4">
-                                        <!-- Container for UMKM entries -->
-                                        <div id="umkm-entries-container">
-                                            @foreach ($pelakuUmkm->dataUmkm as $index => $umkm)
-                                                <div class="umkm-form-entry border rounded p-4 mb-4 shadow-sm"
-                                                    id="umkm-entry-{{ $index }}"
-                                                    data-umkm-id="{{ $index }}">
-                                                    <div
-                                                        class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                                                        <h5 class="m-0 umkm-number font-weight-bold text-primary">UMKM
-                                                            {{ $loop->iteration }}</h5>
-                                                        @if ($loop->count > 1)
-                                                        @endif
-                                                    </div>
-
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group row">
-                                                                <label for="nama_usaha_{{ $index }}"
-                                                                    class="col-sm-4 col-form-label font-weight-bold">Nama
-                                                                    Usaha</label>
-                                                                <div class="col-sm-8">
-                                                                    <input type="text" class="form-control"
-                                                                        id="nama_usaha_{{ $index }}"
-                                                                        name="umkm[{{ $index }}][nama_usaha]"
-                                                                        value="{{ $umkm->nama_usaha }}" disabled>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group row">
-                                                                <label for="alamat_usaha_{{ $index }}"
-                                                                    class="col-sm-4 col-form-label font-weight-bold">Alamat
-                                                                    Usaha</label>
-                                                                <div class="col-sm-8">
-                                                                    <input type="text" class="form-control"
-                                                                        id="alamat_usaha_{{ $index }}"
-                                                                        name="umkm[{{ $index }}][alamat]"
-                                                                        value="{{ $umkm->alamat }}" disabled>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group row">
-                                                                <label for="pengelolaan_usaha_{{ $index }}"
-                                                                    class="col-sm-4 col-form-label font-weight-bold">Pengelolaan
-                                                                    Usaha</label>
-                                                                <div class="col-sm-8">
-                                                                    <select class="form-control"
-                                                                        id="pengelolaan_usaha_{{ $index }}"
-                                                                        name="umkm[{{ $index }}][pengelolaan_usaha]" disabled>
-                                                                        <option value="">-- Pilih --</option>
-                                                                        <option value="PERSEORANGAN / MANDIRI"
-                                                                            {{ $umkm->pengelolaan_usaha == 'PERSEORANGAN / MANDIRI' ? 'selected' : '' }}>
-                                                                            PERSEORANGAN / MANDIRI</option>
-                                                                        <option value="KELOMPOK / SUBKON / KERJASAMA"
-                                                                            {{ $umkm->pengelolaan_usaha == 'KELOMPOK / SUBKON / KERJASAMA' ? 'selected' : '' }}>
-                                                                            KELOMPOK / SUBKON / KERJASAMA</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group row">
-                                                                <label for="klasifikasi_kinerja_usaha_{{ $index }}"
-                                                                    class="col-sm-4 col-form-label font-weight-bold">Klasifikasi
-                                                                    Kinerja</label>
-                                                                <div class="col-sm-8">
-                                                                    <select class="form-control"
-                                                                        id="klasifikasi_kinerja_usaha_{{ $index }}"
-                                                                        name="umkm[{{ $index }}][klasifikasi_kinerja_usaha]" disabled>
-                                                                        <option value="">-- Pilih --</option>
-                                                                        <option value="PEMULA"
-                                                                            {{ $umkm->klasifikasi_kinerja_usaha == 'PEMULA' ? 'selected' : '' }}>
-                                                                            PEMULA</option>
-                                                                        <option value="MADYA"
-                                                                            {{ $umkm->klasifikasi_kinerja_usaha == 'MADYA' ? 'selected' : '' }}>
-                                                                            MADYA</option>
-                                                                        <option value="MANDIRI"
-                                                                            {{ $umkm->klasifikasi_kinerja_usaha == 'MANDIRI' ? 'selected' : '' }}>
-                                                                            MANDIRI</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group row">
-                                                                <label for="jumlah_tenaga_kerja_{{ $index }}"
-                                                                    class="col-sm-4 col-form-label font-weight-bold">Jumlah
-                                                                    Tenaga Kerja</label>
-                                                                <div class="col-sm-8">
-                                                                    <input type="number" class="form-control"
-                                                                        id="jumlah_tenaga_kerja_{{ $index }}"
-                                                                        name="umkm[{{ $index }}][jumlah_tenaga_kerja]"
-                                                                        value="{{ $umkm->jumlah_tenaga_kerja }}" disabled>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group row">
-                                                                <label for="sektor_usaha_{{ $index }}"
-                                                                    class="col-sm-4 col-form-label font-weight-bold">Sektor
-                                                                    Usaha</label>
-                                                                <div class="col-sm-8">
-                                                                    <select class="form-control"
-                                                                        id="sektor_usaha_{{ $index }}"
-                                                                        name="umkm[{{ $index }}][sektor_usaha]" disabled>
-                                                                        <option value="">-- Pilih --</option>
-                                                                        <option value="INDUSTRI"
-                                                                            {{ $umkm->sektor_usaha == 'INDUSTRI' ? 'selected' : '' }}>
-                                                                            INDUSTRI</option>
-                                                                        <option value="DAGANG"
-                                                                            {{ $umkm->sektor_usaha == 'DAGANG' ? 'selected' : '' }}>
-                                                                            DAGANG</option>
-                                                                        <option value="JASA"
-                                                                            {{ $umkm->sektor_usaha == 'JASA' ? 'selected' : '' }}>
-                                                                            JASA</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group row">
-                                                                <label for="status_{{ $index }}"
-                                                                    class="col-sm-4 col-form-label font-weight-bold">Status
-                                                                    Keaktifan</label>
-                                                                <div class="col-sm-8">
-                                                                    <select class="form-control"
-                                                                        id="status_{{ $index }}"
-                                                                        name="umkm[{{ $index }}][status]" disabled>
-                                                                        <option value="">-- Pilih --</option>
-                                                                        <option value="AKTIF"
-                                                                            {{ $umkm->status == 'AKTIF' ? 'selected' : '' }}>
-                                                                            AKTIF</option>
-                                                                        <option value="TIDAK AKTIF"
-                                                                            {{ $umkm->status == 'TIDAK AKTIF' ? 'selected' : '' }}>
-                                                                            TIDAK AKTIF</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <input type="hidden" name="umkm[{{ $index }}][id]"
-                                                        value="{{ $umkm->id }}">
-                                                    <div class="products-section mt-4 pt-3 border-top">
-                                                        <div
-                                                            class="d-flex justify-content-between align-items-center mb-3">
-                                                            <h5 class="m-0 font-weight-bold text-primary">Produk UMKM</h5>
-
-                                                        </div>
-
-                                                        <div class="table-responsive">
-                                                            <table class="table table-bordered table-striped"
-                                                                id="products-table-show{{ $umkm->id }}">
-                                                                <thead class="bg-light">
-                                                                    <tr>
-                                                                        <th class="text-center" width="5%">No</th>
-                                                                        <th width="35%">Jenis Produk</th>
-                                                                        <th width="35%">Tipe Produk</th>
-                                                                        <th width="10%">Status</th>
-
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @forelse($umkm->produkUmkm as $index => $produk)
-                                                                        <tr id="product-{{ $produk->id }}"
-                                                                            data-product-id="{{ $produk->id }}">
-                                                                            <td class="text-center">{{ $index + 1 }}
-                                                                            </td>
-                                                                            <td>{{ $produk->jenis_produk }}</td>
-                                                                            <td>{{ $produk->tipe_produk }}</td>
-                                                                            <td>
-                                                                                @if ($produk->status == 'AKTIF')
-                                                                                    <span
-                                                                                        class="badge badge-success">AKTIF</span>
-                                                                                @else
-                                                                                    <span class="badge badge-danger">TIDAK
-                                                                                        AKTIF</span>
-                                                                                @endif
-                                                                            </td>
-
-                                                                        </tr>
-                                                                    @empty
-                                                                        <tr>
-                                                                            <td colspan="5" class="text-center">Belum
-                                                                                ada produk untuk UMKM ini</td>
-                                                                        </tr>
-                                                                    @endforelse
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-
-
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
-        <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header bg-gradient-primary text-white">
-                        <h5 class="modal-title" id="addProductModalLabel">Tambah Produk</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="add-product-form-edit">
-                            @csrf
-                            <input type="hidden" id="add_product_umkm_id" name="umkm_id">
-                            <input type="hidden" id="product_id" name="id" value="">
-                            <input type="hidden" id="editing_mode" value="add">
-                            <input type="hidden" id="is_temp_product" value="0">
-
-                            <div class="form-group">
-                                <label for="add_product_jenis" class="font-weight-bold">Jenis Produk</label>
-                                <input type="text" class="form-control" id="add_product_jenis" name="jenis_produk" required>
-                                <div class="invalid-feedback">Jenis produk wajib diisi</div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="add_product_tipe" class="font-weight-bold">Tipe Produk</label>
-                                <select class="form-control" id="add_product_tipe" name="tipe_produk" required>
-                                    <option value="Makanan dan Minuman">Makanan dan Minuman</option>
-                                    <option value="Makanan">Makanan</option>
-                                    <option value="Minuman">Minuman</option>
-                                    <option value="Fashion">Fashion</option>
-                                    <option value="Handycraft">Handycraft</option>
-                                    <option value="Lainya">Lainya</option>
-                                </select>
-                                <div class="invalid-feedback">Tipe produk wajib diisi</div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="add_product_status" class="font-weight-bold">Status</label>
-                                <select class="form-control" id="add_product_status" name="status" required>
-                                    <option value="AKTIF">AKTIF</option>
-                                    <option value="TIDAK AKTIF">TIDAK AKTIF</option>
-                                </select>
-                                <div class="invalid-feedback">Status wajib dipilih</div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="submit" form="add-product-form-edit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </main>
+    <style>
+        .main-content {
+            margin-left: 220px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+        }
 
+        /* Style for rejection reason display */
+        .alert-danger h5 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-success {
+            background-color: #28a745 !important;
+            color: white;
+        }
+
+        .badge-danger {
+            background-color: #dc3545 !important;
+            color: white;
+        }
+    </style>
 @endsection

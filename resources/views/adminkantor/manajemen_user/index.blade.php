@@ -46,9 +46,9 @@
                     }
                 },
                 columnDefs: [
-                    { 
-                        targets: [-1], 
-                        orderable: false 
+                    {
+                        targets: [-1],
+                        orderable: false
                     }
                 ]
             });
@@ -73,12 +73,6 @@
                         <i class="fas fa-users mr-2 text-primary"></i>Manajemen Pengguna
                     </h1>
                     <div class="btn-group" role="group" aria-label="Data Actions">
-                        <a href="#" class="btn btn-success btn-icon-split">
-                            <span class="icon text-white-50">
-                                <i class="fas fa-file-export"></i>
-                            </span>
-                            <span class="text">Export Data</span>
-                        </a>
                         <button type="button" class="btn btn-primary btn-icon-split ml-2" data-toggle="modal" data-target="#tambahUserModal">
                             <span class="icon text-white-50">
                                 <i class="fas fa-plus"></i>
@@ -107,7 +101,6 @@
                                 <thead class="thead-light">
                                     <tr>
                                         <th class="text-center">No</th>
-                                        <th>NIK</th>
                                         <th>Username</th>
                                         <th>Role</th>
                                         <th class="text-center">Aksi</th>
@@ -117,7 +110,7 @@
                                     @foreach ($datauser as $manajemenuser)
                                         <tr>
                                             <td class="text-center">{{ $loop->iteration }}</td>
-                                            <td>{{ $manajemenuser->nik }}</td>
+
                                             <td>{{ $manajemenuser->username }}</td>
                                             <td>
                                                 @switch($manajemenuser->role)
@@ -133,23 +126,23 @@
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-group btn-group-sm" role="group">
-                                                    <a href="{{ route('manajemenuser.show', $manajemenuser->id) }}" 
-                                                       class="btn btn-info btn-action mr-2" 
+                                                    <a href="{{ route('manajemenuser.show', $manajemenuser->id) }}"
+                                                       class="btn btn-info btn-action mr-2"
                                                        title="Lihat Detail">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a href="{{ route('manajemenuser.edit', $manajemenuser->id) }}" 
-                                                       class="btn btn-warning btn-action" 
+                                                    <a href="{{ route('manajemenuser.edit', $manajemenuser->id) }}"
+                                                       class="btn btn-warning btn-action"
                                                        title="Edit Data">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <form action="{{ route('manajemenuser.destroy', $manajemenuser->id) }}" 
-                                                          method="POST" 
+                                                    <form action="{{ route('manajemenuser.destroy', $manajemenuser->id) }}"
+                                                          method="POST"
                                                           class="d-inline delete-form">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" 
-                                                                class="btn btn-danger btn-action ml-2" 
+                                                        <button type="submit"
+                                                                class="btn btn-danger btn-action ml-2"
                                                                 title="Hapus Data">
                                                             <i class="fas fa-trash"></i>
                                                         </button>

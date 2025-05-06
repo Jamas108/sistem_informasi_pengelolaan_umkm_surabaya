@@ -148,20 +148,6 @@ class ManajemenUserController extends Controller
         // Validasi data
         $validator = Validator::make($request->all(), [
             'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($id)],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
-            'nik' => ['required', 'string', 'max:16', Rule::unique('pelaku_umkm')->ignore($detailUser->id)],
-            'no_kk' => ['required', 'string', 'max:16'],
-            'tempat_lahir' => ['required', 'string', 'max:255'],
-            'tgl_lahir' => ['required', 'date'],
-            'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
-            'status_hubungan_keluarga' => ['required', 'string', 'max:255'],
-            'status_perkawinan' => ['required', 'string', 'max:255'],
-            'alamat_sesuai_ktp' => ['required', 'string', 'max:255'],
-            'kelurahan' => ['required', 'string', 'max:255'],
-            'rt' => ['required', 'integer'],
-            'rw' => ['required', 'integer'],
-            'no_telp' => ['required', 'string', 'max:15'],
-            'pendidikan_terakhir' => ['required', 'string', 'max:255'],
             'role' => ['required', 'string', 'in:adminkantor,adminlapangan'],
         ]);
 
@@ -190,23 +176,6 @@ class ManajemenUserController extends Controller
                 }
 
                 $user->save();
-
-                // Update tabel pelaku_umkm
-                $detailUser->nama_lengkap = $request->nama_lengkap;
-                $detailUser->nik = $request->nik;
-                $detailUser->no_kk = $request->no_kk;
-                $detailUser->tempat_lahir = $request->tempat_lahir;
-                $detailUser->tgl_lahir = $request->tgl_lahir;
-                $detailUser->jenis_kelamin = $request->jenis_kelamin;
-                $detailUser->status_hubungan_keluarga = $request->status_hubungan_keluarga;
-                $detailUser->status_perkawinan = $request->status_perkawinan;
-                $detailUser->kelurahan = $request->kelurahan;
-                $detailUser->rt = $request->rt;
-                $detailUser->rw = $request->rw;
-                $detailUser->alamat_sesuai_ktp = $request->alamat_sesuai_ktp;
-                $detailUser->no_telp = $request->no_telp;
-                $detailUser->pendidikan_terakhir = $request->pendidikan_terakhir;
-                $detailUser->save();
             });
 
             return redirect()

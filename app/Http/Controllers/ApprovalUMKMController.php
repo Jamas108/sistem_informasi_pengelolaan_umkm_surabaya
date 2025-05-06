@@ -113,12 +113,20 @@ class ApprovalUMKMController extends Controller
      */
     public function reject(Request $request, string $id)
     {
+        // Validate the request
+        $request->validate([
+            'alasan_penolakan' => 'required|string|max:500',
+        ], [
+            'alasan_penolakan.required' => 'Alasan penolakan harus diisi.',
+            'alasan_penolakan.max' => 'Alasan penolakan maksimal 500 karakter.',
+        ]);
 
         try {
             DB::beginTransaction();
 
             $umkm = Umkm::findOrFail($id);
             $umkm->status = 'DITOLAK';
+            $umkm->alasan_penolakan = $request->alasan_penolakan;
             $umkm->save();
 
             DB::commit();

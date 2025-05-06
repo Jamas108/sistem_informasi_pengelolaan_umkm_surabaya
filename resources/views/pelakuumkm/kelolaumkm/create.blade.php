@@ -7,7 +7,7 @@
     @include('layouts.pelakuumkm.sidebar')
     <main class="main-content">
         <!-- Header Section -->
-        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background-color: #5281ab">
+        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
             <div class="container-fluid d-flex justify-content-between align-items-center">
                 <div>
                     <h4 class="fw-bold mb-0">
@@ -133,7 +133,7 @@
                                 <div class="row mb-3">
                                     <label for="product-jenis" class="col-sm-3 col-form-label">Jenis Produk</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="product-jenis" required>
+                                        <input type="text" class="form-control" id="product-jenis" placeholder="Masukan Jenis Produk" required>
                                     </div>
                                 </div>
 
@@ -141,6 +141,7 @@
                                     <label for="product-tipe" class="col-sm-3 col-form-label">Tipe Produk</label>
                                     <div class="col-sm-9">
                                         <select class="form-control" id="product-tipe" required>
+                                            <option value="">Pilih Jenis Produk</option>
                                             <option value="Makanan dan Minuman">Makanan dan Minuman</option>
                                             <option value="Makanan">Makanan</option>
                                             <option value="Minuman">Minuman</option>

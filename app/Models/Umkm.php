@@ -20,6 +20,7 @@ class Umkm extends Model
         'klasifikasi_kinerja_usaha',
         'pengelolaan_usaha',
         'sektor_usaha',
+        'alasan_penolakan',
 
 
     ];

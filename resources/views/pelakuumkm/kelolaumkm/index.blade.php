@@ -121,15 +121,18 @@
                                         </td>
                                         <td>
                                             <div class="d-flex justify-content-center gap-2">
-                                                <a href="{{route('pelakukelolaumkm.show', $umkm->pelakuUmkm->id)}}" class="btn btn-sm btn-outline-primary"
-                                                    data-bs-toggle="tooltip" title="Lihat Detail">
+                                                <a href="{{ route('pelakukelolaumkm.show', $umkm->id) }}"
+                                                    class="btn btn-sm btn-outline-primary mr-2" data-bs-toggle="tooltip"
+                                                    title="Lihat Detail">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('pelakukelolaumkm.edit', $umkm->pelakuUmkm->id) }}"
-                                                    class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip"
-                                                    title="Edit UMKM">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
+                                                @if ($umkm->status != 'DITOLAK')
+                                                    <a href="{{ route('pelakukelolaumkm.edit', $umkm->id) }}"
+                                                        class="btn btn-sm btn-outline-warning mr-2" data-bs-toggle="tooltip"
+                                                        title="Edit UMKM">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                @endif
                                                 <form action="" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')

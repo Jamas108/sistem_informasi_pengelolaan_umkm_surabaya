@@ -120,15 +120,6 @@ class LegalitasController extends Controller
             // Validate the request
             $validated = $request->validate([
                 'umkm_id' => 'required|exists:umkm,id',
-                'no_sk_nib' => 'nullable|string|max:100',
-                'no_sk_siup' => 'nullable|string|max:100',
-                'no_sk_tdp' => 'nullable|string|max:100',
-                'no_sk_pirt' => 'nullable|string|max:100',
-                'no_sk_bpom' => 'nullable|string|max:100',
-                'no_sk_halal' => 'nullable|string|max:100',
-                'no_sk_merek' => 'nullable|string|max:100',
-                'no_sk_haki' => 'nullable|string|max:100',
-                'no_surat_keterangan' => 'nullable|string|max:100',
             ]);
 
             Log::info('Legalitas validation passed', ['validated_data' => $validated]);
@@ -240,15 +231,6 @@ class LegalitasController extends Controller
             // Validate the request
             $validated = $request->validate([
                 'umkm_id' => 'required|exists:umkm,id',
-                'no_sk_nib' => 'nullable|string|max:100',
-                'no_sk_siup' => 'nullable|string|max:100',
-                'no_sk_tdp' => 'nullable|string|max:100',
-                'no_sk_pirt' => 'nullable|string|max:100',
-                'no_sk_bpom' => 'nullable|string|max:100',
-                'no_sk_halal' => 'nullable|string|max:100',
-                'no_sk_merek' => 'nullable|string|max:100',
-                'no_sk_haki' => 'nullable|string|max:100',
-                'no_surat_keterangan' => 'nullable|string|max:100',
             ]);
 
             Log::info('Legalitas update validation passed', ['validated_data' => $validated]);

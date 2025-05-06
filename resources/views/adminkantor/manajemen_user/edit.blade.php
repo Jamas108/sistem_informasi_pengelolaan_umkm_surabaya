@@ -30,7 +30,7 @@
                             <input type="hidden" name="role" value="{{ $user->role }}">
 
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="card mb-4">
                                         <div class="card-header bg-primary text-white">
                                             <h5 class="mb-0">Data Akun</h5>
@@ -58,31 +58,9 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="col-md-6">
-                                    <div class="card mb-4">
-                                        <div class="card-header bg-success text-white">
-                                            <h5 class="mb-0">Data Pribadi</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="form-group">
-                                                <label for="nama_lengkap">Nama Lengkap <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap', $detailUser->nama_lengkap) }}" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="nik">NIK <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" id="nik" name="nik" value="{{ old('nik', $detailUser->nik) }}" required maxlength="16">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="no_kk">Nomor KK <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" id="no_kk" name="no_kk" value="{{ old('no_kk', $detailUser->no_kk) }}" required maxlength="16">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
-                        
+
 
                             <div class="text-center mt-4">
                                 <a href="{{ route('manajemenuser.index') }}" class="btn btn-secondary mr-2">Kembali</a>

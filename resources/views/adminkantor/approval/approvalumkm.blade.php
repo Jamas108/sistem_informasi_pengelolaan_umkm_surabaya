@@ -23,6 +23,31 @@
         }
     </style>
 @endpush
+@push('scripts')
+    <script>
+        $('#rejectionModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var umkmId = button.data('umkm-id');
+            var url = button.data('url');
+
+            var modal = $(this);
+            modal.find('#rejectionForm').attr('action', url);
+        });
+
+        // Form validation before submission
+        $('#rejectionForm').submit(function(e) {
+            var reason = $('#alasan_penolakan').val().trim();
+
+            if (!reason) {
+                e.preventDefault();
+                alert('Alasan penolakan harus diisi!');
+                return false;
+            }
+
+            return confirm('Apakah Anda yakin ingin menolak pengajuan UMKM ini?');
+        });
+    </script>
+@endpush
 
 @push('scripts')
     <script type="module">
@@ -67,7 +92,7 @@
                     <h1 class="h3 mb-0 text-gray-800">
                         <i class="fas fa-store-alt mr-2 text-primary"></i>Persetujuan Pengajuan UMKM
                     </h1>
-                    
+
                 </div>
 
                 <div class="card shadow mb-4">
@@ -140,9 +165,11 @@
                                                         method="POST" class="d-inline">
                                                         @csrf
                                                         @method('PUT')
-                                                        <button type="submit" class="btn btn-sm btn-danger btn-action ml-2"
-                                                            title="Setujui Pengajuan"
-                                                            onclick="return confirm('Apakah Anda yakin ingin Menolak pengajuan UMKM ini?')">
+                                                        <button type="button" class="btn btn-sm btn-danger btn-action ml-2"
+                                                            title="Tolak Pengajuan" data-toggle="modal"
+                                                            data-target="#rejectionModal"
+                                                            data-umkm-id="{{ $dataumkm->id }}"
+                                                            data-url="{{ route('approval.reject', $dataumkm->id) }}">
                                                             <i class="fas fa-times"></i>
                                                         </button>
                                                     </form>
@@ -154,6 +181,36 @@
                             </table>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="rejectionModal" tabindex="-1" role="dialog" aria-labelledby="rejectionModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="rejectionModalLabel">Alasan Penolakan UMKM</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="rejectionForm" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="alasan_penolakan">Alasan Penolakan <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="alasan_penolakan" name="alasan_penolakan" rows="4" required></textarea>
+                                <small class="form-text text-muted">Berikan alasan yang jelas mengapa pengajuan UMKM ini
+                                    ditolak.</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-danger">Tolak Pengajuan</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

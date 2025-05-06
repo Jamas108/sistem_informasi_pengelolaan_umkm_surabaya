@@ -140,12 +140,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                        <a href="{{ route('pelakukelolaintervensi.index') }}"
-                            class="btn btn-outline-light d-inline-flex align-items-center">
-                            <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar
-                        </a>
-                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -199,7 +194,7 @@
                                             <div class="position-relative">
                                                 <select class="form-control" id="umkm_id" name="umkm_id" required>
                                                     <option value="">Pilih UMKM yang akan diintervensi</option>
-                                                    @foreach ($umkms as $umkm)
+                                                    @foreach ($umkms->where('status', 'AKTIF') as $umkm)
                                                         <option value="{{ $umkm->id }}"
                                                             data-sector="{{ $umkm->sektor_usaha }}"
                                                             {{ old('umkm_id') == $umkm->id ? 'selected' : '' }}>
