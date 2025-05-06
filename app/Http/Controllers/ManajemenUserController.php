@@ -119,13 +119,10 @@ class ManajemenUserController extends Controller
     {
         $pageTitle = 'Edit User';
         $user = User::findOrFail($id);
-        $detailUser = PelakuUmkm::where('users_id', $id)->first();
 
-        if (!$detailUser) {
-            return redirect()->route('manajemenuser.index')->with('error', 'Data detail user tidak ditemukan');
-        }
 
-        return view('adminkantor.manajemen_user.edit', compact('user', 'detailUser', 'pageTitle'));
+
+        return view('adminkantor.manajemen_user.edit', compact('user', 'pageTitle'));
     }
 
     /**
