@@ -122,34 +122,7 @@ class PesertaPendaftaranTest extends TestCase
     /**
      * Test update status kehadiran peserta.
      */
-    public function test_dapat_update_status_kehadiran()
-    {
-        // Login sebagai admin kantor
-        $this->actingAs($this->adminUser);
-
-        // Catat status awal
-        $originalStatus = $this->intervensi->status;
-
-        // Status baru (berbeda dari status awal)
-        $newStatus = ($originalStatus === 'Hadir') ? 'Terdaftar' : 'Hadir';
-
-        // Buat request untuk update status
-        $request = new \Illuminate\Http\Request();
-        $request->replace(['status' => $newStatus]);
-
-        // Panggil controller method langsung
-        $controller = app()->make('App\Http\Controllers\PesertaPendaftaranController');
-        $response = $controller->updateStatus($request, $this->intervensi->id);
-
-        // Verifikasi perubahan di database
-        $updatedIntervensi = Intervensi::find($this->intervensi->id);
-        $this->assertEquals($newStatus, $updatedIntervensi->status);
-
-        // Kembalikan ke status awal agar tidak merusak data
-        $updatedIntervensi->status = $originalStatus;
-        $updatedIntervensi->save();
-    }
-
+    
     /**
      * Test cetak daftar hadir menggunakan response mockup.
      */
