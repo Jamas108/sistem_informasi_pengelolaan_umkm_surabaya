@@ -270,9 +270,7 @@
                             </div>
 
                             <div class="d-sm-flex align-items-center justify-content-center my-4">
-                                <button type="button" class="btn btn-primary btn-md" id="add-umkm-btn">
-                                    <i class="fas fa-plus-circle mr-2"></i> Tambah UMKM Baru
-                                </button>
+
                                 <button type="submit" class="btn btn-success btn-md ml-2">
                                     <i class="fas fa-save mr-2"></i> Simpan Perubahan
                                 </button>
@@ -302,7 +300,7 @@
 
                                 <div class="form-group">
                                     <label for="add_product_jenis" class="font-weight-bold">Jenis Produk</label>
-                                    <input type="text" class="form-control" id="add_product_jenis"
+                                    <input type="text" class="form-control" id="add_product_jenis" placeholder="Masukan Jenis Produk"
                                         name="jenis_produk" required>
                                     <div class="invalid-feedback">Jenis produk wajib diisi</div>
                                 </div>

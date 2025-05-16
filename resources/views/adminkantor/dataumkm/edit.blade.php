@@ -1732,7 +1732,7 @@
 
                             <div class="form-group">
                                 <label for="add_product_jenis" class="font-weight-bold">Jenis Produk</label>
-                                <input type="text" class="form-control" id="add_product_jenis" name="jenis_produk"
+                                <input type="text" class="form-control" id="add_product_jenis" name="jenis_produk" placeholder="Masukan Jenis Produk"
                                     required>
                                 <div class="invalid-feedback">Jenis produk wajib diisi</div>
                             </div>
@@ -1740,6 +1740,7 @@
                             <div class="form-group">
                                 <label for="add_product_tipe" class="font-weight-bold">Tipe Produk</label>
                                 <select class="form-control" id="add_product_tipe" name="tipe_produk" required>
+                                    <option value="" selected>-- Pilih Tipe Produk --</option>
                                     <option value="Makanan dan Minuman">Makanan dan Minuman</option>
                                     <option value="Makanan">Makanan</option>
                                     <option value="Minuman">Minuman</option>

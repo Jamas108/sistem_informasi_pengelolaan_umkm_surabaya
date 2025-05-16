@@ -238,7 +238,7 @@ $(document).ready(function () {
                         <div class="form-group row">
                             <label for="nama_usaha_${currentIndex}" class="col-sm-4 col-form-label font-weight-bold">Nama Usaha <span class="text-danger">*</span></label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control required-field" id="nama_usaha_${currentIndex}" name="umkm[${currentIndex}][nama_usaha]" value="">
+                                <input type="text" class="form-control required-field" id="nama_usaha_${currentIndex}" placehorder="Masukan Nama Usaha" name="umkm[${currentIndex}][nama_usaha]" value="">
                                 <div class="invalid-feedback">Nama usaha wajib diisi</div>
                             </div>
                         </div>

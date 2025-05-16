@@ -30,26 +30,43 @@ class DataUmkmController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function index()
+    public function index(Request $request)
     {
         $pageTitle = 'Data UMKM';
+        $query = PelakuUmkm::query();
 
-        $datapelakuumkms = PelakuUmkm::all();
+        // Log nilai filter kelurahan yang diterima dari form
+        Log::info('Filter Kelurahan: ' . $request->kelurahan);  // Menulis nilai kelurahan yang dikirim ke log
 
+        // Filter berdasarkan kelurahan
+        if ($request->filled('kelurahan')) {
+            $query->where('kelurahan', $request->kelurahan);
+        }
 
-        // Filter out UMKM with status 'ditolak'
-        // $dataumkms = Umkm::with('pelakuUmkm', 'produkUmkm')
-        //     ->where('status', '!=', 'DITOLAK',)
-        //     ->where('status', '!=', 'Menunggu Verifikasi',)
-        //     ->get();
+        // Filter berdasarkan nama lengkap
+        if ($request->filled('nama')) {
+            $query->where('nama_lengkap', 'like', '%' . $request->nama . '%');
+        }
+
+        // Filter berdasarkan status_keaktifan
+        if ($request->filled('status_keaktifan')) {
+            $query->where('status_keaktifan', $request->status_keaktifan);
+        }
+
+        $datapelakuumkms = $query->get();
+
+        // Membaca data kelurahan dari file JSON
+        $kelurahanData = json_decode(file_get_contents(public_path('data/kelurahan_sby.json')), true);
+
+        // Extract nama kelurahan dan id untuk dropdown
+        $kelurahanList = collect($kelurahanData)->pluck('nama', 'id')->toArray();
 
         $userRole = Auth::user()->role;
 
-        // Menampilkan view yang berbeda berdasarkan role
         if ($userRole === 'adminkantor') {
-            return view('adminkantor.dataumkm.index', compact('datapelakuumkms', 'pageTitle'));
+            return view('adminkantor.dataumkm.index', compact('datapelakuumkms', 'pageTitle', 'kelurahanList'));
         } elseif ($userRole === 'adminlapangan') {
-            return view('adminlapangan.dataumkm.index', compact('datapelakuumkms', 'pageTitle'));
+            return view('adminlapangan.dataumkm.index', compact('datapelakuumkms', 'pageTitle', 'kelurahanList'));
         }
     }
 
@@ -452,7 +469,7 @@ class DataUmkmController extends Controller
             }
 
             // Check if NIK exists in the pelaku_umkm table
-            $pelakuUmkm = \App\Models\PelakuUmkm::where('nik', $nik)->first();
+            $pelakuUmkm = \App\Models\User::where('nik', $nik)->first();
 
             if ($pelakuUmkm) {
                 return response()->json([
@@ -516,19 +533,19 @@ class DataUmkmController extends Controller
     }
 
     public function exportUmkm()
-{
-    try {
-        Log::info('Starting UMKM data export');
+    {
+        try {
+            Log::info('Starting UMKM data export');
 
-        return Excel::download(new UmkmCompleteExport(), 'data_umkm_' . date('YmdHis') . '.xlsx');
-    } catch (\Exception $e) {
-        Log::error('Error exporting UMKM data', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
+            return Excel::download(new UmkmCompleteExport(), 'data_umkm_' . date('YmdHis') . '.xlsx');
+        } catch (\Exception $e) {
+            Log::error('Error exporting UMKM data', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
-        return redirect()->back()
-            ->with('error', 'Terjadi kesalahan saat mengekspor data: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat mengekspor data: ' . $e->getMessage());
+        }
     }
-}
 }

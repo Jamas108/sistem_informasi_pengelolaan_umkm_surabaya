@@ -25,41 +25,43 @@
 
 
             <!-- Search & Filter Section -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-3">
-                    <div class="row g-3 align-items-center">
-                        <div class="col-lg-4 col-md-4">
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0"><i
-                                        class="fas fa-search text-muted"></i></span>
-                                <input type="text" class="form-control border-start-0" id="searchUMKM"
-                                    placeholder="Cari UMKM...">
+            <form method="GET" action="{{ route('pelakukelolaumkm.index') }}">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-3">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-lg-4 col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i
+                                            class="fas fa-search text-muted"></i></span>
+                                    <input type="text" class="form-control border-start-0" id="searchUMKM"
+                                        placeholder="Cari UMKM...">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <select class="form-control" id="filterSector">
-                                <option value="">Semua Sektor</option>
-                                <option value="makanan">Makanan & Minuman</option>
-                                <option value="fashion">Fashion</option>
-                                <option value="kerajinan">Kerajinan</option>
-                                <option value="jasa">Jasa</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <select class="form-control" id="filterStatus">
-                                <option value="">Semua Status</option>
-                                <option value="Aktif">Aktif</option>
-                                <option value="Menunggu">Menunggu Verifikasi</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-2 col-md-2">
-                            <button class="btn btn-primary w-100">
-                                <i class="fas fa-filter me-2"></i>Filter
-                            </button>
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <select class="form-control" name="sector" id="filterSector">
+                                    <option value="">Semua Sektor</option>
+                                    <option value="INDUSTRI" @if(request('sector') == 'INDUSTRI') selected @endif>INDUSTRI</option>
+                                    <option value="DAGANG" @if(request('sector') == 'DAGANG') selected @endif>DAGANG</option>
+                                    <option value="JASA" @if(request('sector') == 'JASA') selected @endif>JASA</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <select class="form-control" name="status" id="filterStatus">
+                                    <option value="">Semua Status</option>
+                                    <option value="AKTIF" @if(request('status') == 'AKTIF') selected @endif>AKTIF</option>
+                                    <option value="TIDAK AKTIF" @if(request('status') == 'TIDAK AKTIF') selected @endif>TIDAK AKTIF</option>
+                                    <option value="Menunggu Verifikasi" @if(request('status') == 'Menunggu Verifikasi') selected @endif>Menunggu Verifikasi</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-filter me-2"></i>Filter
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
 
             <!-- UMKM List Section -->
             <div class="card border-0 shadow-sm">
@@ -67,14 +69,6 @@
                     <h5 class="mb-0 fw-bold text-primary">
                         <i class="fas fa-list me-2"></i>Daftar UMKM
                     </h5>
-                    <div class="btn-group">
-                        <button id="tableViewBtn" class="btn btn-sm btn-primary">
-                            <i class="fas fa-table me-1"></i> Tabel
-                        </button>
-                        <button id="gridViewBtn" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-th-large me-1"></i> Grid
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Table View -->
@@ -97,17 +91,8 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $umkm->nama_usaha }}</td>
                                         <td>{{ $umkm->alamat }}</td>
-                                        <td>
-                                            <span
-                                                class="badge rounded-pill text-white
-                                                @if ($umkm->sektor_usaha == 'Makanan & Minuman') bg-danger
-                                                @elseif($umkm->sektor_usaha == 'Fashion') bg-info
-                                                @elseif($umkm->sektor_usaha == 'Kerajinan') bg-warning
-                                                @elseif($umkm->sektor_usaha == 'Jasa') bg-primary
-                                                @else bg-secondary @endif px-3 py-2">
-                                                {{ $umkm->sektor_usaha ?? 'Tidak Dikategorikan' }}
-                                            </span>
-                                        </td>
+                                        <td>{{ $umkm->sektor_usaha }}</td>
+                                       
                                         <td>
                                             <span
                                                 class="badge rounded-pill text-white
@@ -135,7 +120,8 @@
                                                 @endif
 
                                                 @if ($umkm->status == 'DITOLAK')
-                                                    <form action="{{ route('pelakukelolaumkm.destroy', $umkm->id) }}" method="POST" class="d-inline">
+                                                    <form action="{{ route('pelakukelolaumkm.destroy', $umkm->id) }}"
+                                                        method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-outline-danger"
@@ -150,7 +136,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center py-5">
+                                        <td colspan="6" class="text-center py-5">
                                             <div class="empty-state">
                                                 <i class="fas fa-store-slash fa-4x text-muted mb-3"></i>
                                                 <h5>Belum Ada UMKM</h5>
@@ -169,100 +155,7 @@
                 </div>
 
                 <!-- Grid View (initially hidden) -->
-                <div id="gridView" class="card-body p-3" style="display: none;">
-                    <div class="row g-3">
-                        @forelse($dataumkms as $umkm)
-                            <div class="col-xl-3 col-lg-4 col-md-6">
-                                <div class="card h-100 border-0 shadow-sm hover-card">
-                                    <div class="card-body p-3">
-                                        <div class="d-flex align-items-center mb-3">
-                                            <div class="avatar rounded-circle text-center text-white me-3"
-                                                style="background-color: {{ $umkm->id % 2 == 0 ? '#1c4970' : '#2F77B6' }}; width: 48px; height: 48px; line-height: 48px;">
-                                                {{ strtoupper(substr($umkm->nama_usaha, 0, 1)) }}
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0 fw-semibold ml-2">{{ $umkm->nama_usaha }}</h6>
-                                                <div class="d-flex align-items-center mt-1 ml-2">
-                                                    <div
-                                                        class="status-dot {{ $umkm->status == 'AKTIF' ? 'bg-success' : 'bg-warning' }} me-2">
-                                                    </div>
-                                                    <small
-                                                        class="{{ $umkm->status == 'AKTIF' ? 'text-success' : 'text-warning' }} ">{{ $umkm->status }}</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <small class="text-muted d-block mb-1"><i
-                                                    class="fas fa-map-marker-alt me-2"></i>{{ $umkm->alamat }}</small>
-                                            <small class="text-muted d-block"><i
-                                                    class="fas fa-tag me-2"></i>{{ $umkm->sektor_usaha ?? 'Tidak Dikategorikan' }}</small>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <a href="#" class="btn btn-sm btn-outline-primary"
-                                                data-bs-toggle="tooltip" title="Lihat Detail">
-                                                <i class="fas fa-eye me-1"></i> Detail
-                                            </a>
-                                            <div class="btn-group">
-                                                <a href="{{ route('pelakukelolaumkm.edit', $umkm->pelakuUmkm->id) }}"
-                                                    class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip"
-                                                    title="Edit UMKM">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <form action="{{ route('pelakukelolaumkm.destroy', $umkm->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <!-- Remove the @method('DELETE') line since we're using POST directly -->
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Hapus UMKM"
-                                                        onclick="return confirm('Anda yakin ingin menghapus UMKM ini?')">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="col-12">
-                                <div class="text-center py-5">
-                                    <i class="fas fa-store-slash fa-4x text-muted mb-3"></i>
-                                    <h5>Belum Ada UMKM</h5>
-                                    <p class="text-muted mb-3">Anda belum menambahkan UMKM ke dalam sistem</p>
-                                    <button class="btn btn-primary px-4" data-bs-toggle="modal"
-                                        data-bs-target="#tambahUMKMModal">
-                                        <i class="fas fa-plus me-2"></i> Tambah UMKM Pertama Anda
-                                    </button>
-                                </div>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
 
-                @if (count($dataumkms) > 0)
-                    <div class="card-footer bg-white p-3">
-                        <div class="row align-items-center">
-                            <div class="col-md-6 small text-muted">
-                                Menampilkan {{ count($dataumkms) }} dari {{ count($dataumkms) }} UMKM
-                            </div>
-                            <div class="col-md-6">
-                                <nav aria-label="Page navigation" class="float-md-end">
-                                    <ul class="pagination pagination-sm mb-0">
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#" aria-label="Previous">
-                                                <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
-                                            </a>
-                                        </li>
-                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#" aria-label="Next">
-                                                <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                @endif
             </div>
         </div>
 

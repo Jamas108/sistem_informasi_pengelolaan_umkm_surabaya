@@ -117,7 +117,7 @@ class KegiatanController extends Controller
                 'kegiatan' => $kegiatan,
                 'intervensis' => $intervensis
             ]);
-        }
+        } 
     }
 
     /**

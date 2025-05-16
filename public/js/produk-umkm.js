@@ -31,14 +31,14 @@ $(document).ready(function() {
             <div class="row mb-3">
                 <label for="nama_usaha_${umkmCounter}" class="col-sm-2 col-form-label">Nama Usaha</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="nama_usaha_${umkmCounter}" name="umkm[${umkmCounter}][nama_usaha]" required>
+                    <input type="text" class="form-control" id="nama_usaha_${umkmCounter}" name="umkm[${umkmCounter}][nama_usaha]" placeholder="Masukan Nama Usaha / UMKM" required>
                 </div>
             </div>
 
             <div class="row mb-3">
                 <label for="alamat_usaha_${umkmCounter}" class="col-sm-2 col-form-label">Alamat Usaha</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="alamat_usaha_${umkmCounter}" name="umkm[${umkmCounter}][alamat]" required>
+                    <input type="text" class="form-control" id="alamat_usaha_${umkmCounter}" name="umkm[${umkmCounter}][alamat]" placeholder="Masukan Alamat Usaha / UMKM"  required>
                 </div>
             </div>
 
@@ -46,7 +46,7 @@ $(document).ready(function() {
                 <label for="pengelolaan_usaha_${umkmCounter}" class="col-sm-2 col-form-label">Pengelolaan Usaha</label>
                 <div class="col-sm-10">
                      <select class="form-control" id="pengelolaan_usaha_${umkmCounter}" name="umkm[${umkmCounter}][pengelolaan_usaha]" required>
-                        <option value="">-- Pilih --</option>
+                        <option value="">-- Pilih Pengelolaan Usaha --</option>
                         <option value="PERSEORANGAN / MANDIRI">PERSEORANGAN / MANDIRI</option>
                         <option value="KELOMPOK / SUBKON / KERJASAMA">KELOMPOK / SUBKON / KERJASAMA</option>
                     </select>
@@ -57,7 +57,7 @@ $(document).ready(function() {
                 <label for="klasifikasi_kinerja_usaha_${umkmCounter}" class="col-sm-2 col-form-label">Klasifikasi Kinerja Usaha</label>
                 <div class="col-sm-10">
                     <select class="form-control" id="klasifikasi_kinerja_usaha_${umkmCounter}" name="umkm[${umkmCounter}][klasifikasi_kinerja_usaha]" required>
-                        <option value="">-- Pilih --</option>
+                        <option value="">-- Pilih Klasifikasi Kinerja Usaha --</option>
                         <option value="PEMULA">PEMULA</option>
                         <option value="MADYA">MADYA</option>
                         <option value="MANDIRI">MANDIRI</option>
@@ -68,7 +68,7 @@ $(document).ready(function() {
             <div class="row mb-3">
                 <label for="jumlah_tenaga_kerja_${umkmCounter}" class="col-sm-2 col-form-label">Jumlah Tenaga Kerja</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="jumlah_tenaga_kerja_${umkmCounter}" name="umkm[${umkmCounter}][jumlah_tenaga_kerja]" required>
+                    <input type="number" class="form-control" id="jumlah_tenaga_kerja_${umkmCounter}" name="umkm[${umkmCounter}][jumlah_tenaga_kerja]" placeholder="Masukan Jumlah Tenaga Kerja"  required>
                 </div>
             </div>
 
@@ -76,7 +76,7 @@ $(document).ready(function() {
                 <label for="sektor_usaha_${umkmCounter}" class="col-sm-2 col-form-label">Sektor Usaha</label>
                 <div class="col-sm-10">
                     <select class="form-control" id="sektor_usaha_${umkmCounter}" name="umkm[${umkmCounter}][sektor_usaha]" required>
-                        <option value="">-- Pilih --</option>
+                        <option value="">-- Pilih Sektor Usaha --</option>
                         <option value="INDUSTRI">INDUSTRI</option>
                         <option value="DAGANG">DAGANG</option>
                         <option value="JASA">JASA</option>
@@ -88,10 +88,8 @@ $(document).ready(function() {
                 <label for="status_${umkmCounter}" class="col-sm-2 col-form-label">Status Keaktifan UMKM</label>
                 <div class="col-sm-10">
                     <select class="form-control" id="status_${umkmCounter}" name="umkm[${umkmCounter}][status]" required>
-                        <option value="">-- Pilih --</option>
+                        <option value="">-- Pilih Status UMKM --</option>
                         <option value="AKTIF">AKTIF</option>
-                        <option value="CUKUP AKTIF">CUKUP AKTIF</option>
-                        <option value="KURANG AKTIF">KURANG AKTIF</option>
                         <option value="TIDAK AKTIF">TIDAK AKTIF</option>
                     </select>
                 </div>

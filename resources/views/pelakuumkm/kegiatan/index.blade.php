@@ -19,8 +19,7 @@
         </div>
 
         <div class="container-fluid px-4 py-4">
-            <!-- Stats Cards -->
-            <!-- Search & Filter Section -->
+            <form method="GET" action="{{ route('pelakukegiatan.index') }}">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body p-3">
                     <div class="row g-3 align-items-center">
@@ -33,32 +32,35 @@
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-6">
-                            <select class="form-control" id="filterJenisKegiatan">
+                            <select class="form-control" name="jenis_kegiatan">
                                 <option value="">Semua Jenis Kegiatan</option>
-                                @php
-                                    $jenisKegiatan = $kegiatans->pluck('jenis_kegiatan')->unique();
-                                @endphp
-                                @foreach ($jenisKegiatan as $jenis)
-                                    <option value="{{ $jenis }}">{{ $jenis }}</option>
-                                @endforeach
+                                <option value="PEMASARAN" @if(request('jenis_kegiatan') == 'PEMASARAN') selected @endif>PEMASARAN</option>
+                                <option value="PELATIHAN" @if(request('jenis_kegiatan') == 'PELATIHAN') selected @endif>PELATIHAN</option>
+                                <option value="LEGALITAS/SERTIFIKASI" @if(request('jenis_kegiatan') == 'LEGALITAS/SERTIFIKASI') selected @endif>LEGALITAS/SERTIFIKASI</option>
+                                <option value="KEMITRAAN" @if(request('jenis_kegiatan') == 'KEMITRAAN') selected @endif>KEMITRAAN</option>
+                                <option value="PEMBINAAN" @if(request('jenis_kegiatan') == 'PEMBINAAN') selected @endif>PEMBINAAN</option>
                             </select>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-6">
-                            <select class="form-control" id="filterStatus">
+                            <select class="form-control" name="status_kegiatan">
                                 <option value="">Semua Status</option>
-                                <option value="Belum Dimulai">Belum Dimulai</option>
-                                <option value="Sedang Berlangsung">Sedang Berlangsung</option>
-                                <option value="Selesai">Selesai</option>
+                                <option value="Belum Dimulai" @if(request('status_kegiatan') == 'Belum Dimulai') selected @endif>Belum Dimulai</option>
+                                <option value="Pendaftaran" @if(request('status_kegiatan') == 'Pendaftaran') selected @endif>Pendaftaran</option>
+                                <option value="Persiapan Acara" @if(request('status_kegiatan') == 'Persiapan Acara') selected @endif>Persiapan Acara</option>
+                                <option value="Selesai" @if(request('status_kegiatan') == 'Selesai') selected @endif>Selesai</option>
+
+   
                             </select>
                         </div>
                         <div class="col-lg-2 col-md-2">
-                            <button class="btn btn-primary w-100">
+                            <button type="submit" class="btn btn-primary w-100">
                                 <i class="fas fa-filter me-2"></i>Filter
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
+        </form>
 
             <!-- Kegiatan List Section -->
             <div class="card border-0 shadow-sm">
@@ -66,14 +68,7 @@
                     <h5 class="mb-0 fw-bold text-primary">
                         <i class="fas fa-list me-2"></i>Daftar Kegiatan
                     </h5>
-                    <div class="btn-group">
-                        <button id="tableViewBtn" class="btn btn-sm btn-primary">
-                            <i class="fas fa-table me-1"></i> Tabel
-                        </button>
-                        <button id="gridViewBtn" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-th-large me-1"></i> Grid
-                        </button>
-                    </div>
+
                 </div>
 
                 <!-- Table View -->
@@ -116,7 +111,7 @@
                                         <td>{{$kegiatan->kuota_pendaftaran}}</td>
                                         <td>
                                             <div class="d-flex justify-content-center gap-2">
-                                                <a href=""
+                                                <a href="{{ route('pelakukegiatan.show', $kegiatan->id) }}"
                                                     class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip"
                                                     title="Detail Kegiatan">
                                                     <i class="fas fa-eye"></i>
@@ -126,7 +121,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center py-5">
+                                        <td colspan="8" class="text-center py-5">
                                             <div class="empty-state">
                                                 <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
                                                 <h5>Belum Ada Kegiatan</h5>
@@ -145,102 +140,7 @@
                 </div>
 
                 <!-- Grid View (initially hidden) -->
-                <div id="gridView" class="card-body p-3" style="display: none;">
-                    <div class="row g-3">
-                        @forelse($kegiatans as $kegiatan)
-                            <div class="col-xl-3 col-lg-4 col-md-6">
-                                <div class="card h-100 border-0 shadow-sm hover-card">
-                                    <div class="card-body p-3">
-                                        @if($kegiatan->poster)
-                                        <div class="text-center"><img src="{{ Storage::url($kegiatan->poster) }}"
-                                            alt="Poster" width="100" height="100"></div>
-                                        @else
-                                            <div class="bg-light d-flex align-items-center justify-content-center mb-3"
-                                                style="height: 200px; background-color: {{ $kegiatan->id % 2 == 0 ? '#1c4970' : '#2F77B6' }}; color: white;">
-                                                <span class="display-4">
-                                                    {{ strtoupper(substr($kegiatan->nama_kegiatan, 0, 1)) }}
-                                                </span>
-                                            </div>
-                                        @endif
 
-                                        <div class="d-flex align-items-center mb-3">
-                                            <div class="me-3">
-                                                <h6 class="mb-0 fw-bold text-black">{{ $kegiatan->nama_kegiatan }}</h6>
-                                                <small class="text-muted">
-                                                    {{ $kegiatan->jenis_kegiatan ?? 'Tidak Dikategorikan' }}
-                                                </small>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <small class="text-muted d-block mb-1">
-                                                <i class="fas fa-calendar-alt me-2"></i>
-                                                {{ \Carbon\Carbon::parse($kegiatan->tanggal_mulai)->format('d M Y') }}
-                                                -
-                                                {{ \Carbon\Carbon::parse($kegiatan->tanggal_selesai)->format('d M Y') }}
-                                            </small>
-                                            <small class="text-muted d-block mb-1">
-                                                <i class="fas fa-clock me-2"></i>
-                                                {{ $kegiatan->jam_mulai }} - {{ $kegiatan->jam_selesai }}
-                                            </small>
-                                            <small class="text-muted d-block">
-                                                <span class="badge
-                                                    @if($kegiatan->status_kegiatan == 'Belum Dimulai') bg-secondary
-                                                    @elseif($kegiatan->status_kegiatan == 'Sedang Berlangsung') bg-primary
-                                                    @elseif($kegiatan->status_kegiatan == 'Selesai') bg-success
-                                                    @else bg-warning @endif">
-                                                    {{ $kegiatan->status_kegiatan }}
-                                                </span>
-                                            </small>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <a href=""
-                                                class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip"
-                                                title="Detail Kegiatan">
-                                                <i class="fas fa-eye me-1"></i> Detail
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="col-12">
-                                <div class="text-center py-5">
-                                    <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
-                                    <h5>Belum Ada Kegiatan</h5>
-                                    <p class="text-muted mb-3">Anda belum menambahkan kegiatan untuk UMKM Anda</p>
-
-                                </div>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-
-                @if (count($kegiatans) > 0)
-                    <div class="card-footer bg-white p-3">
-                        <div class="row align-items-center">
-                            <div class="col-md-6 small text-muted">
-                                Menampilkan {{ count($kegiatans) }} dari {{ count($kegiatans) }} Kegiatan
-                            </div>
-                            <div class="col-md-6">
-                                <nav aria-label="Page navigation" class="float-md-end">
-                                    <ul class="pagination pagination-sm mb-0">
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#" aria-label="Previous">
-                                                <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
-                                            </a>
-                                        </li>
-                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#" aria-label="Next">
-                                                <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                @endif
             </div>
         </div>
 

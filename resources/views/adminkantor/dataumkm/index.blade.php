@@ -83,6 +83,35 @@
                         </div>
                     </div>
 
+                    <form method="GET" action="{{ route('dataumkm.index') }}" class="mb-4">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <label for="kelurahan">Kelurahan</label>
+                                <select name="kelurahan" class="form-control">
+                                    <option value="">-- Semua Kelurahan --</option>
+                                    @foreach ($kelurahanList as $id => $nama)
+                                        <option value="{{ $nama }}" {{ request('kelurahan') == $nama ? 'selected' : '' }}>{{ $nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="status_keaktifan">Status</label>
+                                <select name="status_keaktifan" class="form-control">
+                                    <option value="">-- Semua Status --</option>
+                                    <option value="AKTIF" {{ request('status_keaktifan') == 'AKTIF' ? 'selected' : '' }}>AKTIF</option>
+                                    <option value="TIDAK AKTIF" {{ request('status_keaktifan') == 'TIDAK AKTIF' ? 'selected' : '' }}>TIDAK AKTIF</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Terapkan Filter</button>
+                            </div>
+                            {{-- <div class="col-md-3 d-flex align-items-end">
+                                <a href="{{ route('dataumkm.index') }}" class="btn btn-secondary w-100">Reset</a>
+                            </div> --}}
+                        </div>
+                    </form>
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h6 class="m-0 font-weight-bold">Daftar UMKM Terdaftar</h6>
@@ -109,8 +138,8 @@
                                             <th>Kelurahan</th>
                                             <th>Alamat</th>
                                             {{-- <th></th>
-                                            <th>Alamat</th>
-                                            <th>Status</th> --}}
+                                            <th>Alamat</th> --}}
+                                            <th>Status</th>
                                             <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
@@ -124,8 +153,8 @@
                                                 <td>{{ $pelakuumkm->alamat_sesuai_ktp }}</td>
                                                 {{-- <td>{{ $pelakuumkm-> }}</td>
                                             <td>{{ $pelakuumkm->alamat }}</td> --}}
-                                                {{-- <td>
-                                                @switch($dataumkm->status)
+                                                <td>
+                                                @switch($pelakuumkm->status_keaktifan)
                                                     @case('AKTIF')
                                                         <span class="badge badge-success status-badge">AKTIF</span>
                                                         @break
@@ -133,9 +162,9 @@
                                                         <span class="badge badge-danger status-badge">TIDAK AKTIF</span>
                                                         @break
                                                     @default
-                                                        <span class="badge badge-secondary status-badge">{{ $dataumkm->status }}</span>
+                                                        <span class="badge badge-secondary status-badge">{{ $pelakuumkm->status_keaktifan }}</span>
                                                 @endswitch
-                                            </td> --}}
+                                            </td>
                                                 <td class="text-center">
                                                     <div class="btn-group btn-group-sm text-center" role="group">
                                                         <a href="{{ route('dataumkm.show', $pelakuumkm->id) }}"

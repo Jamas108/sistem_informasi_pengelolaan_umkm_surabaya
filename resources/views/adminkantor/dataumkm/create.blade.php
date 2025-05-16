@@ -474,7 +474,7 @@
                                     <div class="row mb-3">
                                         <label for="product-jenis" class="col-sm-3 col-form-label">Jenis Produk</label>
                                         <div class="col-sm-9">
-                                            <input type="text" class="form-control" id="product-jenis" required>
+                                            <input type="text" class="form-control" id="product-jenis" placeholder="Masukan Nama Produk" required>
                                         </div>
                                     </div>
 
@@ -482,6 +482,7 @@
                                         <label for="product-tipe" class="col-sm-3 col-form-label">Tipe Produk</label>
                                         <div class="col-sm-9">
                                             <select class="form-control" id="product-tipe" required>
+                                                <option value="" selected>-- Pilih Tipe Produk --</option>
                                                 <option value="Makanan dan Minuman">Makanan dan Minuman</option>
                                                 <option value="Makanan">Makanan</option>
                                                 <option value="Minuman">Minuman</option>

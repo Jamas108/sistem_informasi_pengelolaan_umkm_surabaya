@@ -17,29 +17,41 @@ class PelakuKelolaUmkmController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $user = Auth::user();
+    public function index(Request $request)
+{
+    $user = Auth::user();
 
-        // Find the PelakuUmkm record associated with the logged-in user
-        $pelakuUmkm = PelakuUmkm::where('users_id', $user->id)->first();
+    // Find the PelakuUmkm record associated with the logged-in user
+    $pelakuUmkm = PelakuUmkm::where('users_id', $user->id)->first();
 
-        // If no PelakuUmkm record found, return with empty data
-        if (!$pelakuUmkm) {
-            return view('pelakuumkm.kelolaumkm.index', [
-                'dataumkms' => collect(), // Empty collection
-                'pageTitle' => 'Kelola UMKM'
-            ]);
-        }
-
-        // Retrieve UMKM data for the specific PelakuUmkm
-        $dataumkms = Umkm::where('pelaku_umkm_id', $pelakuUmkm->id)->get();
-
+    // If no PelakuUmkm record found, return with empty data
+    if (!$pelakuUmkm) {
         return view('pelakuumkm.kelolaumkm.index', [
-            'dataumkms' => $dataumkms,
+            'dataumkms' => collect(), // Empty collection
             'pageTitle' => 'Kelola UMKM'
         ]);
     }
+
+    // Retrieve UMKM data for the specific PelakuUmkm
+    $query = Umkm::where('pelaku_umkm_id', $pelakuUmkm->id);
+
+    // Apply filters based on request parameters
+    if ($request->has('sector') && $request->sector != '') {
+        $query->where('sektor_usaha', $request->sector);
+    }
+
+    if ($request->has('status') && $request->status != '') {
+        $query->where('status', $request->status);
+    }
+
+    // Get filtered data
+    $dataumkms = $query->get();
+
+    return view('pelakuumkm.kelolaumkm.index', [
+        'dataumkms' => $dataumkms,
+        'pageTitle' => 'Kelola UMKM'
+    ]);
+}
 
     /**
      * Show the form for creating a new resource.
