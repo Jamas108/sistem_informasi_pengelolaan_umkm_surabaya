@@ -20,4 +20,5 @@ class User extends Authenticatable
     {
         return $this->hasOne(PelakuUmkm::class, 'users_id');
     }
+    
 }

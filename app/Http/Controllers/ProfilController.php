@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PelakuUmkm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ProfilController extends Controller
 {
@@ -103,5 +104,30 @@ class ProfilController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Update user password
+     */
+    public function updatePassword(Request $request)
+    {
+        // Validasi request
+        $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        // Periksa password saat ini
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->with('error', 'Password saat ini tidak sesuai!');
+        }
+
+        // Update password
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return back()->with('success', 'Password berhasil diperbarui!');
     }
 }

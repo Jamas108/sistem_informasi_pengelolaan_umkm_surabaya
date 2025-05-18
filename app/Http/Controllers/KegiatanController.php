@@ -86,8 +86,8 @@ class KegiatanController extends Controller
         $kegiatan = Kegiatan::create($validatedData);
 
         // Redirect with success message
-        return redirect()->route('datakegiatan.index')
-            ->with('success', 'Kegiatan berhasil ditambahkan.');
+        session()->flash('success', 'Data Kegiatan berhasil ditambahkan');
+        return redirect()->route('datakegiatan.index');
     }
 
     /**
@@ -117,7 +117,7 @@ class KegiatanController extends Controller
                 'kegiatan' => $kegiatan,
                 'intervensis' => $intervensis
             ]);
-        } 
+        }
     }
 
     /**
@@ -172,8 +172,8 @@ class KegiatanController extends Controller
         $kegiatan->update($validatedData);
 
         // Redirect with success message
-        return redirect()->route('datakegiatan.index')
-            ->with('success', 'Kegiatan berhasil diperbarui.');
+        session()->flash('success', 'Data Kegiatan berhasil diperbarui');
+        return redirect()->route('datakegiatan.index');
     }
 
     /**
@@ -191,9 +191,8 @@ class KegiatanController extends Controller
         // Delete the Kegiatan
         $kegiatan->delete();
 
-        // Redirect with success message
-        return redirect()->route('datakegiatan.index')
-            ->with('success', 'Kegiatan berhasil dihapus.');
+        session()->flash('success', 'Data Kegiatan berhasil dihapus');
+        return redirect()->route('datakegiatan.index');
     }
 
 
@@ -236,8 +235,8 @@ class KegiatanController extends Controller
         $kegiatan->bukti_pendaftaran_path = $folderPath;
         $kegiatan->save();
 
-        return redirect()->route('datakegiatan.index')
-            ->with('success', 'Bukti pendaftaran berhasil dibuat untuk ' . $intervensis->count() . ' UMKM');
+        session()->flash('success', 'Bukti pendaftaran berhasil dibuat untuk ' . $intervensis->count() . ' UMKM');
+        return redirect()->route('datakegiatan.index');
     }
 
     protected function updateKegiatanStatus(Kegiatan $kegiatan)

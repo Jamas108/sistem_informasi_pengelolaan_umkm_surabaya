@@ -126,24 +126,20 @@
     @include('layouts.pelakuumkm.sidebar')
     <main class="main-content">
         <!-- Gradient Header -->
-        <div class="bg-primary text-white py-4 shadow-sm">
-            <div class="container-fluid px-4">
+        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
+            <div class="container-fluid">
                 <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <div class="d-flex align-items-center">
-                            <div class="bg-opacity-20 rounded-circle p-3 me-3">
-                                <i class="fas fa-plus-circle fa-2x text-white"></i>
-                            </div>
-                            <div>
-                                <h2 class="mb-1 fw-bold">Tambah Intervensi Baru</h2>
-                                <p class="mb-0 text-white-75">Catat dan lacak kegiatan pengembangan UMKM Anda</p>
-                            </div>
-                        </div>
+                    <div class="col">
+                        <h4 class="fw-bold mb-0">
+                            <i class="fas fa-edit me-2"></i>
+                            <span class="ml-1">Tambah Intervensi Baru</span>
+                        </h4>
+                        <p class="mb-0 fs-6">Silahkan mengisi formulir pendaftaran Intervensi dengan benar</p>
                     </div>
-                    
                 </div>
             </div>
         </div>
+
 
         <div class="container-fluid px-4 py-4">
             <div class="row">
@@ -174,8 +170,8 @@
                                     <i class="fas fa-briefcase text-primary fa-2x"></i>
                                 </div>
                                 <div>
-                                    <h4 class="mb-1 fw-bold text-primary">Formulir Intervensi</h4>
-                                    <p class="text-muted mb-0">Lengkapi informasi detail kegiatan intervensi UMKM</p>
+                                    <h4 class="mb-1 fw-bold text-primary ml-2">Formulir Intervensi</h4>
+                                    <p class="text-muted mb-0 ml-2">Lengkapi informasi detail kegiatan intervensi UMKM</p>
                                 </div>
                             </div>
                         </div>

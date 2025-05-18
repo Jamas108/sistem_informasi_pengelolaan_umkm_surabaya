@@ -6,18 +6,22 @@
             background: linear-gradient(to right, #4e73e0, #224abe);
             color: white;
         }
+
         .table-hover tbody tr:hover {
             background-color: rgba(78, 115, 223, 0.1);
             cursor: pointer;
         }
+
         .btn-action {
             margin-right: 0.25rem;
             margin-bottom: 0.25rem;
         }
+
         .role-badge {
             font-size: 0.8rem;
             padding: 0.35rem 0.5rem;
         }
+
         .account-type-btn {
             display: flex;
             align-items: center;
@@ -45,12 +49,10 @@
                         previous: "Sebelumnya"
                     }
                 },
-                columnDefs: [
-                    {
-                        targets: [-1],
-                        orderable: false
-                    }
-                ]
+                columnDefs: [{
+                    targets: [-1],
+                    orderable: false
+                }]
             });
 
             // Konfirmasi penghapusan
@@ -73,7 +75,8 @@
                         <i class="fas fa-users mr-2 text-primary"></i>Manajemen Pengguna
                     </h1>
                     <div class="btn-group" role="group" aria-label="Data Actions">
-                        <button type="button" class="btn btn-primary btn-icon-split ml-2" data-toggle="modal" data-target="#tambahUserModal">
+                        <button type="button" class="btn btn-primary btn-icon-split ml-2" data-toggle="modal"
+                            data-target="#tambahUserModal">
                             <span class="icon text-white-50">
                                 <i class="fas fa-plus"></i>
                             </span>
@@ -82,15 +85,31 @@
                     </div>
                 </div>
 
+                <!-- Flash Messages -->
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                         <h6 class="m-0 font-weight-bold">Daftar Pengguna Sistem</h6>
                         <div class="dropdown no-arrow">
-                            <a href="#" class="dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a href="#" class="dropdown-toggle" role="button" id="dropdownMenuLink"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-ellipsis-v fa-sm fa-fw text-white"></i>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#tambahUserModal">Tambah Pengguna Baru</a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                aria-labelledby="dropdownMenuLink">
+                                <a class="dropdown-item" href="#" data-toggle="modal"
+                                    data-target="#tambahUserModal">Tambah Pengguna Baru</a>
                                 <a class="dropdown-item" href="#">Cetak Laporan</a>
                             </div>
                         </div>
@@ -116,34 +135,33 @@
                                                 @switch($manajemenuser->role)
                                                     @case('adminkantor')
                                                         <span class="badge badge-primary role-badge">Admin Kantor</span>
-                                                        @break
+                                                    @break
+
                                                     @case('adminlapangan')
                                                         <span class="badge badge-success role-badge">Admin Lapangan</span>
-                                                        @break
+                                                    @break
+
                                                     @default
-                                                        <span class="badge badge-secondary role-badge">{{ $manajemenuser->role }}</span>
+                                                        <span
+                                                            class="badge badge-secondary role-badge">{{ $manajemenuser->role }}</span>
                                                 @endswitch
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-group btn-group-sm" role="group">
                                                     <a href="{{ route('manajemenuser.show', $manajemenuser->id) }}"
-                                                       class="btn btn-info btn-action mr-2"
-                                                       title="Lihat Detail">
+                                                        class="btn btn-sm btn-info btn-action mr-2" title="Lihat Detail">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
                                                     <a href="{{ route('manajemenuser.edit', $manajemenuser->id) }}"
-                                                       class="btn btn-warning btn-action"
-                                                       title="Edit Data">
+                                                        class="btn btn-sm btn-warning btn-action" title="Edit Data">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                     <form action="{{ route('manajemenuser.destroy', $manajemenuser->id) }}"
-                                                          method="POST"
-                                                          class="d-inline delete-form">
+                                                        method="POST" class="d-inline delete-form">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit"
-                                                                class="btn btn-danger btn-action ml-2"
-                                                                title="Hapus Data">
+                                                        <button type="submit" class="btn btn-sm btn-danger btn-action ml-2"
+                                                            title="Hapus Data">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
@@ -170,7 +188,8 @@
     </div>
 
     <!-- Tambah User Modal -->
-    <div class="modal fade" id="tambahUserModal" tabindex="-1" role="dialog" aria-labelledby="tambahUserModalLabel" aria-hidden="true">
+    <div class="modal fade" id="tambahUserModal" tabindex="-1" role="dialog" aria-labelledby="tambahUserModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-gradient-primary text-white">
@@ -185,13 +204,13 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <a href="{{ route('manajemenuser.create', ['role' => 'adminkantor']) }}"
-                               class="btn btn-primary btn-block py-3 account-type-btn">
+                                class="btn btn-primary btn-block py-3 account-type-btn">
                                 <i class="fas fa-user-tie mr-2"></i>Admin Kantor
                             </a>
                         </div>
                         <div class="col-md-6 mb-3">
                             <a href="{{ route('manajemenuser.create', ['role' => 'adminlapangan']) }}"
-                               class="btn btn-success btn-block py-3 account-type-btn">
+                                class="btn btn-success btn-block py-3 account-type-btn">
                                 <i class="fas fa-user-shield mr-2"></i>Admin Lapangan
                             </a>
                         </div>

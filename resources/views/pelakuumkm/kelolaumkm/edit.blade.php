@@ -50,8 +50,10 @@
                 <div class="row align-items-center">
                     <div class="col">
                         <h4 class="fw-bold mb-0">
-                            <i class="fas fa-edit me-2"></i>Edit Data UMKM
+                            <i class="fas fa-edit me-2"></i>
+                            <span>Edit Data UMKM</span>
                         </h4>
+                        <p class="mb-0 fs-6">Update data UMKM yang anda miliki sesuai pembaruan yang ada</p>
                     </div>
                 </div>
             </div>

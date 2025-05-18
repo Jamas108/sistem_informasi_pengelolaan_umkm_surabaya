@@ -62,6 +62,8 @@ Route::middleware(['auth', 'role:pelakuumkm'])->group(function () {
     Route::resource('pelakukelolaintervensi', PelakuIntervensiController::class);
     Route::resource('pelakukegiatan', PelakuKegiatanController::class);
     Route::resource('profil', ProfilController::class);
+
+    Route::post('/profil/update-password', [ProfilController::class, 'updatePassword'])->name('profil.updatePassword');
 });
 
 // Additional UMKM-related routes that might be shared

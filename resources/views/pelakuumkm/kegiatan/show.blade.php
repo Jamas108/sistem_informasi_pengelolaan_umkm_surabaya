@@ -3,7 +3,7 @@
     @include('layouts.pelakuumkm.sidebar')
     <main class="main-content">
         <!-- Header Section -->
-        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background-color: #5281ab">
+        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
             <div class="container-fluid">
                 <div class="row align-items-center">
                     <div class="col-md-6">

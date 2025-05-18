@@ -81,23 +81,11 @@ class ManajemenUserController extends Controller
                 ]);
             });
 
-            return redirect()
-                ->route('manajemenuser.index')
-                ->with('success', 'User berhasil ditambahkan');
+            session()->flash('success', 'Akun berhasil ditambahkan');
+            return redirect()->route('manajemenuser.index');
         } catch (\Exception $e) {
-            // Log kegagalan dengan detil error
-            Log::error('Gagal menambahkan user: ' . $e->getMessage(), [
-                'exception' => get_class($e),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-                'input' => $request->except(['password', 'password_confirmation'])
-            ]);
-
-            return redirect()
-                ->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
-                ->withInput();
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->back()->withInput();
         }
     }
 
@@ -165,14 +153,11 @@ class ManajemenUserController extends Controller
                 $user->save();
             });
 
-            return redirect()
-                ->route('manajemenuser.index')
-                ->with('success', 'Data user berhasil diperbarui');
+            session()->flash('success', 'Data Akun berhasil diperbarui');
+            return redirect()->route('manajemenuser.index');
         } catch (\Exception $e) {
-            return redirect()
-                ->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
-                ->withInput();
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->back()->withInput();
         }
     }
 
@@ -189,13 +174,11 @@ class ManajemenUserController extends Controller
                 $user->delete();
             });
 
-            return redirect()
-                ->route('manajemenuser.index')
-                ->with('success', 'User berhasil dihapus');
+            session()->flash('success', 'Akun berhasil dihapus');
+            return redirect()->route('manajemenuser.index');
         } catch (\Exception $e) {
-            return redirect()
-                ->route('manajemenuser.index')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->route('manajemenuser.index');
         }
     }
 }

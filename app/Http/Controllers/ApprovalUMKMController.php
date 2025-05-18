@@ -88,24 +88,16 @@ class ApprovalUMKMController extends Controller
 
     public function approve(string $id)
     {
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
-            $umkm = Umkm::findOrFail($id);
-            $umkm->status = 'AKTIF';
-            $umkm->save();
+        $umkm = Umkm::findOrFail($id);
+        $umkm->status = 'AKTIF';
+        $umkm->save();
 
-            DB::commit();
+        DB::commit();
 
-            return redirect()->route('approvalumkm.index')
-                ->with('success', 'Pengajuan UMKM berhasil disetujui.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Approval error: ' . $e->getMessage());
-
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat menyetujui pengajuan: ' . $e->getMessage());
-        }
+        session()->flash('success', 'Berhasil Menerima Pengajuan Data UMKM Baru');
+        return redirect()->route('approvalumkm.index');
     }
 
     /**
@@ -121,7 +113,6 @@ class ApprovalUMKMController extends Controller
             'alasan_penolakan.max' => 'Alasan penolakan maksimal 500 karakter.',
         ]);
 
-        try {
             DB::beginTransaction();
 
             $umkm = Umkm::findOrFail($id);
@@ -131,14 +122,7 @@ class ApprovalUMKMController extends Controller
 
             DB::commit();
 
-            return redirect()->route('approvalumkm.index')
-                ->with('success', 'Pengajuan UMKM berhasil ditolak.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Rejection error: ' . $e->getMessage());
-
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat menolak pengajuan: ' . $e->getMessage());
-        }
+            session()->flash('success', 'Berhasil Menolak Pengajuan Data UMKM Baru');
+            return redirect()->route('approvalumkm.index');
     }
 }

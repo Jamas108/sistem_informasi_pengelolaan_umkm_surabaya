@@ -1,26 +1,58 @@
 @extends('layouts.pelakuumkm.app')
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find all alert elements
+            const alerts = document.querySelectorAll('.alert');
+
+            alerts.forEach(function(alert) {
+                // Set a timeout to hide the alert after 3 seconds
+                setTimeout(function() {
+                    alert.classList.remove('show'); // Remove the 'show' class to hide the alert
+                    alert.classList.add(
+                        'fade'); // Add the 'fade' class to trigger the fade-out effect
+                }, 3000); // 3000 milliseconds = 3 seconds
+            });
+        });
+    </script>
+@endpush
 @section('content')
     @include('layouts.pelakuumkm.sidebar')
     <main class="main-content">
         <!-- Header Section -->
         <!-- Header Section -->
-        <div class="text-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" id="nav"
-            style="background-color: #5281ab">
-            <div>
-                <h4 class="fw-bold mb-0">
-                    <i class="fas fa-briefcase me-2"></i>
-                    <span>Kelola Intervensi</span>
-                </h4>
-                <p class="mb-0 fs-6">Pantau dan kelola kegiatan intervensi untuk UMKM Anda</p>
-            </div>
-            <div>
-                <a href="{{ route('pelakukelolaintervensi.create') }}" class="btn btn-light rounded-pill px-4 shadow-sm">
-                    <i class="fas fa-plus-circle me-2"></i> Pendaftaran Intervensi
-                </a>
+        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
+            <div class="container-fluid d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="fw-bold mb-0">
+                        <i class="fas fa-store me-2"></i>
+                        <span>Kelola Intervensi</span>
+                    </h4>
+                    <p class="mb-0 fs-6">Pantau dan kelola kegiatan intervensi untuk UMKM Anda</p>
+                </div>
+                <div>
+                    <a class="btn btn-light rounded-pill px-4 shadow-sm" href="{{ route('pelakukelolaintervensi.create') }}">
+                        <i class="fas fa-plus-circle me-2"></i> Pendaftaran Intervensi
+                    </a>
+                </div>
             </div>
         </div>
+
+
         <div class="container-fluid px-4 py-4">
 
+            @if (session('success'))
+                <div class="alert alert-success fade show" role="alert">
+                    <i class="fas fa-check-circle"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert alert-danger fade show" role="alert">
+                    {{ session('error') }}
+                </div>
+            @endif
             <!-- Search & Filter Section -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body p-3">
@@ -67,16 +99,9 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white p-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold text-primary">
-                        <i class="fas fa-list me-2"></i>Daftar Intervensi
+                        <i class="fas fa-list me-2"></i>
+                        <span>Daftar Intervensi</span>
                     </h5>
-                    <div class="btn-group">
-                        <button id="tableViewBtn" class="btn btn-sm btn-primary">
-                            <i class="fas fa-table me-1"></i> Tabel
-                        </button>
-                        <button id="gridViewBtn" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-th-large me-1"></i> Grid
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Table View -->
@@ -103,7 +128,17 @@
                                         <td>{{ $intervensi->kegiatan->jenis_kegiatan }}</td>
                                         <td>{{ \Carbon\Carbon::parse($intervensi->kegiatan->tgl_intervensi)->format('d M Y') }}
                                         </td>
-                                        <td>{{ $intervensi->kegiatan->status_kegiatan }}</td>
+                                        <td>
+                                            <span class="badge text-white
+                                                @if($intervensi->kegiatan->status_kegiatan == 'Belum Dimulai') bg-danger
+                                                @elseif($intervensi->kegiatan->status_kegiatan == 'Pendaftaran') bg-info
+                                                 @elseif($intervensi->kegiatan->status_kegiatan == 'Pendaftaran') bg-secondary
+                                                @elseif($intervensi->kegiatan->status_kegiatan == 'Sedang Berlangsung') bg-primary
+                                                @elseif($intervensi->kegiatan->status_kegiatan == 'Selesai') bg-success
+                                                @else bg-warning @endif">
+                                                {{ $intervensi->kegiatan->status_kegiatan }}
+                                            </span>
+                                        </td>
                                         <td>
                                             <div class="d-flex justify-content-center gap-2">
                                                 <a href="{{ route('pelakukelolaintervensi.show', $intervensi->id) }}"
@@ -150,98 +185,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Grid View (initially hidden) -->
-                <div id="gridView" class="card-body p-3" style="display: none;">
-                    <div class="row g-3">
-                        @forelse($dataintervensi as $intervensi)
-                            <div class="col-xl-3 col-lg-4 col-md-6">
-                                <div class="card h-100 border-0 shadow-sm hover-card">
-                                    <div class="card-body p-3">
-                                        <div class="d-flex align-items-center mb-3">
-                                            <div class="avatar rounded-circle text-center text-white me-3"
-                                                style="background-color: {{ $intervensi->id % 2 == 0 ? '#1c4970' : '#2F77B6' }}; width: 48px; height: 48px; line-height: 48px;">
-                                                {{ strtoupper(substr($intervensi->nama_kegiatan, 0, 1)) }}
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0 fw-semibold">{{ $intervensi->nama_kegiatan }}</h6>
-                                                <small class="text-muted">{{ $intervensi->jenis_intervensi }}</small>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <small class="text-muted d-block mb-1">
-                                                <i class="fas fa-store me-2"></i>{{ $intervensi->dataUmkm->nama_usaha }}
-                                            </small>
-                                            <small class="text-muted d-block mb-1">
-                                                <i
-                                                    class="fas fa-calendar me-2"></i>{{ \Carbon\Carbon::parse($intervensi->tgl_intervensi)->format('d M Y') }}
-                                            </small>
-                                            <small class="text-muted d-block">
-                                                <i class="fas fa-coins me-2"></i>Rp
-                                                {{ number_format($intervensi->omset ?? 0, 0, ',', '.') }}
-                                            </small>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <a href="{{ route('pelakukelolaintervensi.edit', $intervensi->id) }}"
-                                                class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip"
-                                                title="Edit Intervensi">
-                                                <i class="fas fa-edit me-1"></i> Edit
-                                            </a>
-                                            <form action="{{ route('pelakukelolaintervensi.destroy', $intervensi->id) }}"
-                                                method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    data-bs-toggle="tooltip" title="Hapus Intervensi"
-                                                    onclick="return confirm('Anda yakin ingin menghapus intervensi ini?')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="col-12">
-                                <div class="text-center py-5">
-                                    <i class="fas fa-briefcase-slash fa-4x text-muted mb-3"></i>
-                                    <h5>Belum Ada Intervensi</h5>
-                                    <p class="text-muted mb-3">Anda belum menambahkan intervensi untuk UMKM Anda</p>
-                                    <a href="{{ route('pelakukelolaintervensi.create') }}" class="btn btn-primary px-4">
-                                        <i class="fas fa-plus me-2"></i> Tambah Intervensi Pertama Anda
-                                    </a>
-                                </div>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-
-                @if (count($dataintervensi) > 0)
-                    <div class="card-footer bg-white p-3">
-                        <div class="row align-items-center">
-                            <div class="col-md-6 small text-muted">
-                                Menampilkan {{ count($dataintervensi) }} dari {{ count($dataintervensi) }} Intervensi
-                            </div>
-                            <div class="col-md-6">
-                                <nav aria-label="Page navigation" class="float-md-end">
-                                    <ul class="pagination pagination-sm mb-0">
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#" aria-label="Previous">
-                                                <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
-                                            </a>
-                                        </li>
-                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#" aria-label="Next">
-                                                <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                @endif
             </div>
         </div>
 

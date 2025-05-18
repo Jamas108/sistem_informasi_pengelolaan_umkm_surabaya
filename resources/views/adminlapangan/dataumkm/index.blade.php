@@ -77,6 +77,18 @@
                     </div>
                 </div>
 
+                @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+
                 <form method="GET" action="{{ route('dataumkm.index') }}" class="mb-4">
                     <div class="row">
                         <div class="col-md-5">

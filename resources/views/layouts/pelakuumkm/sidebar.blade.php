@@ -3,7 +3,7 @@
 @endphp
 
 <!-- Sidebar Toggle Button (Mobile) -->
-<button class="sidebar-toggle btn btn-primary d-lg-none" type="button" id="sidebarToggle">
+<button class="sidebar-toggle btn btn-primary d-lg-none" id="sidebarToggle">
     <i class="fas fa-bars"></i>
 </button>
 
@@ -24,8 +24,8 @@
             <i class="rounded-circle fas fa-user fa-2x" width="70" height="70" alt="User Avatar"></i>
         </div>
         <div class="user-info">
-            <h6 class="fw-bold mb-0">{{ Auth::user()->username ?? 'Pelaku UMKM' }}</h6>
-            <small class="text-white-50">{{ Auth::user()->nik ?? 'user@example.com' }}</small>
+            <h6 class="fw-bold mb-0">{{ Auth::user()->pelakuUmkm->nama_lengkap ?? 'Pelaku UMKM' }}</h6>
+            <small class="text-white-50">Pelaku UMKM</small>
         </div>
     </div>
 
@@ -58,7 +58,7 @@
         <a class="nav-link" href="{{ route('pelakukelolaintervensi.index') }}">
             <div class="d-flex align-items-center">
                 <div class="icon-circle me-3 d-flex align-items-center justify-content-center">
-                    <i class="fas fa-store"></i>
+                    <i class="fas fa-tasks"></i>
                 </div>
                 <span class="ml-2">Intervensi</span>
             </div>
@@ -77,7 +77,7 @@
             <small class="text-uppercase fw-bold text-white-50 ps-3">Akun</small>
         </div>
 
-        <a class="nav-link {{ $currentRouteName == 'profil' ? 'active' : '' }}" href="{{route ('profil.index')}}">
+        <a class="nav-link {{ $currentRouteName == 'profil' ? 'active' : '' }}" href="{{ route('profil.index') }}">
             <div class="d-flex align-items-center">
                 <div class="icon-circle me-3 d-flex align-items-center justify-content-center">
                     <i class="fas fa-user"></i>

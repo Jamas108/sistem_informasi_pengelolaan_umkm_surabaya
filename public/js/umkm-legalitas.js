@@ -1,4 +1,4 @@
-// legalitas-handler.js - Save this file to public/js/legalitas-handler.js
+// legalitas-handler.js - Improved version with proper modal handling
 $(document).ready(function () {
     console.log("Legalitas handler script loaded");
 
@@ -252,15 +252,8 @@ $(document).ready(function () {
                     $('#edit_no_sk_haki').val(data.no_sk_haki);
                     $('#edit_no_surat_keterangan').val(data.no_surat_keterangan);
 
-                    // Show the modal - detect Bootstrap version and use appropriate method
-                    if (typeof bootstrap !== 'undefined') {
-                        // Bootstrap 5
-                        const myModal = new bootstrap.Modal(document.getElementById('editLegalitasModal'));
-                        myModal.show();
-                    } else {
-                        // Bootstrap 4 or earlier
-                        $('#editLegalitasModal').modal('show');
-                    }
+                    // Show the modal using our reliable function
+                    showModalWithFallback('editLegalitasModal');
                 } else {
                     alert("Error loading data: " + (response.message || "Unknown error"));
                 }
@@ -273,7 +266,7 @@ $(document).ready(function () {
         });
     });
 
-    // Save edited legalitas
+    // Save edited legalitas - FIXED VERSION WITH PROPER MODAL CLOSING
     $(document).on('click', '#save-edit-legalitas', function () {
         console.log("Save button clicked - Event triggered");
 
@@ -339,18 +332,8 @@ $(document).ready(function () {
                 $button.prop('disabled', false).html('Simpan Perubahan');
 
                 if (response.success) {
-                    // Close the modal - detect Bootstrap version and use appropriate method
-                    if (typeof bootstrap !== 'undefined') {
-                        // Bootstrap 5
-                        const modalElement = document.getElementById('editLegalitasModal');
-                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                        if (modalInstance) {
-                            modalInstance.hide();
-                        }
-                    } else {
-                        // Bootstrap 4 or earlier
-                        $('#editLegalitasModal').modal('hide');
-                    }
+                    // Close the modal with our reliable function
+                    closeModalWithFallback('editLegalitasModal');
 
                     // Reload data
                     loadLegalitasData();
@@ -410,6 +393,113 @@ $(document).ready(function () {
             });
         }
     });
+
+    // NEW FUNCTIONS FOR MODAL HANDLING - COPIED FROM INTERVENSI MODULE
+    // Try different methods to show the modal
+    function showModalWithFallback(modalId) {
+        console.log(`Attempting to show modal: #${modalId}`);
+        try {
+            // Method 1: jQuery Bootstrap method
+            if (typeof $.fn.modal === 'function') {
+                $('#' + modalId).modal('show');
+                console.log("Modal opened with jQuery Bootstrap");
+                return;
+            }
+        } catch (error1) {
+            console.error("Method 1 failed:", error1);
+        }
+
+        try {
+            // Method 2: Bootstrap 5 approach
+            const modalElement = document.getElementById(modalId);
+            if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                const modalInstance = new bootstrap.Modal(modalElement);
+                modalInstance.show();
+                console.log("Modal opened with Bootstrap 5 JS");
+                return;
+            }
+        } catch (error2) {
+            console.error("Method 2 failed:", error2);
+        }
+
+        try {
+            // Method 3: Manual DOM manipulation as fallback
+            $('#' + modalId).addClass('show');
+            $('#' + modalId).css('display', 'block');
+            $('body').addClass('modal-open');
+            $('<div class="modal-backdrop fade show"></div>').appendTo('body');
+            console.log("Modal opened with manual DOM manipulation");
+        } catch (error3) {
+            console.error("Method 3 failed:", error3);
+            showAlert('danger', 'Error: Could not open modal dialog. Please try another browser or contact support.');
+        }
+    }
+
+    // Add this comprehensive modal closing function to ensure it works across different Bootstrap versions
+    function closeModalWithFallback(modalId) {
+        console.log(`Attempting to close modal: #${modalId}`);
+
+        // Try all possible methods to close the modal
+        try {
+            // Method 1: jQuery Bootstrap modal method (most common)
+            if (typeof $.fn.modal === 'function') {
+                console.log('Trying jQuery modal hide');
+                $('#' + modalId).modal('hide');
+
+                // Force backdrop removal in case it persists
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
+                $('body').css('padding-right', '');
+                return;
+            }
+        } catch (error1) {
+            console.warn('Method 1 failed:', error1);
+        }
+
+        try {
+            // Method 2: Bootstrap 5 approach
+            const modalElement = document.getElementById(modalId);
+            if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                console.log('Trying Bootstrap 5 modal hide');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                if (modalInstance) {
+                    modalInstance.hide();
+                    return;
+                } else {
+                    console.log('No instance found, trying to create one');
+                    const newModal = new bootstrap.Modal(modalElement);
+                    newModal.hide();
+                    return;
+                }
+            }
+        } catch (error2) {
+            console.warn('Method 2 failed:', error2);
+        }
+
+        try {
+            // Method 3: Manual DOM manipulation as last resort
+            console.log('Trying manual DOM manipulation');
+            $('#' + modalId).removeClass('show');
+            $('#' + modalId).css('display', 'none');
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            $('body').css('padding-right', '');
+        } catch (error3) {
+            console.warn('Method 3 failed:', error3);
+        }
+
+        // Ultimate fallback
+        console.log('Using last resort approach');
+        setTimeout(function () {
+            // Final attempt with vanilla JS
+            document.querySelectorAll('.modal, .modal-backdrop').forEach(el => {
+                el.style.display = 'none';
+                el.classList.remove('show');
+            });
+            document.body.classList.remove('modal-open');
+            document.body.style.paddingRight = '';
+        }, 300);
+    }
 
     // Function to show alerts
     function showAlert(type, message, modalId = null) {
@@ -471,6 +561,8 @@ $(document).ready(function () {
     window.legalitasHandler = {
         loadLegalitasData: loadLegalitasData,
         updateLegalitasTable: updateLegalitasTable,
-        showAlert: showAlert
+        showAlert: showAlert,
+        showModal: showModalWithFallback,
+        closeModal: closeModalWithFallback
     };
-});
+}); 

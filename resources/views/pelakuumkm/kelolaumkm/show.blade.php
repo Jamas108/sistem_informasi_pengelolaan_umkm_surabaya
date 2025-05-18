@@ -57,7 +57,7 @@
     @include('layouts.pelakuumkm.sidebar')
 
     <main class="main-content">
-        <div class=" text-white py-3 px-4 shadow-sm mb-4" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
+        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
             <div class="container-fluid">
                 <div class="row align-items-center">
                     <div class="col">
@@ -65,6 +65,7 @@
                             <i class="fas fa-edit me-2"></i>
                             <span class="ml-1">Detail Data UMKM</span>
                         </h4>
+                        <p class="mb-0 fs-6">Pastikan Data UMKM sesuai dengan UMKM yang anda miliki</p>
                     </div>
                 </div>
             </div>

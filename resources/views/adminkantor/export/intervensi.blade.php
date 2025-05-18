@@ -67,7 +67,7 @@
                         <i class="fas fa-store-alt mr-2 text-primary"></i>Data Intervensi
                     </h1>
                     <div class="btn-group" role="group" aria-label="Data Actions">
-                      
+
                     </div>
                 </div>
 
@@ -115,7 +115,6 @@
                                         <th>Nama Kegiatan</th>
                                         <th>Jenis Kegiatan</th>
                                         <th>No Pendaftaran</th>
-                                        <th>Omset</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -127,7 +126,6 @@
                                         <td>{{ $intervensi->kegiatan->nama_kegiatan }}</td>
                                         <td>{{ $intervensi->kegiatan->jenis_kegiatan }}</td>
                                         <td>{{ $intervensi->no_pendaftaran_kegiatan }}</td>
-                                        <td>{{ $intervensi->omset }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>

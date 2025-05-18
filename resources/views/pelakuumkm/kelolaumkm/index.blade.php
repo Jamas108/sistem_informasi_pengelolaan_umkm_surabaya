@@ -1,9 +1,26 @@
 @extends('layouts.pelakuumkm.app')
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find all alert elements
+            const alerts = document.querySelectorAll('.alert');
+
+            alerts.forEach(function(alert) {
+                // Set a timeout to hide the alert after 3 seconds
+                setTimeout(function() {
+                    alert.classList.remove('show'); // Remove the 'show' class to hide the alert
+                    alert.classList.add(
+                        'fade'); // Add the 'fade' class to trigger the fade-out effect
+                }, 3000); // 3000 milliseconds = 3 seconds
+            });
+        });
+    </script>
+@endpush
 @section('content')
     @include('layouts.pelakuumkm.sidebar')
     <main class="main-content">
         <!-- Header Section -->
-        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background-color: #5281ab">
+        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
             <div class="container-fluid d-flex justify-content-between align-items-center">
                 <div>
                     <h4 class="fw-bold mb-0">
@@ -19,8 +36,20 @@
                 </div>
             </div>
         </div>
-
         <div class="container-fluid px-4 py-4">
+
+            @if (session('success'))
+                <div class="alert alert-success fade show" role="alert">
+                    <i class="fas fa-check-circle"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert alert-danger fade show" role="alert">
+                    {{ session('error') }}
+                </div>
+            @endif
             <!-- Stats Cards -->
 
 
@@ -40,17 +69,20 @@
                             <div class="col-lg-3 col-md-3 col-sm-6">
                                 <select class="form-control" name="sector" id="filterSector">
                                     <option value="">Semua Sektor</option>
-                                    <option value="INDUSTRI" @if(request('sector') == 'INDUSTRI') selected @endif>INDUSTRI</option>
-                                    <option value="DAGANG" @if(request('sector') == 'DAGANG') selected @endif>DAGANG</option>
-                                    <option value="JASA" @if(request('sector') == 'JASA') selected @endif>JASA</option>
+                                    <option value="INDUSTRI" @if (request('sector') == 'INDUSTRI') selected @endif>INDUSTRI
+                                    </option>
+                                    <option value="DAGANG" @if (request('sector') == 'DAGANG') selected @endif>DAGANG</option>
+                                    <option value="JASA" @if (request('sector') == 'JASA') selected @endif>JASA</option>
                                 </select>
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-6">
                                 <select class="form-control" name="status" id="filterStatus">
                                     <option value="">Semua Status</option>
-                                    <option value="AKTIF" @if(request('status') == 'AKTIF') selected @endif>AKTIF</option>
-                                    <option value="TIDAK AKTIF" @if(request('status') == 'TIDAK AKTIF') selected @endif>TIDAK AKTIF</option>
-                                    <option value="Menunggu Verifikasi" @if(request('status') == 'Menunggu Verifikasi') selected @endif>Menunggu Verifikasi</option>
+                                    <option value="AKTIF" @if (request('status') == 'AKTIF') selected @endif>AKTIF</option>
+                                    <option value="TIDAK AKTIF" @if (request('status') == 'TIDAK AKTIF') selected @endif>TIDAK
+                                        AKTIF</option>
+                                    <option value="Menunggu Verifikasi" @if (request('status') == 'Menunggu Verifikasi') selected @endif>
+                                        Menunggu Verifikasi</option>
                                 </select>
                             </div>
                             <div class="col-lg-2 col-md-2">
@@ -67,7 +99,8 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white p-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold text-primary">
-                        <i class="fas fa-list me-2"></i>Daftar UMKM
+                        <i class="fas fa-list me-2"></i>
+                        <span>Daftar UMKM</span>
                     </h5>
                 </div>
 
@@ -92,7 +125,7 @@
                                         <td>{{ $umkm->nama_usaha }}</td>
                                         <td>{{ $umkm->alamat }}</td>
                                         <td>{{ $umkm->sektor_usaha }}</td>
-                                       
+
                                         <td>
                                             <span
                                                 class="badge rounded-pill text-white

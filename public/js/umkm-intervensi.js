@@ -532,6 +532,7 @@ $(document).ready(function () {
         });
 
         // Save edited intervensi
+        // Update the save-edit-intervensi click event handler
         $('#save-edit-intervensi').click(function () {
             const intervensiId = $('#edit_intervensi_id').val();
             const umkmId = $('#edit_umkm_id').val();
@@ -580,23 +581,8 @@ $(document).ready(function () {
                     $button.prop('disabled', false).html('<i class="fas fa-save mr-2"></i> Simpan Perubahan');
 
                     if (response.success) {
-                        // Close modal - Handle with both jQuery and vanilla JS for robustness
-                        try {
-                            $('#editIntervensiModal').modal('hide');
-                        } catch (error) {
-                            console.error("Error hiding modal with jQuery:", error);
-                            try {
-                                const modalElement = document.getElementById('editIntervensiModal');
-                                if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                                    if (modalInstance) modalInstance.hide();
-                                } else if (modalElement && typeof modalElement.close === 'function') {
-                                    modalElement.close(); // HTML5 dialog
-                                }
-                            } catch (err) {
-                                console.error("All modal closing attempts failed:", err);
-                            }
-                        }
+                        // Enhanced modal closing - Try multiple methods to ensure the modal closes
+                        closeModalWithFallback('editIntervensiModal');
 
                         // Reload data
                         loadIntervensiData();
@@ -616,6 +602,72 @@ $(document).ready(function () {
                 }
             });
         });
+
+        // Add this comprehensive modal closing function to ensure it works across different Bootstrap versions
+        function closeModalWithFallback(modalId) {
+            console.log(`Attempting to close modal: #${modalId}`);
+
+            // Try all possible methods to close the modal
+            try {
+                // Method 1: jQuery Bootstrap modal method (most common)
+                if (typeof $.fn.modal === 'function') {
+                    console.log('Trying jQuery modal hide');
+                    $('#' + modalId).modal('hide');
+
+                    // Force backdrop removal in case it persists
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open');
+                    $('body').css('padding-right', '');
+                    return;
+                }
+            } catch (error1) {
+                console.warn('Method 1 failed:', error1);
+            }
+
+            try {
+                // Method 2: Bootstrap 5 approach
+                const modalElement = document.getElementById(modalId);
+                if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    console.log('Trying Bootstrap 5 modal hide');
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                        return;
+                    } else {
+                        console.log('No instance found, trying to create one');
+                        const newModal = new bootstrap.Modal(modalElement);
+                        newModal.hide();
+                        return;
+                    }
+                }
+            } catch (error2) {
+                console.warn('Method 2 failed:', error2);
+            }
+
+            try {
+                // Method 3: Manual DOM manipulation as last resort
+                console.log('Trying manual DOM manipulation');
+                $('#' + modalId).removeClass('show');
+                $('#' + modalId).css('display', 'none');
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
+                $('body').css('padding-right', '');
+            } catch (error3) {
+                console.warn('Method 3 failed:', error3);
+            }
+
+            // Ultimate fallback
+            console.log('Using last resort approach');
+            setTimeout(function () {
+                // Final attempt with vanilla JS
+                document.querySelectorAll('.modal, .modal-backdrop').forEach(el => {
+                    el.style.display = 'none';
+                    el.classList.remove('show');
+                });
+                document.body.classList.remove('modal-open');
+                document.body.style.paddingRight = '';
+            }, 300);
+        }
 
         // Delete intervensi
         $(document).on('click', '.delete-intervensi', function () {

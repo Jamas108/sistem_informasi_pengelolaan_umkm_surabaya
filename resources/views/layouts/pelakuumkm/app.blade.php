@@ -146,20 +146,41 @@
     document.addEventListener("DOMContentLoaded", function() {
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebar = document.getElementById('accordionSidebar');
+        const body = document.body;
 
-        sidebarToggle.addEventListener('click', function() {
-            if (sidebar.classList.contains('toggled')) {
-                sidebar.classList.remove('toggled');
-            } else {
-                sidebar.classList.add('toggled');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+
+                // On larger screens, toggle the sidebar width
+                if (window.innerWidth >= 992) {
+                    sidebar.classList.toggle('toggled');
+                    body.classList.toggle('sidebar-toggled');
+                }
+            });
+        }
+
+        // Handle responsive behavior - close sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth < 992 &&
+                sidebar &&
+                sidebarToggle &&
+                !sidebar.contains(event.target) &&
+                !sidebarToggle.contains(event.target)) {
+                sidebar.classList.remove('show');
             }
         });
-    });
-</script>
 
-<script>
-    $(document).ready(function() {
-        $('.dropdown-toggle').dropdown();
+        // Add active class to current menu item
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && currentPath.includes(href) && href !== '#') {
+                link.classList.add('active');
+            }
+        });
     });
 </script>
 

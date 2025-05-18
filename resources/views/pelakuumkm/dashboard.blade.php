@@ -3,7 +3,7 @@
     @include('layouts.pelakuumkm.sidebar')
     <main class="main-content">
         <!-- Header Section -->
-        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background-color: #5281ab">
+        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
             <div class="container-fluid d-flex justify-content-between align-items-center">
                 <div>
                     <h4 class="fw-bold mb-0">
@@ -25,12 +25,12 @@
                         <div class="card-body p-3">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="text-primary text-uppercase fw-bold small mb-1">Omset (Bulanan)</h6>
-                                    <h4 class="fw-bold mb-0">Rp {{ number_format($omsetBulanan, 0, ',', '.') }}</h4>
+                                    <h6 class="text-primary text-uppercase fw-bold small mb-1">Jumlah UMKM</h6>
+                                    <h4 class="fw-bold mb-0">Rp {{ $jumlahUMKM }}</h4>
                                 </div>
                                 <div class="avatar rounded-circle text-center text-white p-3"
                                     style="background-color: rgba(78, 115, 223, 0.1); width: 48px; height: 48px; line-height: 24px;">
-                                    <i class="fas fa-calendar fa-lg text-primary"></i>
+                                    <i class="fas fa-store fa-lg text-primary"></i>
                                 </div>
                             </div>
                         </div>
@@ -43,12 +43,12 @@
                         <div class="card-body p-3">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="text-success text-uppercase fw-bold small mb-1">Omset (Tahunan)</h6>
-                                    <h4 class="fw-bold mb-0">Rp {{ number_format($totalOmset, 0, ',', '.') }}</h4>
+                                    <h6 class="text-success text-uppercase fw-bold small mb-1">Jumlah Produk</h6>
+                                    <h4 class="fw-bold mb-0">{{$jumlahProduk}}</h4>
                                 </div>
                                 <div class="avatar rounded-circle text-center text-white p-3"
                                     style="background-color: rgba(40, 167, 69, 0.1); width: 48px; height: 48px; line-height: 24px;">
-                                    <i class="fas fa-dollar-sign fa-lg text-success"></i>
+                                    <i class="fas fa-boxes fa-lg text-success"></i>
                                 </div>
                             </div>
                         </div>
@@ -79,12 +79,12 @@
                         <div class="card-body p-3">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="text-warning text-uppercase fw-bold small mb-1">Status Legalitas</h6>
-                                    <h4 class="fw-bold mb-0">{{ $jumlahLegalitas }}/8</h4>
+                                    <h6 class="text-warning text-uppercase fw-bold small mb-1">Total Omset</h6>
+                                    <h4 class="fw-bold mb-0">{{$jumlahOmset}}</h4>
                                 </div>
                                 <div class="avatar rounded-circle text-center text-white p-3"
                                     style="background-color: rgba(255, 193, 7, 0.1); width: 48px; height: 48px; line-height: 24px;">
-                                    <i class="fas fa-certificate fa-lg text-warning"></i>
+                                    <i class="fas fa-dollar-sign fa-lg text-warning"></i>
                                 </div>
                             </div>
                         </div>

@@ -402,19 +402,15 @@
     @include('layouts.pelakuumkm.sidebar')
     <main class="main-content">
         <!-- Gradient Header -->
-        <div class=" text-white py-4 shadow-sm" style="background-color: #5281ab">
-            <div class="container-fluid px-4">
+        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
+            <div class="container-fluid">
                 <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <div class="d-flex align-items-center">
-                            <div class=" bg-opacity-20 rounded-circle p-3 me-3">
-                                <i class="fas fa-edit fa-2x text-white"></i>
-                            </div>
-                            <div>
-                                <h2 class="mb-1 fw-bold">Detail Intervensi</h2>
-                                <p class="mb-0 text-white-75">Data detail dari Intervensi UMKM</p>
-                            </div>
-                        </div>
+                    <div class="col">
+                        <h4 class="fw-bold mb-0">
+                            <i class="fas fa-edit me-2"></i>
+                            <span class="ml-1">Detail Intervensi</span>
+                        </h4>
+                        <p class="mb-0 fs-6">Pastikan data intervensi sudah sesuai</p>
                     </div>
                 </div>
             </div>

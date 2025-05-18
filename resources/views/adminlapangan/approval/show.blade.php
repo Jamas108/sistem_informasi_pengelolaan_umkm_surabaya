@@ -88,6 +88,18 @@
                     </a>
                 </div>
 
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                         <h6 class="m-0 font-weight-bold">Detail UMKM #{{ $dataumkm->id }}</h6>
@@ -96,8 +108,9 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-lg-4 mb-4 text-center">
-                                @if($dataumkm->foto_usaha)
-                                    <img src="{{ asset('storage/' . $dataumkm->foto_usaha) }}" alt="Foto Usaha" class="img-fluid umkm-image mb-3">
+                                @if ($dataumkm->foto_usaha)
+                                    <img src="{{ asset('storage/' . $dataumkm->foto_usaha) }}" alt="Foto Usaha"
+                                        class="img-fluid umkm-image mb-3">
                                 @else
                                     <div class="text-center p-4 bg-light mb-3">
                                         <i class="fas fa-store fa-4x text-secondary"></i>
@@ -106,16 +119,19 @@
                                 @endif
 
                                 <div class="text-center mb-3">
-                                    @if($dataumkm->pelakuUmkm->foto)
-                                        <img src="{{ asset('storage/' . $dataumkm->pelakuUmkm->foto) }}" alt="Profil" class="profile-image mb-3">
+                                    @if ($dataumkm->pelakuUmkm->foto)
+                                        <img src="{{ asset('storage/' . $dataumkm->pelakuUmkm->foto) }}" alt="Profil"
+                                            class="profile-image mb-3">
                                     @else
-                                        <div class="mx-auto profile-image d-flex align-items-center justify-content-center bg-primary text-white">
+                                        <div
+                                            class="mx-auto profile-image d-flex align-items-center justify-content-center bg-primary text-white">
                                             <i class="fas fa-user fa-3x"></i>
                                         </div>
                                     @endif
                                     <h5 class="font-weight-bold mt-3">{{ $dataumkm->pelakuUmkm->nama_lengkap }}</h5>
                                     <p class="text-muted mb-1">NIK: {{ $dataumkm->pelakuUmkm->nik }}</p>
-                                    <p class="text-muted mb-1"><i class="fas fa-phone-alt mr-1"></i> {{ $dataumkm->pelakuUmkm->no_telp }}</p>
+                                    <p class="text-muted mb-1"><i class="fas fa-phone-alt mr-1"></i>
+                                        {{ $dataumkm->pelakuUmkm->no_telp }}</p>
                                 </div>
                             </div>
 
@@ -177,27 +193,29 @@
                                         <i class="fas fa-file-alt mr-2"></i>Deskripsi Usaha
                                     </div>
                                     <div class="detail-content">
-                                        <p>{{ $dataumkm->deskripsi_usaha ?? 'Tidak ada deskripsi usaha yang diberikan.' }}</p>
+                                        <p>{{ $dataumkm->deskripsi_usaha ?? 'Tidak ada deskripsi usaha yang diberikan.' }}
+                                        </p>
                                     </div>
                                 </div>
 
-                                @if($dataumkm->dokumen)
-                                <div class="detail-section">
-                                    <div class="detail-title">
-                                        <i class="fas fa-file-pdf mr-2"></i>Dokumen Pendukung
-                                    </div>
-                                    <div class="detail-content">
-                                        <div class="document-preview d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <i class="fas fa-file-pdf mr-2 text-danger"></i>
-                                                <span>{{ basename($dataumkm->dokumen) }}</span>
+                                @if ($dataumkm->dokumen)
+                                    <div class="detail-section">
+                                        <div class="detail-title">
+                                            <i class="fas fa-file-pdf mr-2"></i>Dokumen Pendukung
+                                        </div>
+                                        <div class="detail-content">
+                                            <div class="document-preview d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <i class="fas fa-file-pdf mr-2 text-danger"></i>
+                                                    <span>{{ basename($dataumkm->dokumen) }}</span>
+                                                </div>
+                                                <a href="{{ asset('storage/' . $dataumkm->dokumen) }}"
+                                                    class="btn btn-sm btn-primary" target="_blank">
+                                                    <i class="fas fa-eye mr-1"></i> Lihat
+                                                </a>
                                             </div>
-                                            <a href="{{ asset('storage/' . $dataumkm->dokumen) }}" class="btn btn-sm btn-primary" target="_blank">
-                                                <i class="fas fa-eye mr-1"></i> Lihat
-                                            </a>
                                         </div>
                                     </div>
-                                </div>
                                 @endif
                             </div>
                         </div>
@@ -215,17 +233,20 @@
                                         </span>
                                         <span class="text">Setujui Pengajuan</span>
                                     </button>
-                                    <small class="form-text text-muted">Setujui pengajuan UMKM ini dan memberikan akses kepada pelaku UMKM</small>
+                                    <small class="form-text text-muted">Setujui pengajuan UMKM ini dan memberikan akses
+                                        kepada pelaku UMKM</small>
                                 </form>
                             </div>
                             <div class="col-md-6">
-                                <button type="button" class="btn btn-danger btn-icon-split btn-lg w-100 mb-2" data-toggle="modal" data-target="#rejectModal">
+                                <button type="button" class="btn btn-danger btn-icon-split btn-lg w-100 mb-2"
+                                    data-toggle="modal" data-target="#rejectModal">
                                     <span class="icon text-white-50">
                                         <i class="fas fa-times"></i>
                                     </span>
                                     <span class="text">Tolak Pengajuan</span>
                                 </button>
-                                <small class="form-text text-muted">Tolak pengajuan UMKM ini dengan memberikan alasan penolakan</small>
+                                <small class="form-text text-muted">Tolak pengajuan UMKM ini dengan memberikan alasan
+                                    penolakan</small>
                             </div>
                         </div>
                     </div>
@@ -244,7 +265,8 @@
     </div>
 
     <!-- Reject Modal -->
-    <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form action="{{ route('approval.reject', $dataumkm->id) }}" method="POST">
@@ -260,7 +282,8 @@
                         <div class="form-group">
                             <label for="alasan_penolakan">Alasan Penolakan <span class="text-danger">*</span></label>
                             <textarea class="form-control" id="alasan_penolakan" name="alasan_penolakan" rows="5" required></textarea>
-                            <small class="form-text text-muted">Berikan alasan mengapa pengajuan UMKM ini ditolak. Alasan ini akan ditampilkan kepada pelaku UMKM.</small>
+                            <small class="form-text text-muted">Berikan alasan mengapa pengajuan UMKM ini ditolak. Alasan
+                                ini akan ditampilkan kepada pelaku UMKM.</small>
                         </div>
                     </div>
                     <div class="modal-footer">

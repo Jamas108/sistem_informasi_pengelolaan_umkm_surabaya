@@ -84,12 +84,16 @@
                     </div>
                 </div>
 
+                <!-- Flash Messages -->
                 @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <div class="alert alert-success">
                         {{ session('success') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
                     </div>
                 @endif
 
@@ -115,7 +119,7 @@
                                     <tr>
                                         <th class="text-center align-middle">No</th>
                                         <th style="width: 20%">Nama Kegiatan</th>
-                                        <th  >Jenis Kegiatan</th>
+                                        <th>Jenis Kegiatan</th>
                                         <th style="width: 15%">Tanggal Mulai</th>
                                         <th>Kuota</th>
                                         <th>Status</th>
@@ -185,8 +189,6 @@
                                                                     <i class="fas fa-file-pdf"></i>
                                                                 </button>
                                                             </form>
-                                                        @else
-                                                            <span class="text-muted">Belum ada UMKM terdaftar</span>
                                                         @endif
                                                     @endif
                                                     <a href="{{ route('datakegiatan.show', $kegiatan->id) }}"

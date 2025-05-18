@@ -126,17 +126,11 @@ class PelakuIntervensiController extends Controller
             $intervensi->no_pendaftaran_kegiatan = $registrationNumber;
             $intervensi->save();
 
-            // Redirect with success message
-            return redirect()->route('pelakukelolaintervensi.index')
-                ->with('success', 'Intervensi berhasil ditambahkan dengan nomor pendaftaran: ' . $registrationNumber);
+            session()->flash('success', 'Berhasil Mendaftar Intervensi, Selalu Pantau Perkembangan Kegiatan Anda Pada Menu Detail');
+            return redirect()->route('pelakukelolaintervensi.index');
         } catch (\Exception $e) {
-            // Log the error
-            Log::error('Error creating intervention: ' . $e->getMessage());
-
-            // Redirect back with error message
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal menyimpan intervensi. Silakan coba lagi.');
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->back()->withInput();
         }
     }
 
@@ -161,7 +155,7 @@ class PelakuIntervensiController extends Controller
         }
 
         // Debugging: Cek semua informasi terkait bukti pendaftaran
-        \Log::info('Debug Bukti Pendaftaran', [
+        Log::info('Debug Bukti Pendaftaran', [
             'kegiatan_id' => $intervensi->kegiatan->id,
             'bukti_pendaftaran_path' => $intervensi->kegiatan->bukti_pendaftaran_path,
             'storage_path' => storage_path('app/public/' . $intervensi->kegiatan->bukti_pendaftaran_path)
@@ -332,17 +326,11 @@ class PelakuIntervensiController extends Controller
                 $intervensi->update($updateData);
             }
 
-            // Redirect with success message
-            return redirect()->route('pelakukelolaintervensi.index')
-                ->with('success', 'Intervensi berhasil diperbarui.');
+            session()->flash('success', 'Berhasil Memperbarui Data Kegiatan Intervensi');
+            return redirect()->route('pelakukelolaintervensi.index');
         } catch (\Exception $e) {
-            // Log the error
-            Log::error('Error updating intervention: ' . $e->getMessage());
-
-            // Redirect back with error message
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal memperbarui intervensi: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->back()->withInput();
         }
     }
 

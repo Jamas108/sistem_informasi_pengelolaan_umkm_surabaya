@@ -3,6 +3,7 @@
         <script type="text/javascript" src="{{ URL::asset('js/umkm-form.js') }}"></script>
         <script type="text/javascript" src="{{ URL::asset('js/umkm-legalitas.js') }}"></script>
         <script type="text/javascript" src="{{ URL::asset('js/umkm-intervensi.js') }}"></script>
+        
         <script>
             $(document).ready(function() {
                 // This initializes umkmCounter for both inline script and the external script

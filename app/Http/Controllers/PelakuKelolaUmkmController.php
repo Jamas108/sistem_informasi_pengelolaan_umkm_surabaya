@@ -149,27 +149,11 @@ class PelakuKelolaUmkmController extends Controller
             DB::commit();
             Log::info('All store operations completed successfully', ['success_count' => $successCount]);
 
-            // Redirect with success message
-            $successMessage = $successCount > 1
-                ? "$successCount UMKM berhasil ditambahkan dan menunggu verifikasi admin"
-                : "UMKM berhasil ditambahkan dan menunggu verifikasi admin";
-
-            return redirect()->route('pelakukelolaumkm.index')
-                ->with('status', $successMessage)
-                ->with('status_type', 'success');
+            session()->flash('success', 'Berhasil Mendaftar UMKM, Tunggu Konfirmasi Persetujuan Dari Admin');
+            return redirect()->route('pelakukelolaumkm.index');
         } catch (\Exception $e) {
-            // Rollback in case of any exceptions
-            DB::rollBack();
-            Log::error('Error storing UMKM data', [
-                'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            // Redirect with error message
-            return redirect()->back()
-                ->with('status', 'Terjadi kesalahan: ' . $e->getMessage())
-                ->with('status_type', 'danger')
-                ->withInput();
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->back()->withInput();
         }
     }
 
@@ -247,23 +231,12 @@ class PelakuKelolaUmkmController extends Controller
             DB::commit();
             Log::info('All update operations completed successfully');
 
-            // Redirect with success message - disesuaikan dengan rute yang benar
-            return redirect()->route('pelakukelolaumkm.index')
-                ->with('status', 'Data UMKM berhasil diperbarui')
-                ->with('status_type', 'success');
+            session()->flash('success', 'Berhasil Memperbarui Data UMKM');
+            return redirect()->route('pelakukelolaumkm.index');
         } catch (\Exception $e) {
-            // Rollback in case of any exceptions
-            DB::rollBack();
-            Log::error('Error updating UMKM data', [
-                'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->back()->withInput();
 
-            // Redirect with error message
-            return redirect()->back()
-                ->with('status', 'Terjadi kesalahan: ' . $e->getMessage())
-                ->with('status_type', 'danger')
-                ->withInput();
         }
     }
 

@@ -95,20 +95,23 @@
 
                 </div>
 
+                <!-- Flash Messages -->
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                         <h6 class="m-0 font-weight-bold">Daftar UMKM Terdaftar</h6>
-                        <div class="dropdown no-arrow">
-                            <a href="#" class="dropdown-toggle" role="button" id="dropdownMenuLink"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-white"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                aria-labelledby="dropdownMenuLink">
-                                <a class="dropdown-item" href="{{ route('dataumkm.create') }}">Tambah Data Baru</a>
-                                <a class="dropdown-item" href="#">Cetak Laporan</a>
-                            </div>
-                        </div>
+                       
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">

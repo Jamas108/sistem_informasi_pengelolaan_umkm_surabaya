@@ -13,6 +13,7 @@ use App\Models\Omset;
 use App\Models\Kegiatan;
 use App\Models\Intervensi;
 use App\Models\Legalitas;
+use App\Models\ProdukUmkm;
 
 class DashboardController extends Controller
 {
@@ -208,10 +209,10 @@ class DashboardController extends Controller
             return view('pelakuumkm.dashboard', [
                 'dataUmkm' => [],
                 'pelakuUmkm' => $pelakuUmkm,
-                'omsetBulanan' => 0,
-                'omsetTahunan' => 0,
+                'jumlahUMKM' => 0,
+                'jumlahProduk' => 0,
                 'kegiatanDiikuti' => 0,
-                'jumlahLegalitas' => 0,
+                'jumlahOmset' => 0,
                 'chartOmset' => [
                     'labels' => [],
                     'values' => []
@@ -220,50 +221,24 @@ class DashboardController extends Controller
             ]);
         }
 
-        // ID UMKM pertama untuk data detail
-        $umkmId = $dataUmkm->first()->id;
+        // ID UMKM milik pelaku untuk data detail
+        $umkmIds = $dataUmkm->pluck('id'); // Collect all UMKM IDs owned by this Pelaku UMKM
 
-        // Data omset
-        $omsetBulanan = Intervensi::where('umkm_id', $umkmId)
-            ->where('omset')
-            ->first()
-            ->total_omset ?? 0;
+        // Jumlah UMKM yang dimiliki pelaku
+        $jumlahUMKM = $dataUmkm->count();
 
-        $omsetTahunan = Intervensi::where('umkm_id', $umkmId)
-            ->where('omset')
-            ->first()
-            ->total_omset ?? 0;
+        // Jumlah produk berdasarkan semua UMKM yang dimiliki pelaku
+        $jumlahProduk = ProdukUmkm::whereIn('umkm_id', $umkmIds)->count();
 
-        // Jumlah kegiatan yang diikuti
-        $kegiatanDiikuti = Intervensi::where('umkm_id', $umkmId)->count();
-
-        // Status legalitas
-        $legalitas = Legalitas::where('umkm_id', $umkmId)->first();
-        $jumlahLegalitas = 0;
-
-        if ($legalitas) {
-            $fields = [
-                'no_sk_nib',
-                'no_sk_siup',
-                'no_sk_tdp',
-                'no_sk_pirt',
-                'no_sk_bpom',
-                'no_sk_halal',
-                'no_sk_merek',
-                'no_sk_haki'
-            ];
-
-            foreach ($fields as $field) {
-                if (!empty($legalitas->$field)) {
-                    $jumlahLegalitas++;
-                }
-            }
-        }
-
-        $totalOmset = Intervensi::getTotalOmsetByUmkm($umkmId);
+        // Jumlah kegiatan yang diikuti oleh pelaku UMKM
+        $kegiatanDiikuti = Intervensi::whereIn('umkm_id', $umkmIds)->count();
 
         // Data untuk chart omset
-        $chartOmset = $this->getOmsetChartData($umkmId);
+        $chartOmset = $this->getOmsetChartData($umkmIds); // Modify the method to handle multiple UMKM IDs
+
+        // Jumlah total omset dari semua kegiatan intervensi yang diikuti
+        $jumlahOmset = Intervensi::whereIn('umkm_id', $umkmIds)
+            ->sum('omset'); // Sum all omset values for the UMKM IDs owned by this Pelaku UMKM
 
         // Kegiatan mendatang
         $kegiatanMendatang = Kegiatan::where('tanggal_mulai', '>=', now())
@@ -274,12 +249,10 @@ class DashboardController extends Controller
         return view('pelakuumkm.dashboard', compact(
             'dataUmkm',
             'pelakuUmkm',
-            'omsetBulanan',
-            'omsetTahunan',
+            'jumlahUMKM',
+            'jumlahProduk',
             'kegiatanDiikuti',
-            'jumlahLegalitas',
-            'legalitas',
-            'totalOmset',
+            'jumlahOmset',
             'chartOmset',
             'kegiatanMendatang'
         ));
@@ -473,31 +446,24 @@ class DashboardController extends Controller
      * @param int $umkmId
      * @return array
      */
-    private function getOmsetChartData($umkmId)
-    {
-        $data = [
-            'labels' => [],
-            'values' => []
-        ];
+    private function getOmsetChartData($umkmIds)
+{
+    // Your logic for generating chart data, ensuring you handle multiple UMKM IDs
+    $omsetData = [];
 
-        // Ambil data 6 bulan terakhir
-        for ($i = 5; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $month = $date->format('M Y');
-            $data['labels'][] = $month;
+    // Example of how you can fetch and return chart data based on the provided UMKM IDs
+    $intervensiData = Intervensi::whereIn('umkm_id', $umkmIds)
+        ->groupBy('created_at') // or any other criteria
+        ->selectRaw('SUM(omset) as total_omset, DATE(created_at) as date')
+        ->get();
 
-            // Cari omset untuk bulan tersebut
-            $monthlyOmset = Intervensi::where('umkm_id', $umkmId)
-                ->whereYear('created_at', $date->year)
-                ->whereMonth('created_at', $date->month)
-                ->sum('omset');
-
-            $data['values'][] = $monthlyOmset ?: 0;
-        }
-
-        return $data;
+    foreach ($intervensiData as $data) {
+        $omsetData['labels'][] = $data->date;
+        $omsetData['values'][] = $data->total_omset;
     }
 
+    return $omsetData;
+}
     /**
      * Ekspor laporan (untuk Admin Kantor)
      *

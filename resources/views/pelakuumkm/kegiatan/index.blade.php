@@ -3,7 +3,7 @@
     @include('layouts.pelakuumkm.sidebar')
     <main class="main-content">
         <!-- Header Section -->
-        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background-color: #5281ab">
+        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
             <div class="container-fluid">
                 <div class="row align-items-center">
                     <div class="col-md-6">
@@ -49,7 +49,7 @@
                                 <option value="Persiapan Acara" @if(request('status_kegiatan') == 'Persiapan Acara') selected @endif>Persiapan Acara</option>
                                 <option value="Selesai" @if(request('status_kegiatan') == 'Selesai') selected @endif>Selesai</option>
 
-   
+
                             </select>
                         </div>
                         <div class="col-lg-2 col-md-2">
@@ -66,7 +66,8 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white p-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold text-primary">
-                        <i class="fas fa-list me-2"></i>Daftar Kegiatan
+                        <i class="fas fa-list me-2"></i>
+                        <span>Daftar Kegiatan</span>
                     </h5>
 
                 </div>
@@ -102,6 +103,7 @@
                                             <span class="badge text-white
                                                 @if($kegiatan->status_kegiatan == 'Belum Dimulai') bg-danger
                                                 @elseif($kegiatan->status_kegiatan == 'Pendaftaran') bg-info
+                                                 @elseif($kegiatan->status_kegiatan == 'Pendaftaran') bg-secondary
                                                 @elseif($kegiatan->status_kegiatan == 'Sedang Berlangsung') bg-primary
                                                 @elseif($kegiatan->status_kegiatan == 'Selesai') bg-success
                                                 @else bg-warning @endif">

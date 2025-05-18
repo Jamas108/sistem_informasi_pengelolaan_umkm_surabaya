@@ -213,20 +213,11 @@ class DataUmkmController extends Controller
             DB::commit();
             Log::info('Transaction committed successfully');
 
-            return redirect()->route('dataumkm.index')
-                ->with('success', 'Data UMKM berhasil disimpan. Username dan password telah dibuat dengan NIK.');
+            session()->flash('success', 'Data UMKM berhasil ditambahkan');
+            return redirect()->route('dataumkm.index');
         } catch (\Exception $e) {
-            // Rollback the transaction if any error occurs
-            DB::rollBack();
-            Log::error('Error occurred during UMKM creation', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            // Return with error message
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
-                ->withInput();
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->back()->withInput();
         }
     }
 
@@ -431,20 +422,11 @@ class DataUmkmController extends Controller
 
             DB::commit();
 
-            return redirect()->route('dataumkm.index')
-                ->with('status', 'Data UMKM berhasil diperbarui')
-                ->with('status_type', 'success');
+            session()->flash('success', 'Data UMKM berhasil diperbarui');
+            return redirect()->route('dataumkm.index');
         } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Error updating UMKM data', [
-                'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return redirect()->back()
-                ->with('status', 'Terjadi kesalahan: ' . $e->getMessage())
-                ->with('status_type', 'danger')
-                ->withInput();
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->back()->withInput();
         }
     }
 

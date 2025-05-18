@@ -54,13 +54,13 @@
                 toast.setAttribute('aria-atomic', 'true');
 
                 toast.innerHTML = `
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                `;
+            <div class="d-flex">
+                <div class="toast-body">
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
 
                 toastContainer.appendChild(toast);
 
@@ -73,62 +73,28 @@
                 toast.addEventListener('hidden.bs.toast', () => toast.remove());
             }
 
-            // Create image preview
-            function createImagePreview(imageUrl) {
-                const {
-                    dokumentasiPreview,
-                    cameraButton
-                } = elements;
+            // Function to update camera button visibility based on the status of kegiatan
+            function updateCameraButtonVisibility() {
+                const status = elements.statusKegiatan.value;
 
-                // Clear previous previews
-                dokumentasiPreview.innerHTML = '';
-
-                // Create image container
-                const imageContainer = document.createElement('div');
-                imageContainer.classList.add('position-relative', 'me-2', 'mt-2');
-
-                // Create image element
-                const img = document.createElement('img');
-                img.src = imageUrl;
-                img.classList.add('img-thumbnail');
-                img.style.maxWidth = '150px';
-                img.style.maxHeight = '150px';
-
-                // Create replace button
-                const replaceButton = document.createElement('button');
-                replaceButton.type = 'button';
-                replaceButton.classList.add(
-                    'btn', 'btn-sm', 'btn-primary',
-                    'position-absolute', 'top-0', 'end-0',
-                    'm-1', 'btn-replace'
-                );
-                replaceButton.innerHTML = '<i class="fas fa-sync-alt"></i>';
-                replaceButton.title = 'Ganti Foto';
-                replaceButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    openCamera();
-                });
-
-                // Create temporary label
-                const tempLabel = document.createElement('div');
-                tempLabel.classList.add(
-                    'badge', 'bg-warning',
-                    'position-absolute', 'bottom-0', 'start-0', 'm-1'
-                );
-                tempLabel.innerHTML = '<i class="fas fa-clock me-1"></i> Belum Disimpan';
-
-                // Assemble container
-                imageContainer.appendChild(img);
-                imageContainer.appendChild(replaceButton);
-                imageContainer.appendChild(tempLabel);
-
-                // Add to preview
-                dokumentasiPreview.appendChild(imageContainer);
-
-                // Update camera button
-                if (cameraButton) {
-                    cameraButton.innerHTML = '<i class="fas fa-camera me-2"></i> Ganti Foto Dokumentasi';
+                // Hide the camera button if the status is not 'Sedang Berlangsung'
+                if (status !== 'Sedang Berlangsung') {
+                    if (elements.cameraButton) {
+                        elements.cameraButton.style.display = 'none';
+                    }
+                } else {
+                    if (elements.cameraButton) {
+                        elements.cameraButton.style.display = 'block';
+                    }
                 }
+            }
+
+            // Call this function to initially update the button visibility based on current status
+            updateCameraButtonVisibility();
+
+            // Add event listener to 'status_kegiatan' dropdown if status changes
+            if (elements.statusKegiatan) {
+                elements.statusKegiatan.addEventListener('change', updateCameraButtonVisibility);
             }
 
             // Open camera for capturing image
@@ -315,49 +281,6 @@
                 }
             }
 
-            // Setup existing images
-            function setupExistingImages() {
-                const {
-                    dokumentasiPreview,
-                    statusKegiatan
-                } = elements;
-                const existingImages = dokumentasiPreview.querySelectorAll('img');
-
-                // Keep only first image
-                if (existingImages.length > 1) {
-                    for (let i = 1; i < existingImages.length; i++) {
-                        existingImages[i].closest('.position-relative').remove();
-                    }
-                }
-
-                // Add replace buttons to existing images
-                existingImages.forEach(img => {
-                    const status = statusKegiatan.value;
-                    if (['Sedang Berlangsung', 'Selesai'].includes(status)) {
-                        const container = img.closest('.position-relative');
-
-                        // Add replace button if not exists
-                        if (!container.querySelector('.btn-replace')) {
-                            const replaceButton = document.createElement('button');
-                            replaceButton.type = 'button';
-                            replaceButton.classList.add(
-                                'btn', 'btn-sm', 'btn-primary',
-                                'position-absolute', 'top-0', 'end-0',
-                                'm-1', 'btn-replace'
-                            );
-                            replaceButton.innerHTML = '<i class="fas fa-sync-alt"></i>';
-                            replaceButton.title = 'Ganti Foto';
-                            replaceButton.addEventListener('click', (e) => {
-                                e.preventDefault();
-                                openCamera();
-                            });
-
-                            container.appendChild(replaceButton);
-                        }
-                    }
-                });
-            }
-
             // Initialize page
             function initPage() {
                 // Validate required elements
@@ -374,22 +297,6 @@
                 // Setup existing images
                 setupExistingImages();
                 setTimeout(setupExistingImages, 500);
-
-                // Form submission handler
-                const form = document.querySelector('form.needs-validation');
-                if (form) {
-                    form.addEventListener('submit', (event) => {
-                        const status = elements.statusKegiatan.value;
-
-                        // Validate omset for completed interventions
-                        if (status === 'Selesai' && !elements.omsetInput.value) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            elements.omsetInput.classList.add('is-invalid');
-                            showToast('Harap masukkan omset setelah intervensi', 'danger');
-                        }
-                    });
-                }
             }
 
             // Start initialization
@@ -402,19 +309,15 @@
     @include('layouts.pelakuumkm.sidebar')
     <main class="main-content">
         <!-- Gradient Header -->
-        <div class=" text-white py-4 shadow-sm" style="background-color: #5281ab">
-            <div class="container-fluid px-4">
+        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
+            <div class="container-fluid">
                 <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <div class="d-flex align-items-center">
-                            <div class=" bg-opacity-20 rounded-circle p-3 me-3">
-                                <i class="fas fa-edit fa-2x text-white"></i>
-                            </div>
-                            <div>
-                                <h2 class="mb-1 fw-bold">Edit Intervensi</h2>
-                                <p class="mb-0 text-white-75">Perbarui informasi detail kegiatan intervensi UMKM</p>
-                            </div>
-                        </div>
+                    <div class="col">
+                        <h4 class="fw-bold mb-0">
+                            <i class="fas fa-edit me-2"></i>
+                            <span class="ml-1">Edit Intervensi</span>
+                        </h4>
+                        <p class="mb-0 fs-6">Silahkan melakukan update sesuai kebutuhan pada intervensi</p>
                     </div>
                 </div>
             </div>
@@ -458,14 +361,16 @@
                                     @php
                                         $statusClass =
                                             [
-                                                'Pendaftaran' => 'bg-warning',
-                                                'Sedang Berlangsung' => 'bg-info',
-                                                'Selesai' => 'bg-success',
+                                                'Pendaftaran' => 'bg-warning text-white',
+                                                'Persiapan Acara' => 'bg-secondary text-white',
+                                                'Sedang Berlangsung' => 'bg-info text-white',
+                                                'Selesai' => 'bg-success text-white',
                                             ][$intervensi->kegiatan->status_kegiatan] ?? 'bg-secondary';
 
                                         $statusIcon =
                                             [
                                                 'Pendaftaran' => 'fa-clock',
+                                                'Persiapan Acara' => 'fa-calendar',
                                                 'Sedang Berlangsung' => 'fa-running',
                                                 'Selesai' => 'fa-check-circle',
                                             ][$intervensi->kegiatan->status_kegiatan] ?? 'fa-question-circle';
@@ -497,7 +402,12 @@
 
                                         <!-- Status nodes -->
                                         @php
-                                            $statuses = ['Pendaftaran', 'Sedang Berlangsung', 'Selesai'];
+                                            $statuses = [
+                                                'Pendaftaran',
+                                                'Persiapan Acara',
+                                                'Sedang Berlangsung',
+                                                'Selesai',
+                                            ];
                                             $currentStatusIndex = array_search(
                                                 $intervensi->kegiatan->status_kegiatan,
                                                 $statuses,
@@ -505,24 +415,37 @@
                                         @endphp
 
                                         @foreach ($statuses as $index => $status)
-                                            <div class="status-node text-center" style="z-index: 2; width: 33%;">
+                                            <div class="status-node text-center" style="z-index: 2; width: 25%;">
+                                                <!-- Adjusted width to fit the 4 statuses -->
                                                 <div id="status-node-{{ $index }}"
                                                     class="
-                                                    {{ $index <= $currentStatusIndex ? 'bg-success' : 'bg-light border' }}
-                                                    rounded-circle d-flex align-items-center justify-content-center mx-auto"
+        {{ $index <= $currentStatusIndex ? 'bg-success' : 'bg-light border' }}
+        rounded-circle d-flex align-items-center justify-content-center mx-auto"
                                                     style="width: 50px; height: 50px;">
                                                     @if ($index < $currentStatusIndex)
                                                         <i class="fas fa-check text-white"></i>
                                                     @elseif($index == $currentStatusIndex)
                                                         <i
                                                             class="fas
-                                                        {{ $status == 'Pendaftaran' ? 'fa-clock' : ($status == 'Sedang Berlangsung' ? 'fa-running' : 'fa-check-circle') }}
-                                                        {{ $index <= $currentStatusIndex ? 'text-white' : 'text-muted' }}"></i>
+                {{ $status == 'Pendaftaran'
+                    ? 'fa-clock'
+                    : ($status == 'Persiapan Acara'
+                        ? 'fa-calendar-alt'
+                        : ($status == 'Sedang Berlangsung'
+                            ? 'fa-running'
+                            : 'fa-check-circle')) }}
+                {{ $index <= $currentStatusIndex ? 'text-white' : 'text-muted' }}"></i>
                                                     @else
                                                         <i
                                                             class="fas
-                                                        {{ $status == 'Pendaftaran' ? 'fa-clock' : ($status == 'Sedang Berlangsung' ? 'fa-running' : 'fa-check-circle') }}
-                                                        text-muted"></i>
+                {{ $status == 'Pendaftaran'
+                    ? 'fa-clock'
+                    : ($status == 'Persiapan Acara'
+                        ? 'fa-calendar-alt'
+                        : ($status == 'Sedang Berlangsung'
+                            ? 'fa-running'
+                            : 'fa-check-circle')) }}
+                text-muted"></i>
                                                     @endif
                                                 </div>
                                                 <div id="status-text-{{ $index }}"
@@ -540,6 +463,7 @@
                                         <strong>Ketentuan formulir berdasarkan status:</strong>
                                         <ul class="mb-0">
                                             <li><strong>Pendaftaran:</strong> Data UMKM dan kegiatan dapat diubah</li>
+                                            <li><strong>Persiapan Acara:</strong> Data UMKM dan kegiatan tidak dapat diubah dan tunggu admin untuk membuat bukti pendaftaran</li>
                                             <li><strong>Sedang Berlangsung:</strong> Hanya dokumentasi yang dapat diunggah
                                                 melalui kamera</li>
                                             <li><strong>Selesai:</strong> Hanya omset yang dapat diubah dan dokumentasi
@@ -751,8 +675,7 @@
 
                                             <div class="dokumentasi-container border rounded p-3 bg-light">
                                                 <!-- Status-based guidance -->
-                                                <div class="alert alert-info p-2 mb-3" role="alert">
-                                                    <i class="fas fa-info-circle me-2"></i>
+                                                {{-- <div class="alert alert-info p-2 mb-3" role="alert">
                                                     @php
                                                         $status = $intervensi->kegiatan->status_kegiatan;
                                                     @endphp
@@ -763,7 +686,7 @@
                                                     @elseif ($status === 'Selesai')
                                                         Anda dapat menambahkan atau mengganti dokumentasi kegiatan.
                                                     @endif
-                                                </div>
+                                                </div> --}}
 
                                                 <!-- Hidden file input for camera capture -->
                                                 <input type="file" class="form-control d-none"
@@ -773,38 +696,38 @@
                                                 <!-- Camera button -->
                                                 <div class="text-center mb-3">
                                                     <button type="button" id="camera-button"
-                                                    class="btn btn-primary btn-lg"
-                                                    {{ $status === 'Pendaftaran' ? 'disabled' : '' }}>
-                                                    <i class="fas fa-camera me-2"></i>
-                                                    @php
-                                                        // Safely determine if dokumentasi is empty
-                                                        $hasImages = false;
+                                                        class="btn btn-primary btn-lg"
+                                                        {{ $status === 'Pendaftaran' ? 'disabled' : '' }}>
+                                                        <i class="fas fa-camera me-2"></i>
+                                                        @php
+                                                            // Safely determine if dokumentasi is empty
+                                                            $hasImages = false;
 
-                                                        if (!empty($intervensi->dokumentasi_kegiatan)) {
-                                                            $dokValue = $intervensi->dokumentasi_kegiatan;
+                                                            if (!empty($intervensi->dokumentasi_kegiatan)) {
+                                                                $dokValue = $intervensi->dokumentasi_kegiatan;
 
-                                                            // If it's already an array, use it directly
-                                                            if (is_array($dokValue)) {
-                                                                $hasImages = !empty($dokValue);
-                                                            }
-                                                            // If it's a string that might be JSON, try to decode
-                                                            else if (is_string($dokValue)) {
-                                                                try {
-                                                                    $decodedValue = json_decode($dokValue, true);
-                                                                    // Use decoded value only if successful
-                                                                    if (json_last_error() === JSON_ERROR_NONE) {
-                                                                        $hasImages = !empty($decodedValue);
+                                                                // If it's already an array, use it directly
+    if (is_array($dokValue)) {
+        $hasImages = !empty($dokValue);
+    }
+    // If it's a string that might be JSON, try to decode
+                                                                elseif (is_string($dokValue)) {
+                                                                    try {
+                                                                        $decodedValue = json_decode($dokValue, true);
+                                                                        // Use decoded value only if successful
+                                                                        if (json_last_error() === JSON_ERROR_NONE) {
+                                                                            $hasImages = !empty($decodedValue);
+                                                                        }
+                                                                    } catch (\Exception $e) {
+                                                                        // If decoding fails, check if the string itself has content
+                                                                        $hasImages = !empty($dokValue);
                                                                     }
-                                                                } catch (\Exception $e) {
-                                                                    // If decoding fails, check if the string itself has content
-                                                                    $hasImages = !empty($dokValue);
                                                                 }
                                                             }
-                                                        }
-                                                    @endphp
+                                                        @endphp
 
-                                                    {{ $hasImages ? 'Ganti Foto Dokumentasi' : 'Ambil Foto Dokumentasi' }}
-                                                </button>
+                                                        {{ $hasImages ? 'Ganti Foto Dokumentasi' : 'Ambil Foto Dokumentasi' }}
+                                                    </button>
                                                 </div>
 
                                                 <!-- Dokumentasi preview area -->
@@ -814,7 +737,10 @@
                                                             // Check if dokumentasi_kegiatan is already an array or a JSON string
                                                             $dokumentasis = is_array($intervensi->dokumentasi_kegiatan)
                                                                 ? $intervensi->dokumentasi_kegiatan
-                                                                : json_decode($intervensi->dokumentasi_kegiatan, true) ?? [];
+                                                                : json_decode(
+                                                                        $intervensi->dokumentasi_kegiatan,
+                                                                        true,
+                                                                    ) ?? [];
                                                         @endphp
                                                         @forelse ($dokumentasis as $dok)
                                                             <div class="dokumentasi-item position-relative">
