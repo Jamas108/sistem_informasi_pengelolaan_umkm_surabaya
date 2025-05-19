@@ -3,7 +3,7 @@
         <script type="text/javascript" src="{{ URL::asset('js/umkm-form.js') }}"></script>
         <script type="text/javascript" src="{{ URL::asset('js/umkm-legalitas.js') }}"></script>
         <script type="text/javascript" src="{{ URL::asset('js/umkm-intervensi.js') }}"></script>
-        
+
         <script>
             $(document).ready(function() {
                 // This initializes umkmCounter for both inline script and the external script
@@ -1742,7 +1742,7 @@
                                 <label for="add_product_tipe" class="font-weight-bold">Tipe Produk</label>
                                 <select class="form-control" id="add_product_tipe" name="tipe_produk" required>
                                     <option value="" selected>-- Pilih Tipe Produk --</option>
-                                    <option value="Makanan dan Minuman">Makanan dan Minuman</option>
+                                    <option value="Makanan dan minuman">Makanan dan Minuman</option>
                                     <option value="Makanan">Makanan</option>
                                     <option value="Minuman">Minuman</option>
                                     <option value="Fashion">Fashion</option>
