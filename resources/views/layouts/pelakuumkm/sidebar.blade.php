@@ -90,10 +90,10 @@
             @csrf
         </form>
 
-        <a class="nav-link text-danger" href="#"
+        <a class="nav-link" href="#"
             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             <div class="d-flex align-items-center">
-                <div class="icon-circle me-3 d-flex align-items-center justify-content-center">
+                <div class="icon-circle me-3 d-flex align-items-center justify-content-center bg-danger">
                     <i class="fas fa-sign-out-alt"></i>
                 </div>
                 <span class="ml-2">Keluar</span>

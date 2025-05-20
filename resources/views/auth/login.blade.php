@@ -25,7 +25,7 @@
 
                             <!-- Username Field -->
                             <div class="mb-3">
-                                <input id="nik" type="text"
+                                <input id="nik" type="number"
                                     class="form-control @error('nik') is-invalid @enderror" name="nik"
                                     placeholder="Masukan Nik" value="{{ old('nik') }}" required autofocus>
                                 @error('nik')

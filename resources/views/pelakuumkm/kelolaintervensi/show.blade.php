@@ -402,7 +402,8 @@
     @include('layouts.pelakuumkm.sidebar')
     <main class="main-content">
         <!-- Gradient Header -->
-        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
+        <div class="text-white py-3 px-4 shadow-sm" id="nav"
+            style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
             <div class="container-fluid">
                 <div class="row align-items-center">
                     <div class="col">
@@ -453,14 +454,16 @@
                                     @php
                                         $statusClass =
                                             [
-                                                'Pendaftaran' => 'bg-warning',
-                                                'Sedang Berlangsung' => 'bg-info',
-                                                'Selesai' => 'bg-success',
+                                                'Pendaftaran' => 'bg-warning text-white',
+                                                'Persiapan Acara' => 'bg-secondary text-white',
+                                                'Sedang Berlangsung' => 'bg-info text-white',
+                                                'Selesai' => 'bg-success text-white',
                                             ][$intervensi->kegiatan->status_kegiatan] ?? 'bg-secondary';
 
                                         $statusIcon =
                                             [
                                                 'Pendaftaran' => 'fa-clock',
+                                                'Persiapan Acara' => 'fa-calendar',
                                                 'Sedang Berlangsung' => 'fa-running',
                                                 'Selesai' => 'fa-check-circle',
                                             ][$intervensi->kegiatan->status_kegiatan] ?? 'fa-question-circle';
@@ -492,32 +495,49 @@
 
                                         <!-- Status nodes -->
                                         @php
-                                            $statuses = ['Pendaftaran', 'Sedang Berlangsung', 'Selesai'];
-                                            $currentStatusIndex = array_search(
-                                                $intervensi->kegiatan->status_kegiatan,
-                                                $statuses,
-                                            );
-                                        @endphp
-
+                                        $statuses = [
+                                            'Pendaftaran',
+                                            'Persiapan Acara',
+                                            'Sedang Berlangsung',
+                                            'Selesai',
+                                        ];
+                                        $currentStatusIndex = array_search(
+                                            $intervensi->kegiatan->status_kegiatan,
+                                            $statuses,
+                                        );
+                                    @endphp
                                         @foreach ($statuses as $index => $status)
-                                            <div class="status-node text-center" style="z-index: 2; width: 33%;">
+                                            <div class="status-node text-center" style="z-index: 2; width: 25%;">
+                                                <!-- Adjusted width to fit the 4 statuses -->
                                                 <div id="status-node-{{ $index }}"
                                                     class="
-                                                    {{ $index <= $currentStatusIndex ? 'bg-success' : 'bg-light border' }}
-                                                    rounded-circle d-flex align-items-center justify-content-center mx-auto"
+{{ $index <= $currentStatusIndex ? 'bg-success' : 'bg-light border' }}
+rounded-circle d-flex align-items-center justify-content-center mx-auto"
                                                     style="width: 50px; height: 50px;">
                                                     @if ($index < $currentStatusIndex)
                                                         <i class="fas fa-check text-white"></i>
                                                     @elseif($index == $currentStatusIndex)
                                                         <i
                                                             class="fas
-                                                        {{ $status == 'Pendaftaran' ? 'fa-clock' : ($status == 'Sedang Berlangsung' ? 'fa-running' : 'fa-check-circle') }}
-                                                        {{ $index <= $currentStatusIndex ? 'text-white' : 'text-muted' }}"></i>
+{{ $status == 'Pendaftaran'
+    ? 'fa-clock'
+    : ($status == 'Persiapan Acara'
+        ? 'fa-calendar-alt'
+        : ($status == 'Sedang Berlangsung'
+            ? 'fa-running'
+            : 'fa-check-circle')) }}
+{{ $index <= $currentStatusIndex ? 'text-white' : 'text-muted' }}"></i>
                                                     @else
                                                         <i
                                                             class="fas
-                                                        {{ $status == 'Pendaftaran' ? 'fa-clock' : ($status == 'Sedang Berlangsung' ? 'fa-running' : 'fa-check-circle') }}
-                                                        text-muted"></i>
+{{ $status == 'Pendaftaran'
+    ? 'fa-clock'
+    : ($status == 'Persiapan Acara'
+        ? 'fa-calendar-alt'
+        : ($status == 'Sedang Berlangsung'
+            ? 'fa-running'
+            : 'fa-check-circle')) }}
+text-muted"></i>
                                                     @endif
                                                 </div>
                                                 <div id="status-text-{{ $index }}"
@@ -572,17 +592,7 @@
                                         </div>
                                     @else
                                         <div class="col-md-12 mt-3">
-                                            <div class="alert alert-warning d-flex align-items-center" role="alert">
-                                                <i class="fas fa-exclamation-triangle me-3 fa-2x"></i>
-                                                <div class="ml-2">
-                                                    Bukti pendaftaran belum tersedia.
-                                                    @if ($intervensi->kegiatan->status_kegiatan == 'Pendaftaran')
-                                                        Dokumen akan dibuat setelah admin mengubah status kegiatan.
-                                                    @else
-                                                        Hubungi admin untuk informasi lebih lanjut.
-                                                    @endif
-                                                </div>
-                                            </div>
+
                                         </div>
                                     @endif
                                 </div>

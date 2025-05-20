@@ -451,7 +451,7 @@ class DataUmkmController extends Controller
             }
 
             // Check if NIK exists in the pelaku_umkm table
-            $pelakuUmkm = \App\Models\User::where('nik', $nik)->first();
+            $pelakuUmkm = \App\Models\PelakuUmkm::where('nik', $nik)->first();
 
             if ($pelakuUmkm) {
                 return response()->json([

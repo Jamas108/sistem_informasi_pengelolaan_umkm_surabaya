@@ -35,7 +35,7 @@ class Intervensi extends Model
     // Relasi ke Kegiatan
     public function kegiatan()
     {
-        return $this->belongsTo(Kegiatan::class, 'kegiatan_id');
+        return $this->belongsTo(Kegiatan::class, 'kegiatan_id')->withTrashed();
     }
 
     // Scope untuk filter berdasarkan UMKM

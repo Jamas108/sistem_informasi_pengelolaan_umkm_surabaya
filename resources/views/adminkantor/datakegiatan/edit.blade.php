@@ -78,10 +78,25 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="jenis_kegiatan">Jenis Kegiatan</label>
-                                        <input type="text"
-                                            class="form-control @error('jenis_kegiatan') is-invalid @enderror"
-                                            id="jenis_kegiatan" name="jenis_kegiatan"
-                                            value="{{ old('jenis_kegiatan', $kegiatan->jenis_kegiatan) }}">
+                                        <select class="form-control @error('jenis_kegiatan') is-invalid @enderror"
+                                            id="jenis_kegiatan" name="jenis_kegiatan">
+                                            <option value="">Pilih Status</option>
+                                            <option value="PEMASARAN"
+                                                {{ old('jenis_kegiatan', $kegiatan->jenis_kegiatan) == 'PEMASARAN' ? 'selected' : '' }}>
+                                                PEMASARAN</option>
+                                            <option value="PELATIHAN"
+                                                {{ old('jenis_kegiatan', $kegiatan->jenis_kegiatan) == 'PELATIHAN' ? 'selected' : '' }}>
+                                                PELATIHAN</option>
+                                            <option value="LEGALITAS/SERTIFIKASI"
+                                                {{ old('jenis_kegiatan', $kegiatan->jenis_kegiatan) == 'LEGALITAS/SERTIFIKASI' ? 'selected' : '' }}>
+                                                LEGALITAS/SERTIFIKASI</option>
+                                            <option value="KEMITRAAN"
+                                                {{ old('jenis_kegiatan', $kegiatan->jenis_kegiatan) == 'KEMITRAAN' ? 'selected' : '' }}>
+                                                KEMITRAAN</option>
+                                            <option value="PEMBINAAN"
+                                                {{ old('jenis_kegiatan', $kegiatan->jenis_kegiatan) == 'PEMBINAAN' ? 'selected' : '' }}>
+                                                PEMBINAAN</option>
+                                        </select>
                                         @error('jenis_kegiatan')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -208,11 +223,10 @@
             </div>
         </div>
 
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
+        <footer class="sticky-footer" style="background-color: #e0e0e0">
+            <div class="container  my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>© {{ date('Y') }} UMKM Management System</span>
+                    <span class="text-black">© {{ date('Y') }} UMKM Management System Dinas Koperasi Usaha Kecil dan Menangah dan Perdagangan Kota Surabaya </span> <br>
                 </div>
             </div>
         </footer>

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
+
 class KegiatanController extends Controller
 {
     /**
@@ -73,7 +74,7 @@ class KegiatanController extends Controller
             'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
             'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Optional image upload
             'status_kegiatan' => 'nullable|string|max:50',
-            'kuota_pendaftaran' => 'required|integer|max:50'
+            'kuota_pendaftaran' => 'required|integer|max:100'
         ]);
 
         // Handle poster upload
@@ -183,12 +184,8 @@ class KegiatanController extends Controller
     {
         $kegiatan = Kegiatan::findOrFail($id);
 
-        // Delete poster if exists
-        if ($kegiatan->poster) {
-            Storage::disk('public')->delete($kegiatan->poster);
-        }
-
-        // Delete the Kegiatan
+        // With soft deletes, we don't physically delete the file
+        // Just mark the record as deleted
         $kegiatan->delete();
 
         session()->flash('success', 'Data Kegiatan berhasil dihapus');

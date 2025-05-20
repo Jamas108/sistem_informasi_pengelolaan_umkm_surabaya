@@ -26,7 +26,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <h6 class="text-primary text-uppercase fw-bold small mb-1">Jumlah UMKM</h6>
-                                    <h4 class="fw-bold mb-0">Rp {{ $jumlahUMKM }}</h4>
+                                    <h4 class="fw-bold mb-0">{{ $jumlahUMKM }}</h4>
                                 </div>
                                 <div class="avatar rounded-circle text-center text-white p-3"
                                     style="background-color: rgba(78, 115, 223, 0.1); width: 48px; height: 48px; line-height: 24px;">

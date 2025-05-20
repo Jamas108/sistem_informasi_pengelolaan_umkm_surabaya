@@ -198,7 +198,7 @@
             <div class="container-fluid">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">Dashboard Admin Kantor</h1>
-                   
+
                 </div>
 
                 <!-- Statistik dan KPI Cards -->
@@ -483,6 +483,14 @@
                 </div>
             </div>
         </div>
+        <footer class="sticky-footer" style="background-color: #e0e0e0">
+            <div class="container  my-auto">
+                <div class="copyright text-center my-auto">
+                    <span class="text-black">© {{ date('Y') }} UMKM Management System Dinas Koperasi Usaha Kecil dan Menangah dan Perdagangan Kota Surabaya </span> <br>
+                </div>
+            </div>
+        </footer>
     </div>
+
 @endsection
 

@@ -13,7 +13,7 @@
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">Detail Data UMKM</h1>
-                
+
                 </div>
 
                 <div class="container-fluid pt-2 px-2">
@@ -471,11 +471,10 @@
             </div>
         </div>
 
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white mt-4">
-            <div class="container my-auto">
+        <footer class="sticky-footer" style="background-color: #e0e0e0">
+            <div class="container  my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Your Website 2021</span>
+                    <span class="text-black">© {{ date('Y') }} UMKM Management System Dinas Koperasi Usaha Kecil dan Menangah dan Perdagangan Kota Surabaya </span> <br>
                 </div>
             </div>
         </footer>

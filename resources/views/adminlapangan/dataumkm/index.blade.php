@@ -145,8 +145,8 @@
                                         <th>Kelurahan</th>
                                         <th>Alamat</th>
                                         {{-- <th></th>
-                                        <th>Alamat</th>
-                                        <th>Status</th> --}}
+                                        <th>Alamat</th> --}}
+                                        <th>Status</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
@@ -160,22 +160,26 @@
                                             <td>{{ $pelakuumkm->alamat_sesuai_ktp }}</td>
                                             {{-- <td>{{ $pelakuumkm-> }}</td>
                                         <td>{{ $pelakuumkm->alamat }}</td> --}}
-                                            {{-- <td>
-                                            @switch($dataumkm->status)
-                                                @case('AKTIF')
-                                                    <span class="badge badge-success status-badge">AKTIF</span>
+                                            <td>
+                                                @switch($pelakuumkm->status_keaktifan)
+                                                    @case('AKTIF')
+                                                        <span class="badge badge-success status-badge">AKTIF</span>
                                                     @break
-                                                @case('TIDAK AKTIF')
-                                                    <span class="badge badge-danger status-badge">TIDAK AKTIF</span>
+
+                                                    @case('TIDAK AKTIF')
+                                                        <span class="badge badge-danger status-badge">TIDAK AKTIF</span>
                                                     @break
-                                                @default
-                                                    <span class="badge badge-secondary status-badge">{{ $dataumkm->status }}</span>
-                                            @endswitch
-                                        </td> --}}
+
+                                                    @default
+                                                        <span
+                                                            class="badge badge-secondary status-badge">{{ $pelakuumkm->status_keaktifan }}</span>
+                                                @endswitch
+                                            </td>
                                             <td class="text-center">
                                                 <div class="btn-group btn-group-sm text-center" role="group">
                                                     <a href="{{ route('dataumkm.show', $pelakuumkm->id) }}"
-                                                        class="btn btn-sm btn-info btn-action mr-2" title="Lihat Detail">
+                                                        class="btn btn-sm btn-info btn-action mr-2"
+                                                        title="Lihat Detail">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
                                                     <a href="{{ route('dataumkm.edit', $pelakuumkm->id) }}"
@@ -195,10 +199,10 @@
         </div>
 
         <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
+        <footer class="sticky-footer" style="background-color: #e0e0e0">
+            <div class="container  my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>© {{ date('Y') }} UMKM Management System</span>
+                    <span class="text-black">© {{ date('Y') }} UMKM Management System Dinas Koperasi Usaha Kecil dan Menangah dan Perdagangan Kota Surabaya </span> <br>
                 </div>
             </div>
         </footer>

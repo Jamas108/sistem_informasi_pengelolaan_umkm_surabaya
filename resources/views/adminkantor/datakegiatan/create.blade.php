@@ -194,7 +194,7 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                
+
 
                             </div>
 
@@ -209,11 +209,10 @@
             </div>
         </div>
 
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
+        <footer class="sticky-footer" style="background-color: #e0e0e0">
+            <div class="container  my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>© {{ date('Y') }} UMKM Management System</span>
+                    <span class="text-black">© {{ date('Y') }} UMKM Management System Dinas Koperasi Usaha Kecil dan Menangah dan Perdagangan Kota Surabaya </span> <br>
                 </div>
             </div>
         </footer>
