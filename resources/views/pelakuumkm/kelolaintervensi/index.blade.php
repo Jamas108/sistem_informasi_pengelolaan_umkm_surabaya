@@ -151,23 +151,13 @@
                                                     title="Edit Intervensi">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form
-                                                    action="{{ route('pelakukelolaintervensi.destroy', $intervensi->id) }}"
-                                                    method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                        data-bs-toggle="tooltip" title="Hapus Intervensi"
-                                                        onclick="return confirm('Anda yakin ingin menghapus intervensi ini?')">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
+
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center py-5">
+                                        <td colspan="7" class="text-center py-5">
                                             <div class="empty-state">
                                                 <i class="fas fa-briefcase-slash fa-4x text-muted mb-3"></i>
                                                 <h5>Belum Ada Intervensi</h5>

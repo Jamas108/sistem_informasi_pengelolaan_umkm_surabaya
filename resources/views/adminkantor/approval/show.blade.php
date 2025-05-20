@@ -71,10 +71,7 @@
                                         <label class="form-label text-muted small">Nama Usaha</label>
                                         <input type="text" class="form-control bg-light" value="{{ $dataumkm->nama_usaha }}" disabled>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label text-muted small">Tahun Berdiri</label>
-                                        <input type="text" class="form-control bg-light" value="{{ $dataumkm->tahun_berdiri ?? 'Tidak ada data' }}" disabled>
-                                    </div>
+
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label text-muted small">Sektor Usaha</label>
                                         <input type="text" class="form-control bg-light" value="{{ $dataumkm->sektor_usaha ?? 'Tidak ada data' }}" disabled>
@@ -87,7 +84,7 @@
                                         <label class="form-label text-muted small">Pengelolaan Usaha</label>
                                         <input type="text" class="form-control bg-light" value="{{ $dataumkm->pengelolaan_usaha ?? 'Tidak ada data' }}" disabled>
                                     </div>
-                                    <div class="col-md-12 mb-3">
+                                    <div class="col-md-6 mb-3">
                                         <label class="form-label text-muted small">Klasifikasi Kinerja Usaha</label>
                                         <input type="text" class="form-control bg-light" value="{{ $dataumkm->klasifikasi_kinerja_usaha ?? 'Tidak ada data' }}" disabled>
                                     </div>

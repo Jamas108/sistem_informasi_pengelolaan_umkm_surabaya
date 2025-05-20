@@ -125,63 +125,74 @@ class DashboardController extends Controller
     private function adminLapanganDashboard()
     {
         // Data untuk card statistics
-        $totalUmkmDimonitor = Umkm::count(); // Idealnya filter berdasarkan admin yang bertanggung jawab
-        $totalKegiatanTerjadwal = Kegiatan::where('tanggal_mulai', '>=', now())->count();
+        $totalUmkm = Umkm::count();
+        $totalKegiatan = Kegiatan::count();
+        $rataRataOmset = Intervensi::avg('omset') ?? 0;
 
-        // Simulasi progres intervensi (persentase UMKM yang sudah diintervensi)
-        $totalUmkm = max(1, Umkm::count());
-        $totalIntervensi = Intervensi::distinct('umkm_id')->count('umkm_id');
-        $progresIntervensi = round(($totalIntervensi / $totalUmkm) * 100);
+        // Hitung jumlah UMKM dengan legalitas lengkap (memiliki minimal 5 dokumen legalitas)
+        $umkmLegalitasLengkap = DB::table('legalitas')
+            ->select('umkm_id')
+            ->whereNotNull('no_sk_nib')
+            ->whereNotNull('no_sk_siup')
+            ->whereNotNull('no_sk_pirt')
+            ->whereNotNull('no_sk_halal')
+            ->whereNotNull('no_sk_merek')
+            ->count();
 
-        // Jumlah dokumentasi kegiatan
-        $totalDokumentasi = Intervensi::whereNotNull('dokumentasi_kegiatan')->count();
+        // Data untuk persentase legalitas
+        $persentaseLegalitas = [
+            'nib' => round((DB::table('legalitas')->whereNotNull('no_sk_nib')->count() / max(1, $totalUmkm)) * 100),
+            'siup' => round((DB::table('legalitas')->whereNotNull('no_sk_siup')->count() / max(1, $totalUmkm)) * 100),
+            'pirt' => round((DB::table('legalitas')->whereNotNull('no_sk_pirt')->count() / max(1, $totalUmkm)) * 100),
+            'halal' => round((DB::table('legalitas')->whereNotNull('no_sk_halal')->count() / max(1, $totalUmkm)) * 100),
+            'merek' => round((DB::table('legalitas')->whereNotNull('no_sk_merek')->count() / max(1, $totalUmkm)) * 100),
+        ];
 
-        // Data untuk chart intervensi bulanan
-        $intervensiMonthlyData = $this->getIntervensiMonthlyData();
+        // Data untuk chart pertumbuhan UMKM
+        $chartUmkmGrowth = $this->getUmkmGrowthData();
 
-        // Data untuk chart distribusi jenis kegiatan
-        $distribusiJenisKegiatan = $this->getJenisKegiatanData();
+        // Data untuk chart distribusi sektor UMKM
+        $distribusiSektor = $this->getSektorDistributionData();
 
-        // Data untuk chart perbandingan omset
-        $intervensiOmsetData = $this->getIntervensiOmsetData();
+        // Data untuk chart distribusi tenaga kerja
+        $distribusiTenagaKerja = $this->getTenagaKerjaData();
 
-        // Jadwal kegiatan mendatang
-        $jadwalKegiatan = Kegiatan::with('intervensi')
-            ->where('tanggal_mulai', '>=', now())
+        // Daftar UMKM terbaru
+        $umkmTerbaru = Umkm::with('pelakuUmkm')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        // Daftar kegiatan mendatang
+        $kegiatanMendatang = Kegiatan::where('tanggal_mulai', '>=', now())
             ->orderBy('tanggal_mulai', 'asc')
             ->take(5)
             ->get();
 
-        // UMKM yang dimonitor
-        $umkmDimonitor = Umkm::with('pelakuUmkm')
-            ->orderBy('updated_at', 'desc')
-            ->take(5)
-            ->get();
-
-        // Simulasi aktivitas terakhir
-        $aktivitasTerakhir = $this->getAktivitasTerakhir();
-
         // Warna untuk chart
-        $kegiatanColors = [
-            'rgba(28, 200, 138, 0.7)',
+        $sektorColors = [
             'rgba(78, 115, 223, 0.7)',
+            'rgba(28, 200, 138, 0.7)',
             'rgba(54, 185, 204, 0.7)',
             'rgba(246, 194, 62, 0.7)',
             'rgba(231, 74, 59, 0.7)',
+            'rgba(133, 135, 150, 0.7)',
+            'rgba(255, 99, 132, 0.7)',
+            'rgba(255, 159, 64, 0.7)',
         ];
 
         return view('adminlapangan.dashboard', compact(
-            'totalUmkmDimonitor',
-            'totalKegiatanTerjadwal',
-            'progresIntervensi',
-            'totalDokumentasi',
-            'intervensiMonthlyData',
-            'distribusiJenisKegiatan',
-            'intervensiOmsetData',
-            'jadwalKegiatan',
-            'umkmDimonitor',
-            'aktivitasTerakhir',
-            'kegiatanColors'
+            'totalUmkm',
+            'totalKegiatan',
+            'rataRataOmset',
+            'umkmLegalitasLengkap',
+            'persentaseLegalitas',
+            'chartUmkmGrowth',
+            'distribusiSektor',
+            'distribusiTenagaKerja',
+            'umkmTerbaru',
+            'kegiatanMendatang',
+            'sektorColors'
         ));
     }
 
@@ -447,23 +458,23 @@ class DashboardController extends Controller
      * @return array
      */
     private function getOmsetChartData($umkmIds)
-{
-    // Your logic for generating chart data, ensuring you handle multiple UMKM IDs
-    $omsetData = [];
+    {
+        // Your logic for generating chart data, ensuring you handle multiple UMKM IDs
+        $omsetData = [];
 
-    // Example of how you can fetch and return chart data based on the provided UMKM IDs
-    $intervensiData = Intervensi::whereIn('umkm_id', $umkmIds)
-        ->groupBy('created_at') // or any other criteria
-        ->selectRaw('SUM(omset) as total_omset, DATE(created_at) as date')
-        ->get();
+        // Example of how you can fetch and return chart data based on the provided UMKM IDs
+        $intervensiData = Intervensi::whereIn('umkm_id', $umkmIds)
+            ->groupBy('created_at') // or any other criteria
+            ->selectRaw('SUM(omset) as total_omset, DATE(created_at) as date')
+            ->get();
 
-    foreach ($intervensiData as $data) {
-        $omsetData['labels'][] = $data->date;
-        $omsetData['values'][] = $data->total_omset;
+        foreach ($intervensiData as $data) {
+            $omsetData['labels'][] = $data->date;
+            $omsetData['values'][] = $data->total_omset;
+        }
+
+        return $omsetData;
     }
-
-    return $omsetData;
-}
     /**
      * Ekspor laporan (untuk Admin Kantor)
      *
