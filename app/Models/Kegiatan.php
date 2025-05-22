@@ -25,6 +25,7 @@ class Kegiatan extends Model
         'status_kegiatan',
         'kuota_pendaftaran',
         'bukti_pendaftaran_path',
+        'sertifikat_path',
     ];
 
     public function intervensi()

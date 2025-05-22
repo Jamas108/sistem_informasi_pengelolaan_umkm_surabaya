@@ -1,8 +1,10 @@
-// legalitas-handler.js - Improved version with proper modal handling
 $(document).ready(function () {
-    console.log("Legalitas handler script loaded");
+    console.log("Manual Wizard Legalitas handler loaded");
 
-    // Function to obtain Pelaku ID from URL
+    let currentStep = 1;
+    const totalSteps = 9;
+    const steps = ['surat-keterangan', 'nib', 'siup', 'tdp', 'pirt', 'bpom', 'halal', 'merek', 'haki'];
+
     function getPelakuIdFromUrl() {
         const url = window.location.pathname;
         const urlParts = url.split('/');
@@ -14,152 +16,304 @@ $(document).ready(function () {
         return null;
     }
 
-    // Load legalitas data
-    function loadLegalitasData() {
+    $('#legalitas_umkm_id').change(function() {
+        const selectedValue = $(this).val();
+
+        if (selectedValue) {
+            $('#legalitas-wizard').fadeIn();
+            loadExistingLegalitasData(selectedValue);
+        } else {
+            $('#legalitas-wizard').fadeOut();
+            clearForm();
+        }
+    });
+
+    function showStep(step) {
+        $('.form-step').hide();
+        $(`#${steps[step - 1]}`).show();
+        currentStep = step;
+        updateStepIndicators();
+        updateNavigationButtons();
+
+        setTimeout(function() {
+            $(`#${steps[step - 1]} input[type="text"]:first`).focus();
+        }, 300);
+    }
+
+    function resetWizard() {
+        currentStep = 1;
+        showStep(currentStep);
+        updateStepIndicators();
+        updateProgress();
+        updateNavigationButtons();
+    }
+
+    function validateStep(step) {
+        const stepId = steps[step - 1];
+        const $inputs = $(`#${stepId} input[type="text"]`);
+        let valid = true;
+
+        $inputs.each(function() {
+            const val = $(this).val().trim();
+            if (val === '') {
+                valid = false;
+                $(this).addClass('is-invalid');
+            } else {
+                $(this).removeClass('is-invalid');
+            }
+        });
+
+        return valid;
+    }
+
+    function saveStepData(step) {
+        const stepId = steps[step - 1];
+        const pelakuId = getPelakuIdFromUrl();
+        const umkmId = $('#legalitas_umkm_id').val();
+        const currentId = $('#current_legalitas_id').val();
+
+        if (!umkmId) {
+            showAlert('warning', 'Pilih UMKM terlebih dahulu');
+            return $.Deferred().reject();
+        }
+
+        // Ambil semua data form, pastikan lengkap untuk update
+        const data = {
+            umkm_id: umkmId,
+            no_surat_keterangan: $('#no_surat_keterangan').val(),
+            no_sk_nib: $('#no_sk_nib').val(),
+            no_sk_siup: $('#no_sk_siup').val(),
+            no_sk_tdp: $('#no_sk_tdp').val(),
+            no_sk_pirt: $('#no_sk_pirt').val(),
+            no_sk_bpom: $('#no_sk_bpom').val(),
+            no_sk_halal: $('#no_sk_halal').val(),
+            no_sk_merek: $('#no_sk_merek').val(),
+            no_sk_haki: $('#no_sk_haki').val()
+        };
+
+        let url = `/dataumkm/legalitas/save/${pelakuId}`;
+        let method = 'POST';
+
+        if (currentId) {
+            url = `/dataumkm/legalitas/${currentId}`;
+            data._method = 'PUT';
+        }
+
+        console.log('Saving data step:', step, data);
+
+        return $.ajax({
+            url: url,
+            type: method,
+            data: data,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+        }).done((response) => {
+            if (response.success && response.data && response.data.id) {
+                // Update current_legalitas_id agar update selanjutnya tahu record mana yang diupdate
+                $('#current_legalitas_id').val(response.data.id);
+
+                // Update form dengan data terbaru dari server untuk konsistensi
+                populateForm(response.data);
+            } else {
+                showAlert('danger', response.message || 'Gagal menyimpan data.');
+            }
+        }).fail((xhr) => {
+            let msg = 'Terjadi kesalahan saat menyimpan data.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                msg = xhr.responseJSON.message;
+            }
+            showAlert('danger', msg);
+        });
+    }
+
+    window.changeStep = function(direction) {
+        const newStep = currentStep + direction;
+        console.log(`Change step from ${currentStep} by ${direction} to ${newStep}`);
+
+        if (newStep >= 1 && newStep <= totalSteps) {
+            if (direction === 1) {
+                if (!validateStep(currentStep)) {
+                    showAlert('warning', `Mohon lengkapi data pada langkah ${currentStep} terlebih dahulu`);
+                    return;
+                }
+
+                saveStepData(currentStep)
+                    .done(() => {
+                        showStep(newStep);
+                        updateProgress();
+                    })
+                    .fail(() => {
+                        // Sudah ada alert di saveStepData, tinggal prevent pindah step
+                    });
+
+            } else {
+                // Kalau mundur, langsung pindah tanpa simpan
+                showStep(newStep);
+                updateProgress();
+            }
+        }
+    };
+
+    function loadExistingLegalitasData(umkmId) {
         const pelakuId = getPelakuIdFromUrl();
 
         if (!pelakuId) {
             console.error('Error: Cannot find Pelaku UMKM ID in URL');
-            showAlert('danger', 'Error: Cannot determine Pelaku UMKM ID');
             return;
         }
-
-        console.log('Loading legalitas data for Pelaku ID:', pelakuId);
-
-        // Show loading indicator
-        $('#table-legalitas tbody').html('<tr><td colspan="12" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading data...</td></tr>');
 
         $.ajax({
             url: `/dataumkm/legalitas/list/${pelakuId}`,
             type: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             success: function (response) {
-                console.log('Legalitas data response:', response);
-                if (response.success) {
-                    updateLegalitasTable(response.data);
+                if (response.success && response.data && response.data.length > 0) {
+                    const umkmData = response.data.find(item => item.umkm_id == umkmId);
+                    if (umkmData) {
+                        populateForm(umkmData);
+
+                        // Jika step 1 sudah ada nomor surat keterangan, langsung ke step 2
+                        if (umkmData.no_surat_keterangan && umkmData.no_surat_keterangan.trim() !== '') {
+                            showStep(2);
+                        } else {
+                            showStep(1);
+                        }
+                    } else {
+                        clearForm();
+                        showStep(1);
+                    }
                 } else {
-                    // Show error and empty table
-                    showAlert('danger', response.message || 'Failed to load legalitas data');
-                    updateLegalitasTable([]);
+                    clearForm();
+                    showStep(1);
                 }
+                setTimeout(updateProgress, 100);
             },
             error: function (xhr) {
-                console.error('Error getting legalitas data:', xhr);
-                showAlert('danger', 'Error loading legalitas data: ' + (xhr.responseJSON ? xhr.responseJSON.message : 'Connection error'));
-                // Show empty table in case of error
-                updateLegalitasTable([]);
+                console.error('Error loading existing legalitas data:', xhr);
+                clearForm();
+                showStep(1);
             }
         });
     }
 
-    // Update legalitas table with data
-    function updateLegalitasTable(data) {
-        console.log('Updating legalitas table with data:', data);
+    function populateForm(data) {
+        $('#no_surat_keterangan').val(data.no_surat_keterangan || '');
+        $('#no_sk_nib').val(data.no_sk_nib || '');
+        $('#no_sk_siup').val(data.no_sk_siup || '');
+        $('#no_sk_tdp').val(data.no_sk_tdp || '');
+        $('#no_sk_pirt').val(data.no_sk_pirt || '');
+        $('#no_sk_bpom').val(data.no_sk_bpom || '');
+        $('#no_sk_halal').val(data.no_sk_halal || '');
+        $('#no_sk_merek').val(data.no_sk_merek || '');
+        $('#no_sk_haki').val(data.no_sk_haki || '');
 
-        // Destroy existing DataTable if already initialized
-        if ($.fn.dataTable && $.fn.dataTable.isDataTable('#table-legalitas')) {
-            $('#table-legalitas').DataTable().destroy();
+        $('#current_legalitas_id').val(data.id || '');
+
+        setTimeout(updateProgress, 100);
+    }
+
+    function clearForm() {
+        $('#legalitas-wizard input[type="text"]').val('');
+        $('#current_legalitas_id').val('');
+        updateProgress();
+    }
+
+    function updateProgress() {
+        let filledSteps = 0;
+        const inputs = [
+            '#no_surat_keterangan', '#no_sk_nib', '#no_sk_siup', '#no_sk_tdp',
+            '#no_sk_pirt', '#no_sk_bpom', '#no_sk_halal', '#no_sk_merek', '#no_sk_haki'
+        ];
+
+        inputs.forEach(function(selector) {
+            if ($(selector).val().trim() !== '') {
+                filledSteps++;
+            }
+        });
+
+        const progressPercentage = (filledSteps / totalSteps) * 100;
+
+        $('#progress-fill').css('width', progressPercentage + '%');
+        $('#progress-text').text(`${filledSteps}/${totalSteps} Terisi`);
+        $('#progress-percentage').text(`${Math.round(progressPercentage)}% Selesai`);
+
+        $('#progress-fill').removeClass();
+        $('#progress-fill').addClass('step-progress-fill');
+
+        if (progressPercentage < 30) {
+            $('#progress-fill').css('background', 'linear-gradient(90deg, #dc3545, #fd7e14)');
+        } else if (progressPercentage < 70) {
+            $('#progress-fill').css('background', 'linear-gradient(90deg, #ffc107, #fd7e14)');
+        } else {
+            $('#progress-fill').css('background', 'linear-gradient(90deg, #007bff, #28a745)');
         }
 
-        // Completely empty the table
-        $('#table-legalitas tbody').empty();
+        updateStepIndicators();
+    }
 
-        let tableRows = '';
+    function updateStepIndicators() {
+        $('.step-indicator').each(function(index) {
+            const stepNum = index + 1;
+            const $indicator = $(this);
 
-        if (data && data.length > 0) {
-            data.forEach((item, index) => {
-                tableRows += `
-                <tr>
-                    <td class="text-center">${index + 1}</td>
-                    <td>${item.nama_usaha || 'Tidak ada'}</td>
-                    <td>${item.no_sk_nib || '-'}</td>
-                    <td>${item.no_sk_siup || '-'}</td>
-                    <td>${item.no_sk_tdp || '-'}</td>
-                    <td>${item.no_sk_pirt || '-'}</td>
-                    <td>${item.no_sk_bpom || '-'}</td>
-                    <td>${item.no_sk_halal || '-'}</td>
-                    <td>${item.no_sk_merek || '-'}</td>
-                    <td>${item.no_sk_haki || '-'}</td>
-                    <td>${item.no_surat_keterangan || '-'}</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-warning btn-sm edit-legalitas" data-id="${item.id}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button type="button" class="btn btn-danger btn-sm delete-legalitas" data-id="${item.id}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-                `;
-            });
+            // Reset semua class
+            $indicator.removeClass('active completed filled');
 
-            // Insert rows into the table
-            $('#table-legalitas tbody').html(tableRows);
-
-            // Initialize DataTable with simplified options to avoid conflicts
-            setTimeout(function () {
-                try {
-                    if ($.fn.dataTable) {
-                        $('#table-legalitas').DataTable({
-                            destroy: true,       // Ensure any previous instance is destroyed
-                            retrieve: true,      // Retrieve existing instance if already initialized
-                            responsive: true,
-                            paging: true,        // Enable pagination
-                            searching: true,     // Enable search
-                            ordering: true,      // Enable ordering
-                            info: true,          // Show information
-                            lengthChange: true,  // Allow changing page length
-                            language: {
-                                search: "Cari:",
-                                lengthMenu: "Tampilkan _MENU_ entri",
-                                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-                                infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
-                                infoFiltered: "(disaring dari _MAX_ total entri)",
-                                emptyTable: "Belum ada data legalitas",
-                                paginate: {
-                                    first: "Pertama",
-                                    last: "Terakhir",
-                                    next: "Selanjutnya",
-                                    previous: "Sebelumnya"
-                                }
-                            }
-                        });
-                        console.log('DataTable successfully initialized');
-                    } else {
-                        console.warn('DataTable is not available, table will display without advanced features');
-                    }
-                } catch (error) {
-                    console.error('Error initializing DataTable:', error);
-                    // Continue without DataTable if there's an error
+            if (stepNum === currentStep) {
+                // Tab yang sedang aktif
+                $indicator.addClass('active');
+            } else {
+                // Tab yang tidak aktif - cek apakah sudah terisi
+                const inputValue = getInputValueForStep(stepNum);
+                if (inputValue && inputValue.trim() !== '') {
+                    // Jika sudah terisi, tetap gunakan class 'filled' (warna biru muda)
+                    $indicator.addClass('filled');
                 }
-            }, 100); // Small delay to ensure DOM is fully updated
+            }
+        });
+    }
+
+    function getInputValueForStep(stepNum) {
+        const stepId = steps[stepNum - 1];
+        const input = $(`#${stepId} input[type="text"]`);
+        return input.length > 0 ? input.val() : '';
+    }
+
+    function updateNavigationButtons() {
+        const $prevBtn = $('#prevBtn');
+        const $nextBtn = $('#nextBtn');
+        const $saveBtn = $('#saveBtn');
+
+        if (currentStep === 1) {
+            $prevBtn.hide();
         } else {
-            // For empty data, just show a message without initializing DataTable
-            tableRows = `
-            <tr>
-                <td colspan="12" class="text-center">Belum ada data legalitas</td>
-            </tr>
-            `;
-            $('#table-legalitas tbody').html(tableRows);
-            console.log('No data available, skipping DataTable initialization');
+            $prevBtn.show();
+        }
+
+        if (currentStep === totalSteps) {
+            $nextBtn.hide();
+            $saveBtn.show();
+        } else {
+            $nextBtn.show();
+            $saveBtn.hide();
         }
     }
 
-    // Add legalitas data
-    $('#simpan-legalitas').click(function () {
+    $('#prevBtn').click(function() {
+        changeStep(-1);
+    });
+
+    $('#nextBtn').click(function() {
+        changeStep(1);
+    });
+
+    $('#saveBtn').click(function() {
+        saveLegalitasData();
+    });
+
+    window.saveLegalitasData = function() {
         const umkmId = $('#legalitas_umkm_id').val();
-        const noSkNib = $('#no_sk_nib').val();
-        const noSkSiup = $('#no_sk_siup').val();
-        const noSkTdp = $('#no_sk_tdp').val();
-        const noSkPirt = $('#no_sk_pirt').val();
-        const noSkBpom = $('#no_sk_bpom').val();
-        const noSkHalal = $('#no_sk_halal').val();
-        const noSkMerek = $('#no_sk_merek').val();
-        const noSkHaki = $('#no_sk_haki').val();
-        const noSuratKeterangan = $('#no_surat_keterangan').val();
         const pelakuId = getPelakuIdFromUrl();
+        const currentId = $('#current_legalitas_id').val();
 
         if (!umkmId) {
             showAlert('warning', 'Pilih UMKM terlebih dahulu');
@@ -168,401 +322,103 @@ $(document).ready(function () {
 
         const data = {
             umkm_id: umkmId,
-            no_sk_nib: noSkNib,
-            no_sk_siup: noSkSiup,
-            no_sk_tdp: noSkTdp,
-            no_sk_pirt: noSkPirt,
-            no_sk_bpom: noSkBpom,
-            no_sk_halal: noSkHalal,
-            no_sk_merek: noSkMerek,
-            no_sk_haki: noSkHaki,
-            no_surat_keterangan: noSuratKeterangan
+            no_surat_keterangan: $('#no_surat_keterangan').val(),
+            no_sk_nib: $('#no_sk_nib').val(),
+            no_sk_siup: $('#no_sk_siup').val(),
+            no_sk_tdp: $('#no_sk_tdp').val(),
+            no_sk_pirt: $('#no_sk_pirt').val(),
+            no_sk_bpom: $('#no_sk_bpom').val(),
+            no_sk_halal: $('#no_sk_halal').val(),
+            no_sk_merek: $('#no_sk_merek').val(),
+            no_sk_haki: $('#no_sk_haki').val()
         };
 
+        let url = `/dataumkm/legalitas/save/${pelakuId}`;
+        let method = 'POST';
+
+        if (currentId) {
+            url = `/dataumkm/legalitas/${currentId}`;
+            data._method = 'PUT';
+        }
+
         $.ajax({
-            url: `/dataumkm/legalitas/save/${pelakuId}`,
-            type: 'POST',
+            url: url,
+            type: method,
             data: data,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             success: function (response) {
                 if (response.success) {
-                    // Reset fields
-                    $('#legalitas_umkm_id').val('');
-                    $('#no_sk_nib').val('');
-                    $('#no_sk_siup').val('');
-                    $('#no_sk_tdp').val('');
-                    $('#no_sk_pirt').val('');
-                    $('#no_sk_bpom').val('');
-                    $('#no_sk_halal').val('');
-                    $('#no_sk_merek').val('');
-                    $('#no_sk_haki').val('');
-                    $('#no_surat_keterangan').val('');
-
-                    // Reload data
-                    loadLegalitasData();
-                    showAlert('success', 'Data legalitas berhasil ditambahkan');
+                    showAlert('success', 'Data legalitas berhasil disimpan.');
                 } else {
-                    showAlert('danger', response.message || 'Terjadi kesalahan');
+                    showAlert('danger', response.message || 'Terjadi kesalahan saat menyimpan data.');
                 }
             },
-            error: function (xhr) {
-                console.error('Error:', xhr);
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.message
-                    ? xhr.responseJSON.message
-                    : 'Kesalahan menyimpan data';
-                showAlert('danger', errorMessage);
+            error: function () {
+                showAlert('danger', 'Terjadi kesalahan pada server saat menyimpan data.');
             }
         });
-    });
-
-    // Edit legalitas handler (click on edit button)
-    $(document).on('click', '.edit-legalitas', function (e) {
-        e.preventDefault();
-        const legalitasId = $(this).data('id');
-
-        // Add visual feedback
-        const $button = $(this);
-        $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Loading...');
-
-        // Make the AJAX request
-        $.ajax({
-            url: `/dataumkm/legalitas/${legalitasId}`,
-            type: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (response) {
-                $button.prop('disabled', false).html('<i class="fas fa-edit"></i> Edit');
-
-                if (response.success) {
-                    const data = response.data;
-
-                    // Set values in the form
-                    $('#edit_legalitas_id').val(data.id);
-                    $('#edit_legalitas_umkm_id').val(data.umkm_id);
-                    $('#edit_no_sk_nib').val(data.no_sk_nib);
-                    $('#edit_no_sk_siup').val(data.no_sk_siup);
-                    $('#edit_no_sk_tdp').val(data.no_sk_tdp);
-                    $('#edit_no_sk_pirt').val(data.no_sk_pirt);
-                    $('#edit_no_sk_bpom').val(data.no_sk_bpom);
-                    $('#edit_no_sk_halal').val(data.no_sk_halal);
-                    $('#edit_no_sk_merek').val(data.no_sk_merek);
-                    $('#edit_no_sk_haki').val(data.no_sk_haki);
-                    $('#edit_no_surat_keterangan').val(data.no_surat_keterangan);
-
-                    // Show the modal using our reliable function
-                    showModalWithFallback('editLegalitasModal');
-                } else {
-                    alert("Error loading data: " + (response.message || "Unknown error"));
-                }
-            },
-            error: function (xhr) {
-                $button.prop('disabled', false).html('<i class="fas fa-edit"></i> Edit');
-                alert("Error loading data. Please check console for details.");
-                console.error("Error loading legalitas data:", xhr);
-            }
-        });
-    });
-
-    // Save edited legalitas - FIXED VERSION WITH PROPER MODAL CLOSING
-    $(document).on('click', '#save-edit-legalitas', function () {
-        console.log("Save button clicked - Event triggered");
-
-        // Disable the button and show loading state
-        const $button = $(this);
-        $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Menyimpan...');
-
-        const legalitasId = $('#edit_legalitas_id').val();
-        const umkmId = $('#edit_legalitas_umkm_id').val();
-        const noSkNib = $('#edit_no_sk_nib').val();
-        const noSkSiup = $('#edit_no_sk_siup').val();
-        const noSkTdp = $('#edit_no_sk_tdp').val();
-        const noSkPirt = $('#edit_no_sk_pirt').val();
-        const noSkBpom = $('#edit_no_sk_bpom').val();
-        const noSkHalal = $('#edit_no_sk_halal').val();
-        const noSkMerek = $('#edit_no_sk_merek').val();
-        const noSkHaki = $('#edit_no_sk_haki').val();
-        const noSuratKeterangan = $('#edit_no_surat_keterangan').val();
-
-        console.log('Saving edit legalitas data:', {
-            id: legalitasId,
-            umkm_id: umkmId,
-            no_sk_nib: noSkNib,
-            no_sk_siup: noSkSiup,
-            no_sk_tdp: noSkTdp,
-            no_sk_pirt: noSkPirt,
-            no_sk_bpom: noSkBpom,
-            no_sk_halal: noSkHalal,
-            no_sk_merek: noSkMerek,
-            no_sk_haki: noSkHaki,
-            no_surat_keterangan: noSuratKeterangan
-        });
-
-        if (!umkmId) {
-            alert('Pilih UMKM terlebih dahulu');
-            $button.prop('disabled', false).html('Simpan Perubahan');
-            return;
-        }
-
-        const data = {
-            _method: 'PUT',
-            umkm_id: umkmId,
-            no_sk_nib: noSkNib,
-            no_sk_siup: noSkSiup,
-            no_sk_tdp: noSkTdp,
-            no_sk_pirt: noSkPirt,
-            no_sk_bpom: noSkBpom,
-            no_sk_halal: noSkHalal,
-            no_sk_merek: noSkMerek,
-            no_sk_haki: noSkHaki,
-            no_surat_keterangan: noSuratKeterangan
-        };
-
-        $.ajax({
-            url: `/dataumkm/legalitas/${legalitasId}`,
-            type: 'POST',
-            data: data,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (response) {
-                console.log('Update legalitas response:', response);
-                $button.prop('disabled', false).html('Simpan Perubahan');
-
-                if (response.success) {
-                    // Close the modal with our reliable function
-                    closeModalWithFallback('editLegalitasModal');
-
-                    // Reload data
-                    loadLegalitasData();
-
-                    // Show success message
-                    showAlert('success', 'Data legalitas berhasil diperbarui');
-                } else {
-                    showAlert('danger', response.message || 'Terjadi kesalahan', 'editLegalitasModal');
-                }
-            },
-            error: function (xhr) {
-                console.error('Error saving changes:', xhr);
-                $button.prop('disabled', false).html('Simpan Perubahan');
-
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.message
-                    ? xhr.responseJSON.message
-                    : 'Kesalahan memperbarui data';
-                showAlert('danger', errorMessage, 'editLegalitasModal');
-            }
-        });
-    });
-
-    // Delete legalitas
-    $(document).on('click', '.delete-legalitas', function () {
-        const legalitasId = $(this).data('id');
-
-        if (confirm('Apakah Anda yakin ingin menghapus data legalitas ini?')) {
-            // Disable the button to prevent multiple clicks
-            const $button = $(this);
-            $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
-
-            $.ajax({
-                url: `/dataumkm/legalitas/${legalitasId}`,
-                type: 'POST',
-                data: {
-                    _method: 'DELETE'
-                },
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function (response) {
-                    if (response.success) {
-                        loadLegalitasData();
-                        showAlert('success', 'Data legalitas berhasil dihapus');
-                    } else {
-                        showAlert('danger', response.message || 'Kesalahan menghapus data');
-                        // Re-enable the button in case of failure
-                        $button.prop('disabled', false).html('<i class="fas fa-trash"></i> Hapus');
-                    }
-                },
-                error: function (xhr) {
-                    console.error('Error:', xhr);
-                    showAlert('danger', 'Kesalahan menghapus data');
-                    // Re-enable the button in case of failure
-                    $button.prop('disabled', false).html('<i class="fas fa-trash"></i> Hapus');
-                }
-            });
-        }
-    });
-
-    // NEW FUNCTIONS FOR MODAL HANDLING - COPIED FROM INTERVENSI MODULE
-    // Try different methods to show the modal
-    function showModalWithFallback(modalId) {
-        console.log(`Attempting to show modal: #${modalId}`);
-        try {
-            // Method 1: jQuery Bootstrap method
-            if (typeof $.fn.modal === 'function') {
-                $('#' + modalId).modal('show');
-                console.log("Modal opened with jQuery Bootstrap");
-                return;
-            }
-        } catch (error1) {
-            console.error("Method 1 failed:", error1);
-        }
-
-        try {
-            // Method 2: Bootstrap 5 approach
-            const modalElement = document.getElementById(modalId);
-            if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                const modalInstance = new bootstrap.Modal(modalElement);
-                modalInstance.show();
-                console.log("Modal opened with Bootstrap 5 JS");
-                return;
-            }
-        } catch (error2) {
-            console.error("Method 2 failed:", error2);
-        }
-
-        try {
-            // Method 3: Manual DOM manipulation as fallback
-            $('#' + modalId).addClass('show');
-            $('#' + modalId).css('display', 'block');
-            $('body').addClass('modal-open');
-            $('<div class="modal-backdrop fade show"></div>').appendTo('body');
-            console.log("Modal opened with manual DOM manipulation");
-        } catch (error3) {
-            console.error("Method 3 failed:", error3);
-            showAlert('danger', 'Error: Could not open modal dialog. Please try another browser or contact support.');
-        }
-    }
-
-    // Add this comprehensive modal closing function to ensure it works across different Bootstrap versions
-    function closeModalWithFallback(modalId) {
-        console.log(`Attempting to close modal: #${modalId}`);
-
-        // Try all possible methods to close the modal
-        try {
-            // Method 1: jQuery Bootstrap modal method (most common)
-            if (typeof $.fn.modal === 'function') {
-                console.log('Trying jQuery modal hide');
-                $('#' + modalId).modal('hide');
-
-                // Force backdrop removal in case it persists
-                $('.modal-backdrop').remove();
-                $('body').removeClass('modal-open');
-                $('body').css('padding-right', '');
-                return;
-            }
-        } catch (error1) {
-            console.warn('Method 1 failed:', error1);
-        }
-
-        try {
-            // Method 2: Bootstrap 5 approach
-            const modalElement = document.getElementById(modalId);
-            if (modalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                console.log('Trying Bootstrap 5 modal hide');
-                const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                if (modalInstance) {
-                    modalInstance.hide();
-                    return;
-                } else {
-                    console.log('No instance found, trying to create one');
-                    const newModal = new bootstrap.Modal(modalElement);
-                    newModal.hide();
-                    return;
-                }
-            }
-        } catch (error2) {
-            console.warn('Method 2 failed:', error2);
-        }
-
-        try {
-            // Method 3: Manual DOM manipulation as last resort
-            console.log('Trying manual DOM manipulation');
-            $('#' + modalId).removeClass('show');
-            $('#' + modalId).css('display', 'none');
-            $('.modal-backdrop').remove();
-            $('body').removeClass('modal-open');
-            $('body').css('padding-right', '');
-        } catch (error3) {
-            console.warn('Method 3 failed:', error3);
-        }
-
-        // Ultimate fallback
-        console.log('Using last resort approach');
-        setTimeout(function () {
-            // Final attempt with vanilla JS
-            document.querySelectorAll('.modal, .modal-backdrop').forEach(el => {
-                el.style.display = 'none';
-                el.classList.remove('show');
-            });
-            document.body.classList.remove('modal-open');
-            document.body.style.paddingRight = '';
-        }, 300);
-    }
-
-    // Function to show alerts
-    function showAlert(type, message, modalId = null) {
-        // Hapus alert yang sudah ada dulu
-        if (modalId) {
-            $(`#${modalId} .alert`).remove();
-        } else {
-            $('.container-fluid > .alert').remove();
-        }
-
-        const alertHTML = `
-        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-            ${message}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        `;
-
-        if (modalId) {
-            $(`#${modalId} .modal-body`).prepend(alertHTML);
-        } else {
-            // Tambahkan hanya ke elemen container-fluid pertama
-            $('.container-fluid:first').prepend(alertHTML);
-        }
-
-        // Auto-close after 5 seconds
-        setTimeout(function () {
-            $('.alert').alert('close');
-        }, 5000);
-    }
-
-    // Modal debugging
-    $('#editLegalitasModal').on('show.bs.modal', function () {
-        console.log("Legalitas Modal is about to be shown");
-    }).on('shown.bs.modal', function () {
-        console.log("Legalitas Modal has been shown");
-        // Focus on the first input field
-        $(this).find('input:visible:first').focus();
-    }).on('hide.bs.modal', function () {
-        console.log("Legalitas Modal is about to be hidden");
-    }).on('hidden.bs.modal', function () {
-        console.log("Legalitas Modal has been hidden");
-        // Clear any modal alerts when hidden
-        $(this).find('.alert').remove();
-    });
-
-    // Event when clicking on the legalitas tab
-    $('#legalitas-tab').on('click', function () {
-        loadLegalitasData();
-    });
-
-    // Load data at startup if legalitas tab is active
-    if ($('#legalitas-tab').hasClass('active') || window.location.hash === '#legalitas') {
-        loadLegalitasData();
-    }
-
-    // Expose functions for global use
-    window.legalitasHandler = {
-        loadLegalitasData: loadLegalitasData,
-        updateLegalitasTable: updateLegalitasTable,
-        showAlert: showAlert,
-        showModal: showModalWithFallback,
-        closeModal: closeModalWithFallback
     };
-}); 
+
+    $(document).on('input', '#legalitas-wizard input[type="text"]', function() {
+        updateProgress();
+        if($(this).val().trim() !== '') {
+            $(this).removeClass('is-invalid');
+        }
+    });
+
+    function showAlert(type, message) {
+        alert(`${type.toUpperCase()}: ${message}`);
+    }
+
+    $(document).on('click', '.step-indicator', function() {
+        const targetStep = parseInt($(this).data('step'));
+
+        if (targetStep === currentStep) {
+            return; // Sudah di step ini, tidak perlu apa-apa
+        }
+
+        if (targetStep < currentStep) {
+            // Boleh mundur ke langkah sebelumnya tanpa batasan
+            showStep(targetStep);
+        } else if (targetStep === currentStep + 1) {
+            // Jika ingin pindah ke langkah berikutnya dengan klik tab,
+            // pastikan step saat ini sudah valid dan sudah tersimpan
+
+            if (!validateStep(currentStep)) {
+                showAlert('warning', `Mohon lengkapi data pada langkah ${currentStep} terlebih dahulu.`);
+                return;
+            }
+
+            saveStepData(currentStep)
+                .done(() => {
+                    showStep(targetStep);
+                    updateProgress();
+                })
+                .fail(() => {
+                    showAlert('danger', 'Gagal menyimpan data langkah ini. Silakan coba lagi.');
+                });
+        } else {
+            // Cegah lompat lebih dari 1 step tanpa menyimpan step sekarang
+            showAlert('warning', 'Silakan simpan data langkah saat ini terlebih dahulu sebelum melanjutkan.');
+        }
+    });
+
+    $(document).keydown(function(e) {
+        if ($('#legalitas-wizard').is(':visible')) {
+            if (e.ctrlKey && e.keyCode === 39) {
+                e.preventDefault();
+                changeStep(1);
+            } else if (e.ctrlKey && e.keyCode === 37) {
+                e.preventDefault();
+                changeStep(-1);
+            } else if (e.keyCode === 13) {
+                e.preventDefault();
+                if (currentStep === totalSteps) {
+                    saveLegalitasData();
+                } else {
+                    changeStep(1);
+                }
+            }
+        }
+    });
+});

@@ -191,6 +191,26 @@
                                                             </form>
                                                         @endif
                                                     @endif
+                                                    @if ($kegiatan->status_kegiatan == 'Selesai')
+                                                        @php
+                                                            $existingInterventions = App\Models\Intervensi::where(
+                                                                'kegiatan_id',
+                                                                $kegiatan->id,
+                                                            )->count();
+                                                        @endphp
+                                                        @if ($existingInterventions > 0)
+                                                            <form
+                                                                action="{{ route('datakegiatan.generate-sertifikat', $kegiatan->id) }}"
+                                                                method="POST"
+                                                                onsubmit="return confirm('Generate sertifikat untuk {{ $existingInterventions }} UMKM?');"
+                                                                class="d-inline ml-1">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-success btn-sm">
+                                                                    <i class="fas fa-certificate"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    @endif
                                                     <a href="{{ route('datakegiatan.show', $kegiatan->id) }}"
                                                         class="btn btn-info btn-sm btn-action ml-1" title="Detail">
                                                         <i class="fas fa-eye"></i>
@@ -239,11 +259,12 @@
         </div>
 
         <!-- Footer -->
-         <!-- Footer -->
-         <footer class="sticky-footer" style="background-color: #e0e0e0">
+        <!-- Footer -->
+        <footer class="sticky-footer" style="background-color: #e0e0e0">
             <div class="container  my-auto">
                 <div class="copyright text-center my-auto">
-                    <span class="text-black">© {{ date('Y') }} UMKM Management System Dinas Koperasi Usaha Kecil dan Menangah dan Perdagangan Kota Surabaya </span> <br>
+                    <span class="text-black">© {{ date('Y') }} UMKM Management System Dinas Koperasi Usaha Kecil dan
+                        Menangah dan Perdagangan Kota Surabaya </span> <br>
                 </div>
             </div>
         </footer>

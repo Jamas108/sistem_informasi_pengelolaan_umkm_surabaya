@@ -204,11 +204,42 @@ class PelakuIntervensiController extends Controller
             }
         }
 
+        $sertifikatPath = null;
+        if ($intervensi->kegiatan->sertifikat_path) {
+                // Coba beberapa variasi nama file
+                $fileNameVariations = [
+                    Str::slug($intervensi->dataUmkm->nama_usaha . '-sertifikat') . '.pdf',
+                    'sertifikat_' . Str::slug($intervensi->dataUmkm->nama_usaha) . '.pdf'
+                ];
+
+                foreach ($fileNameVariations as $fileName) {
+                    $fullPath = $intervensi->kegiatan->sertifikat_path . '/' . $fileName;
+
+                    // Cek menggunakan Storage
+                    if (Storage::disk('public')->exists($fullPath)) {
+                        $sertifikatPath = $fullPath;
+                        break;
+                    }
+
+                    // Cek menggunakan file_exists untuk debugging
+                    $absolutePath = storage_path('app/public/' . $fullPath);
+                    if (file_exists($absolutePath)) {
+                        $sertifikatPath = $fullPath;
+                        Log::info('File ditemukan dengan file_exists', [
+                            'path' => $absolutePath
+                        ]);
+                        break;
+                    }
+                }
+            }
+
+
         return view('pelakuumkm.kelolaintervensi.show', [
             'umkms' => $umkms,
             'kegiatans' => $kegiatans,
             'intervensi' => $intervensi,
             'buktiPendaftaranPath' => $buktiPendaftaranPath,
+            'sertifikatPath' => $sertifikatPath,
             'pageTitle' => 'Detail Intervensi'
         ]);
     }

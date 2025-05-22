@@ -19,7 +19,7 @@
                 </div>
             </div>
         </div>
-        
+
 
         <!-- Content Section -->
         <div class="container-fluid py-4">
@@ -27,22 +27,26 @@
             <div class="row mb-4">
                 <div class="col-lg-12">
                     @if (session('success'))
-                        <div class="alert custom-alert-success alert-dismissible fade show" role="alert">
+                        <div class="alert d-flex justify-content-between custom-alert-success alert-dismissible fade show" role="alert">
                             <div class="d-flex align-items-center">
-                                <i class="fas fa-check-circle me-2"></i>
-                                <strong>Berhasil!</strong> {{ session('success') }}
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <strong class="ml-2 pr-2">Berhasil!, </strong> {{ session('success') }}
                             </div>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     @endif
 
                     @if (session('error'))
-                        <div class="alert custom-alert-danger alert-dismissible fade show" role="alert">
+                        <div class="alert d-flex justify-content-between custom-alert-danger alert-dismissible fade show" role="alert">
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-exclamation-circle me-2"></i>
-                                <strong>Gagal!</strong> {{ session('error') }}
+                                <strong class="ml-2 pr-2">Gagal!, </strong> {{ session('error') }}
                             </div>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     @endif
                 </div>

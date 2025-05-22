@@ -88,7 +88,8 @@
 
                     // Update progress bar
                     kuotaProgressBar.style.width = percentageFilled + '%';
-                    kuotaText.textContent = `Kuota terisi: ${kuota - sisa} dari ${kuota} (${Math.round(percentageFilled)}%)`;
+                    kuotaText.textContent =
+                        `Kuota terisi: ${kuota - sisa} dari ${kuota} (${Math.round(percentageFilled)}%)`;
 
                     // Show kuota info
                     kuotaInfoDiv.style.display = 'block';
@@ -126,7 +127,8 @@
     @include('layouts.pelakuumkm.sidebar')
     <main class="main-content">
         <!-- Gradient Header -->
-        <div class="text-white py-3 px-4 shadow-sm" id="nav" style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
+        <div class="text-white py-3 px-4 shadow-sm" id="nav"
+            style="background: linear-gradient(145deg, #1c4970, #2F77B6);">
             <div class="container-fluid">
                 <div class="row align-items-center">
                     <div class="col">
@@ -215,47 +217,48 @@
                                                 <select class="form-control" id="kegiatan_id" name="kegiatan_id" required>
                                                     <option value="">Pilih Kegiatan Intervensi</option>
                                                     @foreach ($kegiatans as $kegiatan)
-                                                        @php
-                                                            $existingInterventions = \App\Models\Intervensi::where(
-                                                                'kegiatan_id',
-                                                                $kegiatan->id,
-                                                            )->count();
-                                                            $quotaPercentage =
-                                                                ($existingInterventions /
-                                                                    $kegiatan->kuota_pendaftaran) *
-                                                                100;
-                                                            $isQuotaFull =
-                                                                $existingInterventions >= $kegiatan->kuota_pendaftaran;
-                                                            $status = $kegiatan->status_kegiatan;
-                                                            $isRegistrationAllowed = $status === 'Pendaftaran';
+                                                        @if ($kegiatan->status_kegiatan !== 'Selesai')
+                                                            @php
+                                                                $existingInterventions = \App\Models\Intervensi::where(
+                                                                    'kegiatan_id',
+                                                                    $kegiatan->id,
+                                                                )->count();
+                                                                $quotaPercentage =
+                                                                    ($existingInterventions /
+                                                                        $kegiatan->kuota_pendaftaran) *
+                                                                    100;
+                                                                $isQuotaFull =
+                                                                    $existingInterventions >=
+                                                                    $kegiatan->kuota_pendaftaran;
+                                                                $status = $kegiatan->status_kegiatan;
+                                                                $isRegistrationAllowed = $status === 'Pendaftaran';
 
-                                                            // Prepare status label
-                                                            $statusLabel = '';
-                                                            if ($status === 'Belum Dimulai') {
-                                                                $statusLabel = '- Pendaftaran Belum Dibuka';
-                                                            } elseif ($status === 'Sedang Berlangsung') {
-                                                                $statusLabel = '- Kegiatan Sedang Berlangsung';
-                                                            } elseif ($status === 'Selesai') {
-                                                                $statusLabel = '- Kegiatan Telah Selesai';
-                                                            }
-                                                        @endphp
-                                                        <option value="{{ $kegiatan->id }}"
-                                                            data-jenis="{{ $kegiatan->jenis_kegiatan }}"
-                                                            data-lokasi="{{ $kegiatan->lokasi_kegiatan }}"
-                                                            data-tanggal-mulai="{{ $kegiatan->tanggal_mulai }}"
-                                                            data-tanggal-selesai="{{ $kegiatan->tanggal_mulai }}"
-                                                            data-jam-mulai="{{ $kegiatan->jam_mulai }}"
-                                                            data-jam-selesai="{{ $kegiatan->jam_selesai }}"
-                                                            data-kuota="{{ $kegiatan->kuota_pendaftaran }}"
-                                                            data-sisa="{{ $kegiatan->kuota_pendaftaran - $existingInterventions }}"
-                                                            data-status="{{ $status }}"
-                                                            {{ $isQuotaFull || !$isRegistrationAllowed ? 'disabled' : '' }}
-                                                            {{ old('kegiatan_id') == $kegiatan->id ? 'selected' : '' }}>
-                                                            {{ $kegiatan->nama_kegiatan }}
-                                                            ({{ $existingInterventions }}/{{ $kegiatan->kuota_pendaftaran }}
-                                                            Slot)
-                                                            {{ $statusLabel }}
-                                                        </option>
+                                                                // Prepare status label
+                                                                $statusLabel = '';
+                                                                if ($status === 'Belum Dimulai') {
+                                                                    $statusLabel = '- Pendaftaran Belum Dibuka';
+                                                                } elseif ($status === 'Sedang Berlangsung') {
+                                                                    $statusLabel = '- Kegiatan Sedang Berlangsung';
+                                                                }
+                                                            @endphp
+                                                            <option value="{{ $kegiatan->id }}"
+                                                                data-jenis="{{ $kegiatan->jenis_kegiatan }}"
+                                                                data-lokasi="{{ $kegiatan->lokasi_kegiatan }}"
+                                                                data-tanggal-mulai="{{ $kegiatan->tanggal_mulai }}"
+                                                                data-tanggal-selesai="{{ $kegiatan->tanggal_mulai }}"
+                                                                data-jam-mulai="{{ $kegiatan->jam_mulai }}"
+                                                                data-jam-selesai="{{ $kegiatan->jam_selesai }}"
+                                                                data-kuota="{{ $kegiatan->kuota_pendaftaran }}"
+                                                                data-sisa="{{ $kegiatan->kuota_pendaftaran - $existingInterventions }}"
+                                                                data-status="{{ $status }}"
+                                                                {{ $isQuotaFull || !$isRegistrationAllowed ? 'disabled' : '' }}
+                                                                {{ old('kegiatan_id') == $kegiatan->id ? 'selected' : '' }}>
+                                                                {{ $kegiatan->nama_kegiatan }}
+                                                                ({{ $existingInterventions }}/{{ $kegiatan->kuota_pendaftaran }}
+                                                                Slot)
+                                                                {{ $statusLabel }}
+                                                            </option>
+                                                        @endif
                                                     @endforeach
                                                 </select>
                                                 <div class="invalid-tooltip">
@@ -378,7 +381,9 @@
                                     </div>
                                     <div class="ml-2">
                                         <h5 class="alert-heading">Informasi Pendaftaran</h5>
-                                        <p class="mb-0">Pendaftaran kegiatan hanya dapat dilakukan ketika status kegiatan <strong>"Pendaftaran Dibuka"</strong>. Kegiatan dengan status <strong>"Belum Dimulai"</strong> tidak dapat dipilih.</p>
+                                        <p class="mb-0">Pendaftaran kegiatan hanya dapat dilakukan ketika status kegiatan
+                                            <strong>"Pendaftaran Dibuka"</strong>. Kegiatan dengan status <strong>"Belum
+                                                Dimulai"</strong> tidak dapat dipilih.</p>
                                     </div>
                                 </div>
                             </div>

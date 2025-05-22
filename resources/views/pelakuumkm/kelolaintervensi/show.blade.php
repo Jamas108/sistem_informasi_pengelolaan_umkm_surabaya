@@ -495,49 +495,31 @@
 
                                         <!-- Status nodes -->
                                         @php
-                                        $statuses = [
-                                            'Pendaftaran',
-                                            'Persiapan Acara',
-                                            'Sedang Berlangsung',
-                                            'Selesai',
-                                        ];
-                                        $currentStatusIndex = array_search(
-                                            $intervensi->kegiatan->status_kegiatan,
-                                            $statuses,
-                                        );
-                                    @endphp
+                                            $statuses = [
+                                                'Pendaftaran',
+                                                'Persiapan Acara',
+                                                'Sedang Berlangsung',
+                                                'Selesai',
+                                            ];
+                                            $currentStatusIndex = array_search(
+                                                $intervensi->kegiatan->status_kegiatan,
+                                                $statuses,
+                                            );
+                                        @endphp
                                         @foreach ($statuses as $index => $status)
                                             <div class="status-node text-center" style="z-index: 2; width: 25%;">
                                                 <!-- Adjusted width to fit the 4 statuses -->
                                                 <div id="status-node-{{ $index }}"
-                                                    class="
-{{ $index <= $currentStatusIndex ? 'bg-success' : 'bg-light border' }}
-rounded-circle d-flex align-items-center justify-content-center mx-auto"
+                                                    class=" {{ $index <= $currentStatusIndex ? 'bg-success' : 'bg-light border' }} rounded-circle d-flex align-items-center justify-content-center mx-auto"
                                                     style="width: 50px; height: 50px;">
                                                     @if ($index < $currentStatusIndex)
                                                         <i class="fas fa-check text-white"></i>
                                                     @elseif($index == $currentStatusIndex)
                                                         <i
-                                                            class="fas
-{{ $status == 'Pendaftaran'
-    ? 'fa-clock'
-    : ($status == 'Persiapan Acara'
-        ? 'fa-calendar-alt'
-        : ($status == 'Sedang Berlangsung'
-            ? 'fa-running'
-            : 'fa-check-circle')) }}
-{{ $index <= $currentStatusIndex ? 'text-white' : 'text-muted' }}"></i>
+                                                            class="fas {{ $status == 'Pendaftaran' ? 'fa-clock' : ($status == 'Persiapan Acara' ? 'fa-calendar-alt' : ($status == 'Sedang Berlangsung' ? 'fa-running' : 'fa-check-circle')) }} {{ $index <= $currentStatusIndex ? 'text-white' : 'text-muted' }}"></i>
                                                     @else
                                                         <i
-                                                            class="fas
-{{ $status == 'Pendaftaran'
-    ? 'fa-clock'
-    : ($status == 'Persiapan Acara'
-        ? 'fa-calendar-alt'
-        : ($status == 'Sedang Berlangsung'
-            ? 'fa-running'
-            : 'fa-check-circle')) }}
-text-muted"></i>
+                                                            class="fas {{ $status == 'Pendaftaran' ? 'fa-clock' : ($status == 'Persiapan Acara' ? 'fa-calendar-alt' : ($status == 'Sedang Berlangsung' ? 'fa-running' : 'fa-check-circle')) }} text-muted"></i>
                                                     @endif
                                                 </div>
                                                 <div id="status-text-{{ $index }}"
@@ -593,6 +575,99 @@ text-muted"></i>
                                     @else
                                         <div class="col-md-12 mt-3">
 
+                                        </div>
+                                    @endif
+                                    <!-- Tambahkan bagian ini setelah section bukti pendaftaran dan sebelum closing div dari status-timeline -->
+
+                                    <!-- Section Sertifikat - tampil ketika status kegiatan Selesai -->
+                                    @if ($intervensi->kegiatan->status_kegiatan === 'Selesai')
+                                        <div class="col-md-12 mt-3">
+                                            @if ($sertifikatPath)
+                                                <div class="card border-success mb-3">
+                                                    <div
+                                                        class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <i class="fas fa-certificate me-2"></i>
+                                                            Sertifikat Kegiatan
+                                                        </div>
+                                                        <span class="badge bg-light text-success">
+                                                            <i class="fas fa-award me-1"></i>Tersedia
+                                                        </span>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-md-8">
+                                                                <h5 class="card-title">
+                                                                    Sertifikat {{ $intervensi->dataUmkm->nama_usaha }}
+                                                                </h5>
+                                                                <p class="card-text text-muted">
+                                                                    Sertifikat resmi penyelesaian kegiatan intervensi
+                                                                </p>
+                                                                <div class="d-flex align-items-center text-success">
+                                                                    <i class="fas fa-check-circle me-2"></i>
+                                                                    <small class="fw-bold">Kegiatan telah selesai dan
+                                                                        sertifikat tersedia</small>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 text-end">
+                                                                <a href="{{ Storage::url($sertifikatPath) }}"
+                                                                    target="_blank" class="btn btn-md btn-outline-success">
+                                                                    <i class="fas fa-eye me-2"></i>Lihat Sertifikat
+                                                                </a>
+                                                                <a href="{{ Storage::url($sertifikatPath) }}" download
+                                                                    class="btn btn-success ms-2 mt-2">
+                                                                    <i class="fas fa-download me-2"></i>Unduh Sertifikat
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-footer bg-light text-success small">
+                                                        <i class="fas fa-award me-2"></i>
+                                                        Selamat! Anda telah menyelesaikan kegiatan intervensi. Sertifikat
+                                                        ini adalah bukti pencapaian Anda.
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="card border-warning mb-3">
+                                                    <div
+                                                        class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <i class="fas fa-certificate me-2"></i>
+                                                            Sertifikat Kegiatan
+                                                        </div>
+                                                        <span class="badge bg-light text-warning">
+                                                            <i class="fas fa-clock me-1"></i>Dalam Proses
+                                                        </span>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-md-8">
+                                                                <h5 class="card-title">
+                                                                    Sertifikat {{ $intervensi->dataUmkm->nama_usaha }}
+                                                                </h5>
+                                                                <p class="card-text text-muted">
+                                                                    Sertifikat sedang dalam proses pembuatan
+                                                                </p>
+                                                                <div class="d-flex align-items-center text-warning">
+                                                                    <i class="fas fa-hourglass-half me-2"></i>
+                                                                    <small class="fw-bold">Kegiatan telah selesai,
+                                                                        sertifikat akan segera tersedia</small>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 text-end">
+                                                                <button class="btn btn-outline-warning" disabled>
+                                                                    <i class="fas fa-clock me-2"></i>Menunggu Sertifikat
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-footer bg-light text-warning small">
+                                                        <i class="fas fa-info-circle me-2"></i>
+                                                        Sertifikat akan tersedia dalam beberapa hari kerja setelah kegiatan
+                                                        selesai.
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     @endif
                                 </div>

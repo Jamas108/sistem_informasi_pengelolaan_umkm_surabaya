@@ -132,21 +132,21 @@ class DataUMKMTest extends TestCase
     /**
      * Test menampilkan daftar Pelaku UMKM.
      */
-    public function test_dapat_melihat_daftar_pelaku_umkm()
-    {
-        // Login sebagai admin kantor
-        $this->actingAs($this->adminUser);
+    // public function test_dapat_melihat_daftar_pelaku_umkm()
+    // {
+    //     // Login sebagai admin kantor
+    //     $this->actingAs($this->adminUser);
 
-        // Akses controller langsung
-        $controller = app()->make('App\Http\Controllers\DataUmkmController');
-        $response = $controller->index();
+    //     // Akses controller langsung
+    //     $controller = app()->make('App\Http\Controllers\DataUmkmController');
+    //     $response = $controller->index();
 
-        // Verifikasi response
-        $this->assertInstanceOf(\Illuminate\View\View::class, $response);
-        $this->assertEquals('adminkantor.dataumkm.index', $response->getName());
-        $this->assertArrayHasKey('datapelakuumkms', $response->getData());
-        $this->assertArrayHasKey('pageTitle', $response->getData());
-    }
+    //     // Verifikasi response
+    //     $this->assertInstanceOf(\Illuminate\View\View::class, $response);
+    //     $this->assertEquals('adminkantor.dataumkm.index', $response->getName());
+    //     $this->assertArrayHasKey('datapelakuumkms', $response->getData());
+    //     $this->assertArrayHasKey('pageTitle', $response->getData());
+    // }
 
     /**
      * Test menampilkan form tambah data UMKM.

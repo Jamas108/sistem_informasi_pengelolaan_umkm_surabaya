@@ -367,6 +367,7 @@
                                                     <tr>
                                                         <th class="text-center" width="5%">NO</th>
                                                         <th>UMKM</th>
+                                                        <th>No SK</th>
                                                         <th>No NIB</th>
                                                         <th>No SIUP</th>
                                                         <th>No TDP</th>
@@ -375,7 +376,7 @@
                                                         <th>No HALAL</th>
                                                         <th>No MERK</th>
                                                         <th>No HAKI</th>
-                                                        <th>No SK</th>
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -384,6 +385,7 @@
                                                             <tr>
                                                                 <td class="text-center">{{ $index + 1 }}</td>
                                                                 <td>{{ $item->dataUmkm->nama_usaha ?? 'Tidak ada' }}</td>
+                                                                <td>{{ $item->no_surat_keterangan ?: '-' }}</td>
                                                                 <td>{{ $item->no_sk_nib ?: '-' }}</td>
                                                                 <td>{{ $item->no_sk_siup ?: '-' }}</td>
                                                                 <td>{{ $item->no_sk_tdp ?: '-' }}</td>
@@ -392,7 +394,7 @@
                                                                 <td>{{ $item->no_sk_halal ?: '-' }}</td>
                                                                 <td>{{ $item->no_sk_merk ?: '-' }}</td>
                                                                 <td>{{ $item->no_sk_haki ?: '-' }}</td>
-                                                                <td>-</td>
+
                                                             </tr>
                                                         @endforeach
                                                     @else

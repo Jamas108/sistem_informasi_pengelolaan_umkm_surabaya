@@ -131,6 +131,7 @@ Route::middleware(['auth', 'role:adminkantor,adminlapangan'])->group(function ()
 
     // ---- RUTE UNTUK KELOLA KEGIATAN ----//
     Route::post('/datakegiatan/{id}/generate-bukti', [KegiatanController::class, 'generateBuktiPendaftaran'])->name('datakegiatan.generate-bukti');
+    Route::post('datakegiatan/{id}/generate-sertifikat', [KegiatanController::class, 'generateSertifikat'])->name('datakegiatan.generate-sertifikat');
     Route::get('datakegiatan/{id}/pendaftar', [PesertaPendaftaranController::class, 'index'])->name('pendaftar.index');
     Route::patch('pendaftar/{id}/update-status', [PesertaPendaftaranController::class, 'updateStatus'])->name('pendaftar.updateStatus');
     Route::get('/datakegiatan/{kegiatanId}/print-attendance', [PesertaPendaftaranController::class, 'printAttendance'])->name('datakegiatan.print-attendance');

@@ -44,10 +44,6 @@ class RegisterController extends Controller
     {
         $messages = [
             // Custom messages for User data
-            'username.required' => 'Username wajib diisi',
-            'username.string' => 'Username harus berupa teks',
-            'username.max' => 'Username maksimal 255 karakter',
-            'username.unique' => 'Username sudah digunakan',
             'password.required' => 'Password wajib diisi',
             'password.string' => 'Password harus berupa teks',
             'password.min' => 'Password minimal 8 karakter',
@@ -72,9 +68,9 @@ class RegisterController extends Controller
             'jenis_kelamin.required' => 'Jenis kelamin wajib diisi',
             'jenis_kelamin.string' => 'Jenis kelamin harus berupa teks',
             'jenis_kelamin.in' => 'Jenis kelamin harus Laki-laki atau Perempuan',
-            'alamat.required' => 'Alamat wajib diisi',
-            'alamat.string' => 'Alamat harus berupa teks',
-            'alamat.max' => 'Alamat maksimal 255 karakter',
+            'alamat_sesuai_ktp.required' => 'Alamat wajib diisi',
+            'alamat_sesuai_ktp.string' => 'Alamat harus berupa teks',
+            'alamat_sesuai_ktp.max' => 'Alamat maksimal 255 karakter',
             'kelurahan.required' => 'Kelurahan wajib diisi',
             'kelurahan.string' => 'Kelurahan harus berupa teks',
             'kelurahan.max' => 'Kelurahan maksimal 255 karakter',
@@ -82,9 +78,6 @@ class RegisterController extends Controller
             'rt.integer' => 'RT harus berupa angka',
             'rw.required' => 'RW wajib diisi',
             'rw.integer' => 'RW harus berupa angka',
-            'alamat_sesuai_ktp.required' => 'Status alamat wajib diisi',
-            'alamat_sesuai_ktp.string' => 'Status alamat harus berupa teks',
-            'alamat_sesuai_ktp.in' => 'Status alamat harus Ya atau Tidak',
             'no_telp.required' => 'Nomor telepon wajib diisi',
             'no_telp.string' => 'Nomor telepon harus berupa teks',
             'no_telp.max' => 'Nomor telepon maksimal 15 digit',
@@ -95,7 +88,6 @@ class RegisterController extends Controller
 
         return Validator::make($data, [
             // Data Users
-            'username' => ['required', 'string', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
 
             // Data Pelaku UMKM
@@ -105,11 +97,10 @@ class RegisterController extends Controller
             'tempat_lahir' => ['required', 'string', 'max:255'],
             'tgl_lahir' => ['required', 'date'],
             'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
-            'alamat' => ['required', 'string', 'max:255'],
+            'alamat_sesuai_ktp' => ['required', 'string', 'max:255'],
             'kelurahan' => ['required', 'string', 'max:255'],
             'rt' => ['required', 'integer'],
             'rw' => ['required', 'integer'],
-            'alamat_sesuai_ktp' => ['required', 'string', 'in:Ya,Tidak'],
             'no_telp' => ['required', 'string', 'max:15'],
             'pendidikan_terakhir' => ['required', 'string', 'max:255'],
         ], $messages);
@@ -123,7 +114,7 @@ class RegisterController extends Controller
         return DB::transaction(function () use ($data) {
             // Simpan ke tabel users
             $user = User::create([
-                'username' => $data['username'],
+                'username' => $data['nik'],
                 'NIK' => $data['nik'],
                 'password' => Hash::make($data['password']),
                 'role' => 'pelakuumkm', // Role default sebagai user
@@ -140,7 +131,6 @@ class RegisterController extends Controller
                 'jenis_kelamin' => $data['jenis_kelamin'],
                 'status_hubungan_keluarga' => $data['status_hubungan_keluarga'],
                 'status_perkawinan' => $data['status_perkawinan'],
-                'alamat' => $data['alamat'],
                 'kelurahan' => $data['kelurahan'],
                 'rt' => $data['rt'],
                 'rw' => $data['rw'],

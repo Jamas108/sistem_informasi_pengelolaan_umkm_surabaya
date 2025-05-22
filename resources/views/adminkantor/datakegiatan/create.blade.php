@@ -66,8 +66,8 @@
                                         <label for="nama_kegiatan">Nama Kegiatan <span class="text-danger">*</span></label>
                                         <input type="text"
                                             class="form-control @error('nama_kegiatan') is-invalid @enderror"
-                                            id="nama_kegiatan" name="nama_kegiatan" value="{{ old('nama_kegiatan') }}" placeholder="Masukan Nama Kegiatan"
-                                            required>
+                                            id="nama_kegiatan" name="nama_kegiatan" value="{{ old('nama_kegiatan') }}"
+                                            placeholder="Masukan Nama Kegiatan" required>
                                         @error('nama_kegiatan')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -92,8 +92,8 @@
                                         <label for="jenis_kegiatan">Lokasi Kegiatan</label>
                                         <input type="text"
                                             class="form-control @error('lokasi_kegiatan') is-invalid @enderror"
-                                            id="lokasi_kegiatan" name="lokasi_kegiatan"
-                                            value="{{ old('lokasi_kegiatan') }}" placeholder="Masukan Lokasi Kegiatan" required>
+                                            id="lokasi_kegiatan" name="lokasi_kegiatan" value="{{ old('lokasi_kegiatan') }}"
+                                            placeholder="Masukan Lokasi Kegiatan" required>
                                         @error('lokasi_kegiatan')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -159,7 +159,8 @@
                                         <input type="number"
                                             class="form-control @error('kuota_pendaftaran') is-invalid @enderror"
                                             id="kuota_pendaftaran" name="kuota_pendaftaran"
-                                            value="{{ old('kuota_pendaftaran') }}" placeholder="Masukan Kuota Pendaftaran Kegiatan" required>
+                                            value="{{ old('kuota_pendaftaran') }}"
+                                            placeholder="Masukan Kuota Pendaftaran Kegiatan" required>
                                         @error('kuota_pendaftaran')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -185,11 +186,10 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="poster">Poster Kegiatan</label>
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input @error('poster') is-invalid @enderror"
-                                        id="poster" name="poster" accept="image/*">
-                                    <label class="custom-file-label" for="poster">Pilih Poster</label>
+                                    <label for="poster" class="form-label">Poster Kegiatan</label>
+                                    <input class="form-control" type="file" id="poster" name="poster"
+                                        accept="image/*" />
                                     @error('poster')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -212,7 +212,8 @@
         <footer class="sticky-footer" style="background-color: #e0e0e0">
             <div class="container  my-auto">
                 <div class="copyright text-center my-auto">
-                    <span class="text-black">© {{ date('Y') }} UMKM Management System Dinas Koperasi Usaha Kecil dan Menangah dan Perdagangan Kota Surabaya </span> <br>
+                    <span class="text-black">© {{ date('Y') }} UMKM Management System Dinas Koperasi Usaha Kecil dan
+                        Menangah dan Perdagangan Kota Surabaya </span> <br>
                 </div>
             </div>
         </footer>

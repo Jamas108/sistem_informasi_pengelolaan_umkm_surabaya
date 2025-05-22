@@ -3,6 +3,8 @@
     <script type="text/javascript" src="{{ URL::asset('js/umkm-form.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/umkm-legalitas.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/umkm-intervensi.js') }}"></script>
+
+
     <script>
         $(document).ready(function() {
             // This initializes umkmCounter for both inline script and the external script
@@ -999,364 +1001,327 @@
                                     </div>
                                 </div> --}}
                                 <!-- Tab 5: Legalitas UMKM -->
+                                <!-- Tab 5: Legalitas UMKM -->
                                 <div class="tab-pane fade" id="legalitas" role="tabpanel"
                                     aria-labelledby="legalitas-tab">
                                     <div class="card border-0 shadow-sm">
                                         <div class="card-header bg-gradient-primary text-white py-3">
-                                            <h5 class="m-0 font-weight-bold">Data Legalitas UMKM</h5>
+                                            <h5 class="m-0 font-weight-bold">
+                                                <i class="fas fa-file-contract mr-2"></i>
+                                                Data Legalitas UMKM
+                                            </h5>
                                         </div>
                                         <div class="card-body p-4">
                                             <!-- UMKM Selection for Legalitas -->
+                                            <div class="alert alert-info" role="alert">
+                                                <i class="fas fa-info-circle mr-2"></i>
+                                                Pilih UMKM terlebih dahulu untuk mengisi data legalitas secara bertahap.
+                                            </div>
+
                                             <div class="row mb-4">
                                                 <label for="legalitas_umkm_id"
-                                                    class="col-sm-3 col-form-label font-weight-bold">Pilih UMKM</label>
+                                                    class="col-sm-3 col-form-label font-weight-bold">
+                                                    <i class="fas fa-building mr-2"></i>Pilih UMKM
+                                                </label>
                                                 <div class="col-sm-9">
                                                     <select class="form-control" id="legalitas_umkm_id"
                                                         name="legalitas[umkm_id]">
                                                         <option value="">-- Pilih UMKM --</option>
                                                         @foreach ($pelakuUmkm->dataUmkm as $umkm)
-                                                            <option value="{{ $umkm->id }}">
-                                                                {{ $umkm->nama_usaha }}
-                                                            </option>
+                                                            @if ($umkm->status !== 'DITOLAK')
+                                                                <option value="{{ $umkm->id }}">
+                                                                    {{ $umkm->nama_usaha }}</option>
+                                                            @endif
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
 
-                                            <!-- Container for legalitas form -->
-                                            <div id="legalitas-container">
-                                                <div class="row mb-3">
-                                                    <label for="no_sk_nib"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
-                                                        NIB</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="text" class="form-control" id="no_sk_nib"
-                                                            name="legalitas[no_sk_nib]"
-                                                            value="{{ $pelakuUmkm->legalitas->no_sk_nib ?? '' }}">
+                                            <!-- Progress Steps -->
+                                            <div id="legalitas-wizard" style="display: none;">
+                                                <!-- Step Progress Bar -->
+                                                <div class="step-progress mb-4">
+                                                    <div class="step-progress-bar">
+                                                        <div class="step-progress-track"></div>
+                                                        <div class="step-progress-fill" id="progress-fill"></div>
+                                                    </div>
+                                                    <div class="step-indicators">
+                                                        <div class="step-indicator" data-step="1"
+                                                            data-target="surat-keterangan">
+                                                            <div class="step-number">1</div>
+                                                            <div class="step-label">Surat Keterangan</div>
+                                                        </div>
+                                                        <div class="step-indicator" data-step="2" data-target="nib">
+                                                            <div class="step-number">2</div>
+                                                            <div class="step-label">NIB</div>
+                                                        </div>
+                                                        <div class="step-indicator" data-step="3"
+                                                            data-target="siup">
+                                                            <div class="step-number">3</div>
+                                                            <div class="step-label">SIUP</div>
+                                                        </div>
+                                                        <div class="step-indicator" data-step="4" data-target="tdp">
+                                                            <div class="step-number">4</div>
+                                                            <div class="step-label">TDP</div>
+                                                        </div>
+                                                        <div class="step-indicator" data-step="5"
+                                                            data-target="pirt">
+                                                            <div class="step-number">5</div>
+                                                            <div class="step-label">PIRT</div>
+                                                        </div>
+                                                        <div class="step-indicator" data-step="6"
+                                                            data-target="bpom">
+                                                            <div class="step-number">6</div>
+                                                            <div class="step-label">BPOM</div>
+                                                        </div>
+                                                        <div class="step-indicator" data-step="7"
+                                                            data-target="halal">
+                                                            <div class="step-number">7</div>
+                                                            <div class="step-label">Halal</div>
+                                                        </div>
+                                                        <div class="step-indicator" data-step="8"
+                                                            data-target="merek">
+                                                            <div class="step-number">8</div>
+                                                            <div class="step-label">Merek</div>
+                                                        </div>
+                                                        <div class="step-indicator" data-step="9"
+                                                            data-target="haki">
+                                                            <div class="step-number">9</div>
+                                                            <div class="step-label">HAKI</div>
+                                                        </div>
                                                     </div>
                                                 </div>
 
-                                                <div class="row mb-3">
-                                                    <label for="no_sk_siup"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
-                                                        SIUP</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="text" class="form-control" id="no_sk_siup"
-                                                            name="legalitas[no_sk_siup]"
-                                                            value="{{ $pelakuUmkm->legalitas->no_sk_siup ?? '' }}">
+                                                <!-- Progress Text -->
+                                                <div class="text-center mb-4">
+                                                    <div class="progress-info">
+                                                        <span class="badge badge-primary" id="progress-text">0/9
+                                                            Terisi</span>
+                                                        <span class="text-muted ml-2">|</span>
+                                                        <span class="text-muted ml-2" id="progress-percentage">0%
+                                                            Selesai</span>
                                                     </div>
                                                 </div>
 
-                                                <div class="row mb-3">
-                                                    <label for="no_sk_tdp"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
-                                                        TDP</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="text" class="form-control" id="no_sk_tdp"
-                                                            name="legalitas[no_sk_tdp]"
-                                                            value="{{ $pelakuUmkm->legalitas->no_sk_tdp ?? '' }}">
+                                                <!-- Form Steps -->
+                                                <div class="form-steps">
+                                                    <!-- Step 1: Surat Keterangan -->
+                                                    <div class="form-step" id="surat-keterangan"
+                                                        style="display: block;">
+                                                        <div class="card border-left-primary">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title text-primary">
+                                                                    <i class="fas fa-file-alt mr-2"></i>
+                                                                    Nomor Surat Keterangan
+                                                                </h5>
+
+                                                                <div class="form-group">
+                                                                    <label for="no_surat_keterangan"
+                                                                        class="font-weight-bold">No Surat
+                                                                        Keterangan</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="no_surat_keterangan"
+                                                                        name="legalitas[no_surat_keterangan]"
+                                                                        placeholder="Silahkan Masukan Nomor Surat Keterangan" />
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
 
-                                                <div class="row mb-3">
-                                                    <label for="no_sk_pirt"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
-                                                        PIRT</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="text" class="form-control" id="no_sk_pirt"
-                                                            name="legalitas[no_sk_pirt]"
-                                                            value="{{ $pelakuUmkm->legalitas->no_sk_pirt ?? '' }}">
+                                                    <!-- Step 2: NIB -->
+                                                    <div class="form-step" id="nib" style="display: none;">
+                                                        <div class="card border-left-info">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title text-info">
+                                                                    <i class="fas fa-id-card mr-2"></i>
+                                                                    Nomor Induk Berusaha (NIB)
+                                                                </h5>
+
+                                                                <div class="form-group">
+                                                                    <label for="no_sk_nib" class="font-weight-bold">No
+                                                                        SK NIB</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="no_sk_nib" name="legalitas[no_sk_nib]"
+                                                                        placeholder="Silahkan Masukan Nomor SK NIB" />
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
 
-                                                <div class="row mb-3">
-                                                    <label for="no_sk_bpom"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
-                                                        BPOM</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="text" class="form-control" id="no_sk_bpom"
-                                                            name="legalitas[no_sk_bpom]"
-                                                            value="{{ $pelakuUmkm->legalitas->no_sk_bpom ?? '' }}">
+                                                    <!-- Step 3: SIUP -->
+                                                    <div class="form-step" id="siup" style="display: none;">
+                                                        <div class="card border-left-success">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title text-success">
+                                                                    <i class="fas fa-store mr-2"></i>
+                                                                    Surat Izin Usaha Perdagangan (SIUP)
+                                                                </h5>
+
+                                                                <div class="form-group">
+                                                                    <label for="no_sk_siup"
+                                                                        class="font-weight-bold">No SK SIUP</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="no_sk_siup" name="legalitas[no_sk_siup]"
+                                                                        placeholder="Silahkan Masukan Nomor SK SIUP" />
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
 
-                                                <div class="row mb-3">
-                                                    <label for="no_sk_halal"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
-                                                        HALAL</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="text" class="form-control" id="no_sk_halal"
-                                                            name="legalitas[no_sk_halal]"
-                                                            value="{{ $pelakuUmkm->legalitas->no_sk_halal ?? '' }}">
+                                                    <!-- Step 4: TDP -->
+                                                    <div class="form-step" id="tdp" style="display: none;">
+                                                        <div class="card border-left-warning">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title text-warning">
+                                                                    <i class="fas fa-registered mr-2"></i>
+                                                                    Tanda Daftar Perusahaan (TDP)
+                                                                </h5>
+
+                                                                <div class="form-group">
+                                                                    <label for="no_sk_tdp" class="font-weight-bold">No
+                                                                        SK TDP</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="no_sk_tdp" name="legalitas[no_sk_tdp]"
+                                                                        placeholder="Silahkan Masukan Nomor SK TDP" />
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
 
-                                                <div class="row mb-3">
-                                                    <label for="no_sk_merek"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
-                                                        MEREK</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="text" class="form-control" id="no_sk_merek"
-                                                            name="legalitas[no_sk_merek]"
-                                                            value="{{ $pelakuUmkm->legalitas->no_sk_merek ?? '' }}">
+                                                    <!-- Step 5: PIRT -->
+                                                    <div class="form-step" id="pirt" style="display: none;">
+                                                        <div class="card border-left-danger">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title text-danger">
+                                                                    <i class="fas fa-utensils mr-2"></i>
+                                                                    Produksi Industri Rumah Tangga (PIRT)
+                                                                </h5>
+
+                                                                <div class="form-group">
+                                                                    <label for="no_sk_pirt"
+                                                                        class="font-weight-bold">No SK PIRT</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="no_sk_pirt" name="legalitas[no_sk_pirt]"
+                                                                        placeholder="Silahkan Masukan Nomor SK PIRT" />
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
 
-                                                <div class="row mb-3">
-                                                    <label for="no_sk_haki"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No SK
-                                                        HAKI</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="text" class="form-control" id="no_sk_haki"
-                                                            name="legalitas[no_sk_haki]"
-                                                            value="{{ $pelakuUmkm->legalitas->no_sk_haki ?? '' }}">
+                                                    <!-- Step 6: BPOM -->
+                                                    <div class="form-step" id="bpom" style="display: none;">
+                                                        <div class="card border-left-secondary">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title text-secondary">
+                                                                    <i class="fas fa-pills mr-2"></i>
+                                                                    Badan Pengawas Obat dan Makanan (BPOM)
+                                                                </h5>
+
+                                                                <div class="form-group">
+                                                                    <label for="no_sk_bpom"
+                                                                        class="font-weight-bold">No SK BPOM</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="no_sk_bpom" name="legalitas[no_sk_bpom]"
+                                                                        placeholder="Silahkan Masukan Nomor SK BPOM" />
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
 
-                                                <div class="row mb-3">
-                                                    <label for="no_surat_keterangan"
-                                                        class="col-sm-3 col-form-label font-weight-bold">No Surat
-                                                        Keterangan</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="text" class="form-control"
-                                                            id="no_surat_keterangan"
-                                                            name="legalitas[no_surat_keterangan]"
-                                                            value="{{ $pelakuUmkm->legalitas->no_surat_keterangan ?? '' }}">
+                                                    <!-- Step 7: Halal -->
+                                                    <div class="form-step" id="halal" style="display: none;">
+                                                        <div class="card border-left-dark">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title text-dark">
+                                                                    <i class="fas fa-moon mr-2"></i>
+                                                                    Sertifikat Halal
+                                                                </h5>
+
+                                                                <div class="form-group">
+                                                                    <label for="no_sk_halal"
+                                                                        class="font-weight-bold">No SK HALAL</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="no_sk_halal" name="legalitas[no_sk_halal]"
+                                                                        placeholder="Silahkan Masukan Nomor SK Halal" />
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
 
-                                                <div class="row mt-4">
-                                                    <div class="col-12 text-center">
-                                                        <button type="button" class="btn btn-success btn-md"
-                                                            id="simpan-legalitas">
-                                                            <i class="fas fa-save mr-2"></i> Simpan Legalitas
-                                                        </button>
+                                                    <!-- Step 8: Merek -->
+                                                    <div class="form-step" id="merek" style="display: none;">
+                                                        <div class="card border-left-primary">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title text-primary">
+                                                                    <i class="fas fa-trademark mr-2"></i>
+                                                                    Sertifikat Merek
+                                                                </h5>
+
+                                                                <div class="form-group">
+                                                                    <label for="no_sk_merek"
+                                                                        class="font-weight-bold">No SK MEREK</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="no_sk_merek" name="legalitas[no_sk_merek]"
+                                                                        placeholder="Silahkan Masukan Nomor SK Merek" />
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="mt-5">
-                                                    <div class="card border-left-primary shadow">
-                                                        <div class="card-body">
-                                                            <div class="table-responsive">
-                                                                <table class="table table-bordered"
-                                                                    id="table-legalitas" width="100%"
-                                                                    cellspacing="0">
-                                                                    <thead class="bg-light">
-                                                                        <tr>
-                                                                            <th class="text-center" width="5%">NO
-                                                                            </th>
-                                                                            <th>UMKM</th>
-                                                                            <th>No NIB</th>
-                                                                            <th>No SIUP</th>
-                                                                            <th>No TDP</th>
-                                                                            <th>No PIRT</th>
-                                                                            <th>No BPOM</th>
-                                                                            <th>No HALAL</th>
-                                                                            <th>No MERK</th>
-                                                                            <th>No HAKI</th>
-                                                                            <th>No SK</th>
-                                                                            <th>Aksi</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        @if (isset($legalitasData) && count($legalitasData) > 0)
-                                                                            @foreach ($legalitasData as $index => $item)
-                                                                                <tr>
-                                                                                    <td class="text-center">
-                                                                                        {{ $index + 1 }}</td>
-                                                                                    <td>{{ $item->dataUmkm->nama_usaha ?? 'Tidak ada' }}
-                                                                                    </td>
-                                                                                    <td>{{ $item->no_sk_nib ?: '-' }}
-                                                                                    </td>
-                                                                                    <td>{{ $item->no_sk_siup ?: '-' }}
-                                                                                    </td>
-                                                                                    <td>{{ $item->no_sk_tdp ?: '-' }}
-                                                                                    </td>
-                                                                                    <td>{{ $item->no_sk_pirt ?: '-' }}
-                                                                                    </td>
-                                                                                    <td>{{ $item->no_sk_bpom ?: '-' }}
-                                                                                    </td>
-                                                                                    <td>{{ $item->no_sk_halal ?: '-' }}
-                                                                                    </td>
-                                                                                    <td>{{ $item->no_sk_merk ?: '-' }}
-                                                                                    </td>
-                                                                                    <td>{{ $item->no_sk_haki ?: '-' }}
-                                                                                    </td>
-                                                                                    <td>{{ $item->no_surat_keterangan ?: '-' }}
-                                                                                    </td>
-                                                                                    <td class="text-center">
 
-                                                                                        <button type="button"
-                                                                                            class="btn btn-warning btn-sm edit-legalitas"
-                                                                                            data-id="{{ $item->id }}">
-                                                                                            <i class="fas fa-edit"></i>
+                                                    <!-- Step 9: HAKI -->
+                                                    <div class="form-step" id="haki" style="display: none;">
+                                                        <div class="card border-left-info">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title text-info">
+                                                                    <i class="fas fa-copyright mr-2"></i>
+                                                                    Hak Atas Kekayaan Intelektual (HAKI)
+                                                                </h5>
 
-                                                                                        </button>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            @endforeach
-                                                                        @else
-                                                                            <tr>
-                                                                                <td colspan="7"
-                                                                                    class="text-center">
-                                                                                    Belum ada data legalitas</td>
-                                                                            </tr>
-                                                                        @endif
-                                                                    </tbody>
-                                                                </table>
+                                                                <div class="form-group">
+                                                                    <label for="no_sk_haki"
+                                                                        class="font-weight-bold">No SK HAKI</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="no_sk_haki" name="legalitas[no_sk_haki]"
+                                                                        placeholder="Silahkan Masukan Nomor SK HAKI" />
+
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <!-- Modal for editing legalitas -->
-                                                <div class="modal fade" id="editLegalitasModal" tabindex="-1"
-                                                    role="dialog" aria-labelledby="editLegalitasModalLabel"
-                                                    aria-hidden="true">
-                                                    <div class="modal-dialog modal-lg" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header bg-gradient-primary text-white">
-                                                                <h5 class="modal-title" id="editLegalitasModalLabel">
-                                                                    Edit
-                                                                    Data Legalitas</h5>
-                                                                <button type="button" class="close text-white"
-                                                                    data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <form id="edit-legalitas-form">
-                                                                    <input type="hidden" id="edit_legalitas_id"
-                                                                        name="id">
+                                                <!-- Navigation Buttons -->
+                                                <div class="form-navigation mt-4">
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                id="prevBtn" onclick="changeStep(-1)">
+                                                                <i class="fas fa-arrow-left mr-2"></i>Sebelumnya
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-6 text-right">
 
-                                                                    <div class="form-group row">
-                                                                        <label for="edit_legalitas_umkm_id"
-                                                                            class="col-sm-3 col-form-label">UMKM</label>
-                                                                        <div class="col-sm-9">
-                                                                            <select class="form-control"
-                                                                                id="edit_legalitas_umkm_id"
-                                                                                name="umkm_id">
-                                                                                @foreach ($pelakuUmkm->dataUmkm as $umkm)
-                                                                                    <option
-                                                                                        value="{{ $umkm->id }}">
-                                                                                        {{ $umkm->nama_usaha }}
-                                                                                    </option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="edit_no_sk_nib"
-                                                                            class="col-sm-3 col-form-label">No SK
-                                                                            NIB</label>
-                                                                        <div class="col-sm-9">
-                                                                            <input type="text" class="form-control"
-                                                                                id="edit_no_sk_nib" name="no_sk_nib">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="edit_no_sk_siup"
-                                                                            class="col-sm-3 col-form-label">No SK
-                                                                            SIUP</label>
-                                                                        <div class="col-sm-9">
-                                                                            <input type="text" class="form-control"
-                                                                                id="edit_no_sk_siup"
-                                                                                name="no_sk_siup">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="edit_no_sk_tdp"
-                                                                            class="col-sm-3 col-form-label">No SK
-                                                                            TDP</label>
-                                                                        <div class="col-sm-9">
-                                                                            <input type="text" class="form-control"
-                                                                                id="edit_no_sk_tdp" name="no_sk_tdp">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="edit_no_sk_pirt"
-                                                                            class="col-sm-3 col-form-label">No SK
-                                                                            PIRT</label>
-                                                                        <div class="col-sm-9">
-                                                                            <input type="text" class="form-control"
-                                                                                id="edit_no_sk_pirt"
-                                                                                name="no_sk_pirt">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="edit_no_sk_bpom"
-                                                                            class="col-sm-3 col-form-label">No SK
-                                                                            BPOM</label>
-                                                                        <div class="col-sm-9">
-                                                                            <input type="text" class="form-control"
-                                                                                id="edit_no_sk_bpom"
-                                                                                name="no_sk_bpom">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="edit_no_sk_halal"
-                                                                            class="col-sm-3 col-form-label">No SK
-                                                                            HALAL</label>
-                                                                        <div class="col-sm-9">
-                                                                            <input type="text" class="form-control"
-                                                                                id="edit_no_sk_halal"
-                                                                                name="no_sk_halal">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="edit_no_sk_merek"
-                                                                            class="col-sm-3 col-form-label">No SK
-                                                                            MEREK</label>
-                                                                        <div class="col-sm-9">
-                                                                            <input type="text" class="form-control"
-                                                                                id="edit_no_sk_merek"
-                                                                                name="no_sk_merek">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="edit_no_sk_haki"
-                                                                            class="col-sm-3 col-form-label">No SK
-                                                                            HAKI</label>
-                                                                        <div class="col-sm-9">
-                                                                            <input type="text" class="form-control"
-                                                                                id="edit_no_sk_haki"
-                                                                                name="no_sk_haki">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <label for="edit_no_surat_keterangan"
-                                                                            class="col-sm-3 col-form-label">No Surat
-                                                                            Keterangan</label>
-                                                                        <div class="col-sm-9">
-                                                                            <input type="text" class="form-control"
-                                                                                id="edit_no_surat_keterangan"
-                                                                                name="no_surat_keterangan">
-                                                                        </div>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-dismiss="modal">Batal</button>
-                                                                <button type="button" class="btn btn-primary"
-                                                                    id="save-edit-legalitas">Simpan Perubahan</button>
-                                                            </div>
+                                                            <button id="nextBtn" type="button" class="btn btn-primary" onclick="changeStep(1)">Simpan & Selanjutnya</button>
                                                         </div>
                                                     </div>
                                                 </div>
-
                                             </div>
+
+                                            <!-- Hidden field for current legalitas ID -->
+                                            <input type="hidden" id="current_legalitas_id" value="">
                                         </div>
                                     </div>
                                 </div>
+
+
                                 <!-- Tab 4: Intervensi UMKM -->
                                 <div class="tab-pane fade" id="intervensi" role="tabpanel"
                                     aria-labelledby="intervensi-tab">
@@ -1687,17 +1652,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Footer -->
-        <footer class="sticky-footer" style="background-color: #e0e0e0">
-            <div class="container  my-auto">
-                <div class="copyright text-center my-auto">
-                    <span class="text-black">© {{ date('Y') }} UMKM Management System Dinas Koperasi Usaha Kecil dan Menangah dan Perdagangan Kota Surabaya </span> <br>
-                </div>
-            </div>
-        </footer>
-        <!-- End of Footer -->
-
     </div>
 
     <!-- End of Content Wrapper -->
@@ -1733,14 +1687,15 @@
                         <div class="form-group">
                             <label for="add_product_jenis" class="font-weight-bold">Jenis Produk</label>
                             <input type="text" class="form-control" id="add_product_jenis" name="jenis_produk"
-                                required>
+                                placeholder="Masukan Jenis Produk" required>
                             <div class="invalid-feedback">Jenis produk wajib diisi</div>
                         </div>
 
                         <div class="form-group">
                             <label for="add_product_tipe" class="font-weight-bold">Tipe Produk</label>
                             <select class="form-control" id="add_product_tipe" name="tipe_produk" required>
-                                <option value="Makanan dan Minuman">Makanan dan Minuman</option>
+                                <option value="" selected>-- Pilih Tipe Produk --</option>
+                                <option value="Makanan dan minuman">Makanan dan Minuman</option>
                                 <option value="Makanan">Makanan</option>
                                 <option value="Minuman">Minuman</option>
                                 <option value="Fashion">Fashion</option>
@@ -1787,4 +1742,252 @@
             </div>
         </div>
     </div>
+    <footer class="sticky-footer" style="background-color: #e0e0e0">
+        <div class="container  my-auto">
+            <div class="copyright text-center my-auto">
+                <span class="text-black">© {{ date('Y') }} UMKM Management System Dinas Koperasi Usaha Kecil dan
+                    Menangah dan Perdagangan Kota Surabaya </span> <br>
+            </div>
+        </div>
+    </footer>
+    <style>
+        /* Manual Wizard Styles */
+        .step-progress {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .step-progress-bar {
+            position: relative;
+            height: 4px;
+            background-color: #e9ecef;
+            border-radius: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .step-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007bff, #28a745);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .step-indicators {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .step-indicator {
+background-color: white; /* default putih */
+color: black;
+cursor: pointer;
+transition: background-color 0.3s;
+}
+
+
+        .step-indicator:hover {
+            transform: translateY(-2px);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            border: 2px solid #e9ecef;
+        }
+
+        .step-label {
+            font-size: 11px;
+            text-align: center;
+            color: #6c757d;
+            font-weight: 500;
+            line-height: 1.2;
+            transition: color 0.3s ease;
+        }
+
+        /* Active Step */
+        .step-indicator.active .step-number {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+
+        .step-indicator.active .step-label {
+            color: #007bff;
+            font-weight: 600;
+        }
+
+        /* Completed Step */
+        .step-indicator.completed .step-number {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .step-indicator.completed .step-label {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .step-indicator.completed .step-number::before {
+            content: "✓";
+            font-size: 16px;
+        }
+
+        /* Filled Step */
+        .step-indicator.filled .step-number {
+            background-color: #17a2b8;
+            color: white;
+            border-color: #17a2b8;
+        }
+
+        .step-indicator.filled .step-label {
+            color: #17a2b8;
+            font-weight: 600;
+        }
+
+
+
+        /* Form Steps */
+        .form-steps {
+            min-height: 300px;
+            margin-bottom: 2rem;
+        }
+
+        .form-step {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Progress Info */
+        .progress-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .progress-info .badge {
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+        /* Form Navigation */
+        .form-navigation {
+            border-top: 1px solid #e9ecef;
+            padding-top: 1rem;
+        }
+
+        .form-navigation .btn {
+            min-width: 120px;
+        }
+
+        /* Card Variations */
+        .card.border-left-primary {
+            border-left: 4px solid #007bff !important;
+        }
+
+        .card.border-left-info {
+            border-left: 4px solid #17a2b8 !important;
+        }
+
+        .card.border-left-success {
+            border-left: 4px solid #28a745 !important;
+        }
+
+        .card.border-left-warning {
+            border-left: 4px solid #ffc107 !important;
+        }
+
+        .card.border-left-danger {
+            border-left: 4px solid #dc3545 !important;
+        }
+
+        .card.border-left-secondary {
+            border-left: 4px solid #6c757d !important;
+        }
+
+        .card.border-left-dark {
+            border-left: 4px solid #343a40 !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .step-indicators {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .step-indicator {
+                min-width: 60px;
+            }
+
+            .step-number {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+
+            .step-label {
+                font-size: 10px;
+            }
+
+            .form-navigation .col-6 {
+                margin-bottom: 10px;
+            }
+
+            .form-navigation .col-6:last-child {
+                text-align: left !important;
+            }
+        }
+
+        /* Input Focus Enhancement */
+        .form-step input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        /* Loading State */
+        .btn.loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .btn.loading .fas {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 @endsection

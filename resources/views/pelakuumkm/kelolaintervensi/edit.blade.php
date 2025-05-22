@@ -235,6 +235,63 @@
                     }
                 }
 
+                function createImagePreview(imageUrl) {
+                const {
+                    dokumentasiPreview,
+                    cameraButton
+                } = elements;
+
+                // Clear previous previews
+                dokumentasiPreview.innerHTML = '';
+
+                // Create image container
+                const imageContainer = document.createElement('div');
+                imageContainer.classList.add('position-relative', 'me-2', 'mt-2');
+
+                // Create image element
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.classList.add('img-thumbnail');
+                img.style.maxWidth = '150px';
+                img.style.maxHeight = '150px';
+
+                // Create replace button
+                const replaceButton = document.createElement('button');
+                replaceButton.type = 'button';
+                replaceButton.classList.add(
+                    'btn', 'btn-sm', 'btn-primary',
+                    'position-absolute', 'top-0', 'end-0',
+                    'm-1', 'btn-replace'
+                );
+                replaceButton.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                replaceButton.title = 'Ganti Foto';
+                replaceButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openCamera();
+                });
+
+                // Create temporary label
+                const tempLabel = document.createElement('div');
+                tempLabel.classList.add(
+                    'badge', 'bg-warning',
+                    'position-absolute', 'bottom-0', 'start-0', 'm-1'
+                );
+
+
+                // Assemble container
+                imageContainer.appendChild(img);
+                imageContainer.appendChild(replaceButton);
+                imageContainer.appendChild(tempLabel);
+
+                // Add to preview
+                dokumentasiPreview.appendChild(imageContainer);
+
+                // Update camera button
+                if (cameraButton) {
+                    cameraButton.innerHTML = '<i class="fas fa-camera me-2"></i> Ganti Foto Dokumentasi';
+                }
+            }
+
                 // Process captured image
                 function processCapture(blob) {
                     const file = new File([blob], 'captured-image.jpg', {
@@ -280,6 +337,49 @@
                     if (cameraButton) cameraButton.style.display = 'block';
                 }
             }
+
+            function setupExistingImages() {
+                const {
+                    dokumentasiPreview,
+                    statusKegiatan
+                } = elements;
+                const existingImages = dokumentasiPreview.querySelectorAll('img');
+
+                // Keep only first image
+                if (existingImages.length > 1) {
+                    for (let i = 1; i < existingImages.length; i++) {
+                        existingImages[i].closest('.position-relative').remove();
+                    }
+                }
+
+                // Add replace buttons to existing images
+                existingImages.forEach(img => {
+                    const status = statusKegiatan.value;
+                    if (['Sedang Berlangsung', 'Selesai'].includes(status)) {
+                        const container = img.closest('.position-relative');
+
+                        // Add replace button if not exists
+                        if (!container.querySelector('.btn-replace')) {
+                            const replaceButton = document.createElement('button');
+                            replaceButton.type = 'button';
+                            replaceButton.classList.add(
+                                'btn', 'btn-sm', 'btn-primary',
+                                'position-absolute', 'top-0', 'end-0',
+                                'm-1', 'btn-replace'
+                            );
+                            replaceButton.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                            replaceButton.title = 'Ganti Foto';
+                            replaceButton.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                openCamera();
+                            });
+
+                            container.appendChild(replaceButton);
+                        }
+                    }
+                });
+            }
+
 
             // Initialize page
             function initPage() {
@@ -675,7 +775,7 @@
 
                                             <div class="dokumentasi-container border rounded p-3 bg-light">
                                                 <!-- Status-based guidance -->
-                                                {{-- <div class="alert alert-info p-2 mb-3" role="alert">
+                                                <div class="alert alert-info p-2 mb-3" role="alert">
                                                     @php
                                                         $status = $intervensi->kegiatan->status_kegiatan;
                                                     @endphp
@@ -686,7 +786,7 @@
                                                     @elseif ($status === 'Selesai')
                                                         Anda dapat menambahkan atau mengganti dokumentasi kegiatan.
                                                     @endif
-                                                </div> --}}
+                                                </div>
 
                                                 <!-- Hidden file input for camera capture -->
                                                 <input type="file" class="form-control d-none"

@@ -236,6 +236,45 @@ class KegiatanController extends Controller
         return redirect()->route('datakegiatan.index');
     }
 
+    public function generateSertifikat(Request $request, $id)
+{
+    // Cari kegiatan
+    $kegiatan = Kegiatan::findOrFail($id);
+
+    // Validasi status kegiatan
+    if ($kegiatan->status_kegiatan !== 'Selesai') {
+        return redirect()->back()->with('error', 'Sertifikat hanya dapat dibuat saat status Kegiatan Selesai.');
+    }
+
+    // Ambil semua intervensi (peserta) pada kegiatan ini
+    $intervensis = Intervensi::where('kegiatan_id', $id)
+        ->with('dataUmkm')
+        ->get();
+
+    // Buat folder khusus sertifikat
+    $folderPath = 'sertifikat/' . $kegiatan->id . '_' . now()->format('YmdHis');
+    Storage::disk('public')->makeDirectory($folderPath);
+
+    foreach ($intervensis as $intervensi) {
+        $pdf = Pdf::loadView('adminkantor.datakegiatan.sertifikat-umkm', [
+            'kegiatan' => $kegiatan,
+            'intervensi' => $intervensi,
+        ])->setPaper('a4')->setWarnings(false);
+
+        $fileName = Str::slug($intervensi->dataUmkm->nama_usaha . '-sertifikat') . '.pdf';
+        $filePath = $folderPath . '/' . $fileName;
+
+        Storage::disk('public')->put($filePath, $pdf->output());
+    }
+
+    // Simpan path folder sertifikat ke database jika diperlukan
+    $kegiatan->sertifikat_path = $folderPath;
+    $kegiatan->save();
+
+    session()->flash('success', 'Sertifikat berhasil dibuat untuk ' . $intervensis->count() . ' UMKM');
+    return redirect()->route('datakegiatan.index');
+}
+
     protected function updateKegiatanStatus(Kegiatan $kegiatan)
     {
         // Skip jika tidak memiliki semua data yang diperlukan

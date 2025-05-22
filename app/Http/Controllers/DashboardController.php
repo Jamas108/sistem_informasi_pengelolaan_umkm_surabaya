@@ -14,6 +14,7 @@ use App\Models\Kegiatan;
 use App\Models\Intervensi;
 use App\Models\Legalitas;
 use App\Models\ProdukUmkm;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -60,14 +61,30 @@ class DashboardController extends Controller
             ->whereNotNull('no_sk_merek')
             ->count();
 
+            function hitungPersentaseLegalitasRaw($columnName, $totalUmkm) {
+                $result = DB::selectOne("
+                    SELECT COUNT(DISTINCT umkm_id) AS count FROM legalitas
+                    WHERE {$columnName} IS NOT NULL AND {$columnName} <> ''
+                ");
+
+                $count = $result->count ?? 0;
+                return round(($count / max(1, $totalUmkm)) * 100, 2);
+            }
+
+
         // Data untuk persentase legalitas
         $persentaseLegalitas = [
-            'nib' => round((DB::table('legalitas')->whereNotNull('no_sk_nib')->count() / max(1, $totalUmkm)) * 100),
-            'siup' => round((DB::table('legalitas')->whereNotNull('no_sk_siup')->count() / max(1, $totalUmkm)) * 100),
-            'pirt' => round((DB::table('legalitas')->whereNotNull('no_sk_pirt')->count() / max(1, $totalUmkm)) * 100),
-            'halal' => round((DB::table('legalitas')->whereNotNull('no_sk_halal')->count() / max(1, $totalUmkm)) * 100),
-            'merek' => round((DB::table('legalitas')->whereNotNull('no_sk_merek')->count() / max(1, $totalUmkm)) * 100),
+            'sk' => hitungPersentaseLegalitasRaw('no_surat_keterangan', $totalUmkm),
+            'nib' => hitungPersentaseLegalitasRaw('no_sk_nib', $totalUmkm),
+            'siup' => hitungPersentaseLegalitasRaw('no_sk_siup', $totalUmkm),
+            'tdp' => hitungPersentaseLegalitasRaw('no_sk_tdp', $totalUmkm),
+            'pirt' => hitungPersentaseLegalitasRaw('no_sk_pirt', $totalUmkm),
+            'bpom' => hitungPersentaseLegalitasRaw('no_sk_bpom', $totalUmkm),
+            'halal' => hitungPersentaseLegalitasRaw('no_sk_halal', $totalUmkm),
+            'merek' => hitungPersentaseLegalitasRaw('no_sk_merek', $totalUmkm),
+            'haki' => hitungPersentaseLegalitasRaw('no_sk_haki', $totalUmkm),
         ];
+
 
         // Data untuk chart pertumbuhan UMKM
         $chartUmkmGrowth = $this->getUmkmGrowthData();
@@ -83,6 +100,8 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
+
+        $totalUmkmMenungguVerifikasi = Umkm::where('status', 'Menunggu Verifikasi')->count();
 
         // Daftar kegiatan mendatang
         $kegiatanMendatang = Kegiatan::where('tanggal_mulai', '>=', now())
@@ -102,12 +121,15 @@ class DashboardController extends Controller
             'rgba(255, 159, 64, 0.7)',
         ];
 
+        Log::info('Persentase Legalitas:', $persentaseLegalitas);
+
         return view('adminkantor.dashboard', compact(
             'totalUmkm',
             'totalKegiatan',
             'rataRataOmset',
             'umkmLegalitasLengkap',
             'persentaseLegalitas',
+            'totalUmkmMenungguVerifikasi',
             'chartUmkmGrowth',
             'distribusiSektor',
             'distribusiTenagaKerja',
@@ -128,6 +150,7 @@ class DashboardController extends Controller
         $totalUmkm = Umkm::count();
         $totalKegiatan = Kegiatan::count();
         $rataRataOmset = Intervensi::avg('omset') ?? 0;
+        $totalUmkmMenungguVerifikasi = Umkm::where('status', 'Menunggu Verifikasi')->count();
 
         // Hitung jumlah UMKM dengan legalitas lengkap (memiliki minimal 5 dokumen legalitas)
         $umkmLegalitasLengkap = DB::table('legalitas')
@@ -139,15 +162,29 @@ class DashboardController extends Controller
             ->whereNotNull('no_sk_merek')
             ->count();
 
+            function hitungPersentaseLegalitasRaw2($columnName, $totalUmkm) {
+                $result = DB::selectOne("
+                    SELECT COUNT(DISTINCT umkm_id) AS count FROM legalitas
+                    WHERE {$columnName} IS NOT NULL AND {$columnName} <> ''
+                ");
+
+                $count = $result->count ?? 0;
+                return round(($count / max(1, $totalUmkm)) * 100, 2);
+            }
+
+
         // Data untuk persentase legalitas
         $persentaseLegalitas = [
-            'nib' => round((DB::table('legalitas')->whereNotNull('no_sk_nib')->count() / max(1, $totalUmkm)) * 100),
-            'siup' => round((DB::table('legalitas')->whereNotNull('no_sk_siup')->count() / max(1, $totalUmkm)) * 100),
-            'pirt' => round((DB::table('legalitas')->whereNotNull('no_sk_pirt')->count() / max(1, $totalUmkm)) * 100),
-            'halal' => round((DB::table('legalitas')->whereNotNull('no_sk_halal')->count() / max(1, $totalUmkm)) * 100),
-            'merek' => round((DB::table('legalitas')->whereNotNull('no_sk_merek')->count() / max(1, $totalUmkm)) * 100),
+            'sk' => hitungPersentaseLegalitasRaw2('no_surat_keterangan', $totalUmkm),
+            'nib' => hitungPersentaseLegalitasRaw2('no_sk_nib', $totalUmkm),
+            'siup' => hitungPersentaseLegalitasRaw2('no_sk_siup', $totalUmkm),
+            'tdp' => hitungPersentaseLegalitasRaw2('no_sk_tdp', $totalUmkm),
+            'pirt' => hitungPersentaseLegalitasRaw2('no_sk_pirt', $totalUmkm),
+            'bpom' => hitungPersentaseLegalitasRaw2('no_sk_bpom', $totalUmkm),
+            'halal' => hitungPersentaseLegalitasRaw2('no_sk_halal', $totalUmkm),
+            'merek' => hitungPersentaseLegalitasRaw2('no_sk_merek', $totalUmkm),
+            'haki' => hitungPersentaseLegalitasRaw2('no_sk_haki', $totalUmkm),
         ];
-
         // Data untuk chart pertumbuhan UMKM
         $chartUmkmGrowth = $this->getUmkmGrowthData();
 
@@ -187,6 +224,7 @@ class DashboardController extends Controller
             'rataRataOmset',
             'umkmLegalitasLengkap',
             'persentaseLegalitas',
+            'totalUmkmMenungguVerifikasi',
             'chartUmkmGrowth',
             'distribusiSektor',
             'distribusiTenagaKerja',

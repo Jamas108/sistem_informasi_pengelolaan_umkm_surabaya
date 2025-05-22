@@ -52,9 +52,6 @@
                                 <button type="submit" class="btn btn-danger">
                                     <i class="fas fa-sign-in-alt"></i> {{ __('Masuk') }}
                                 </button>
-                                <a class="btn btn-link" href="{{ route('password.request') }}">
-                                    {{ __('Lupa Password?') }}
-                                </a>
                             </div>
                         </form>
                         <!-- Link Pendaftaran -->

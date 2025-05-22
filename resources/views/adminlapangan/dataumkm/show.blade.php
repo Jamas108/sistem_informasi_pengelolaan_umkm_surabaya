@@ -13,10 +13,7 @@
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">Detail Data UMKM</h1>
-                    <a href="{{ route('dataumkm.edit', $pelakuUmkm->id) }}"
-                        class="d-none d-sm-inline-block btn btn-primary shadow-sm">
-                        <i class="fas fa-edit fa-sm text-white-50"></i> Edit Data
-                    </a>
+
                 </div>
 
                 <div class="container-fluid pt-2 px-2">
@@ -370,6 +367,7 @@
                                                     <tr>
                                                         <th class="text-center" width="5%">NO</th>
                                                         <th>UMKM</th>
+                                                        <th>No SK</th>
                                                         <th>No NIB</th>
                                                         <th>No SIUP</th>
                                                         <th>No TDP</th>
@@ -378,7 +376,7 @@
                                                         <th>No HALAL</th>
                                                         <th>No MERK</th>
                                                         <th>No HAKI</th>
-                                                        <th>No SK</th>
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -387,6 +385,7 @@
                                                             <tr>
                                                                 <td class="text-center">{{ $index + 1 }}</td>
                                                                 <td>{{ $item->dataUmkm->nama_usaha ?? 'Tidak ada' }}</td>
+                                                                <td>{{ $item->no_surat_keterangan ?: '-' }}</td>
                                                                 <td>{{ $item->no_sk_nib ?: '-' }}</td>
                                                                 <td>{{ $item->no_sk_siup ?: '-' }}</td>
                                                                 <td>{{ $item->no_sk_tdp ?: '-' }}</td>
@@ -395,7 +394,7 @@
                                                                 <td>{{ $item->no_sk_halal ?: '-' }}</td>
                                                                 <td>{{ $item->no_sk_merk ?: '-' }}</td>
                                                                 <td>{{ $item->no_sk_haki ?: '-' }}</td>
-                                                                <td>-</td>
+
                                                             </tr>
                                                         @endforeach
                                                     @else
@@ -474,7 +473,6 @@
             </div>
         </div>
 
-        <!-- Footer -->
         <footer class="sticky-footer" style="background-color: #e0e0e0">
             <div class="container  my-auto">
                 <div class="copyright text-center my-auto">

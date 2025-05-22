@@ -117,14 +117,24 @@ class LegalitasController extends Controller
         ]);
 
         try {
-            // Validate the request
+            // Validasi dasar
             $validated = $request->validate([
                 'umkm_id' => 'required|exists:umkm,id',
             ]);
 
-            Log::info('Legalitas validation passed', ['validated_data' => $validated]);
+            // Validasi urutan pengisian field legalitas
+            $errorMessage = $this->validateSequentialFields($request->all());
+            if ($errorMessage) {
+                Log::warning('Sequential validation failed', ['message' => $errorMessage]);
+                return response()->json([
+                    'success' => false,
+                    'message' => $errorMessage
+                ], 422);
+            }
 
-            // Verify the UMKM exists
+            // Proses simpan data seperti sebelumnya...
+
+            // Cek UMKM
             $umkm = Umkm::where('id', $request->umkm_id)->first();
 
             if (!$umkm) {
@@ -137,13 +147,11 @@ class LegalitasController extends Controller
                 ], 404);
             }
 
-            Log::info('UMKM verified', ['umkm_id' => $umkm->id, 'nama_usaha' => $umkm->nama_usaha]);
-
-            // Check if a legalitas record already exists for this UMKM
+            // Cek legalitas sudah ada
             $existingLegalitas = Legalitas::where('umkm_id', $request->umkm_id)->first();
 
             if ($existingLegalitas) {
-                // Update existing record
+                // Update data legalitas
                 $existingLegalitas->no_sk_nib = $request->no_sk_nib;
                 $existingLegalitas->no_sk_siup = $request->no_sk_siup;
                 $existingLegalitas->no_sk_tdp = $request->no_sk_tdp;
@@ -163,7 +171,7 @@ class LegalitasController extends Controller
                     'data' => $existingLegalitas
                 ]);
             } else {
-                // Create new legalitas data
+                // Create new legalitas
                 $legalitas = new Legalitas([
                     'umkm_id' => $request->umkm_id,
                     'no_sk_nib' => $request->no_sk_nib,
@@ -177,7 +185,6 @@ class LegalitasController extends Controller
                     'no_surat_keterangan' => $request->no_surat_keterangan,
                 ]);
 
-                // Save the legalitas
                 $legalitas->save();
                 Log::info('New legalitas data saved successfully', ['legalitas_id' => $legalitas->id]);
 
@@ -218,73 +225,81 @@ class LegalitasController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateLegalitas(Request $request, string $id)
-    {
-        Log::info('Legalitas update request received', [
-            'legalitas_id' => $id,
-            'request_data' => $request->all()
+{
+    Log::info('Legalitas update request received', [
+        'legalitas_id' => $id,
+        'request_data' => $request->all()
+    ]);
+
+    try {
+        // Cari data legalitas dulu
+        $legalitas = Legalitas::findOrFail($id);
+
+        // Validasi dasar
+        $validated = $request->validate([
+            'umkm_id' => 'required|exists:umkm,id',
         ]);
 
-        try {
-            // Find the legalitas
-            $legalitas = Legalitas::findOrFail($id);
-
-            // Validate the request
-            $validated = $request->validate([
-                'umkm_id' => 'required|exists:umkm,id',
-            ]);
-
-            Log::info('Legalitas update validation passed', ['validated_data' => $validated]);
-
-            // Update the legalitas
-            $legalitas->umkm_id = $request->umkm_id;
-            $legalitas->no_sk_nib = $request->no_sk_nib;
-            $legalitas->no_sk_siup = $request->no_sk_siup;
-            $legalitas->no_sk_tdp = $request->no_sk_tdp;
-            $legalitas->no_sk_pirt = $request->no_sk_pirt;
-            $legalitas->no_sk_bpom = $request->no_sk_bpom;
-            $legalitas->no_sk_halal = $request->no_sk_halal;
-            $legalitas->no_sk_merek = $request->no_sk_merek;
-            $legalitas->no_sk_haki = $request->no_sk_haki;
-            $legalitas->no_surat_keterangan = $request->no_surat_keterangan;
-            $legalitas->save();
-
-            Log::info('Legalitas data updated successfully', ['legalitas_id' => $legalitas->id]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data legalitas berhasil diperbarui',
-                'data' => $legalitas
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            Log::error('Legalitas not found', [
-                'legalitas_id' => $id
-            ]);
+        // Validasi urutan pengisian field legalitas
+        $errorMessage = $this->validateSequentialFields($request->all());
+        if ($errorMessage) {
+            Log::warning('Sequential validation failed', ['message' => $errorMessage]);
             return response()->json([
                 'success' => false,
-                'message' => 'Data legalitas tidak ditemukan'
-            ], 404);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Validation failed for legalitas update', [
-                'errors' => $e->errors(),
-                'request' => $request->all()
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $e->errors()
+                'message' => $errorMessage
             ], 422);
-        } catch (\Exception $e) {
-            Log::error('Error updating legalitas data', [
-                'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'request' => $request->all()
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ], 500);
         }
+
+        // Update data legalitas
+        $legalitas->umkm_id = $request->umkm_id;
+        $legalitas->no_sk_nib = $request->no_sk_nib;
+        $legalitas->no_sk_siup = $request->no_sk_siup;
+        $legalitas->no_sk_tdp = $request->no_sk_tdp;
+        $legalitas->no_sk_pirt = $request->no_sk_pirt;
+        $legalitas->no_sk_bpom = $request->no_sk_bpom;
+        $legalitas->no_sk_halal = $request->no_sk_halal;
+        $legalitas->no_sk_merek = $request->no_sk_merek;
+        $legalitas->no_sk_haki = $request->no_sk_haki;
+        $legalitas->no_surat_keterangan = $request->no_surat_keterangan;
+        $legalitas->save();
+
+        Log::info('Legalitas data updated successfully', ['legalitas_id' => $legalitas->id]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data legalitas berhasil diperbarui',
+            'data' => $legalitas
+        ]);
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        Log::error('Legalitas not found', [
+            'legalitas_id' => $id
+        ]);
+        return response()->json([
+            'success' => false,
+            'message' => 'Data legalitas tidak ditemukan'
+        ], 404);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        Log::error('Validation failed for legalitas update', [
+            'errors' => $e->errors(),
+            'request' => $request->all()
+        ]);
+        return response()->json([
+            'success' => false,
+            'message' => 'Validasi gagal',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        Log::error('Error updating legalitas data', [
+            'exception' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'request' => $request->all()
+        ]);
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+        ], 500);
     }
+}
 
     /**
      * Remove the specified legalitas from storage.
@@ -330,5 +345,31 @@ class LegalitasController extends Controller
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
+    }
+    private function validateSequentialFields(array $data): ?string
+    {
+        $fields = [
+            'no_surat_keterangan',
+            'no_sk_nib',
+            'no_sk_siup',
+            'no_sk_tdp',
+            'no_sk_pirt',
+            'no_sk_bpom',
+            'no_sk_halal',
+            'no_sk_merek',
+            'no_sk_haki',
+        ];
+
+        foreach ($fields as $index => $field) {
+            if (!empty($data[$field])) {
+                // Cek semua field sebelumnya sudah terisi
+                for ($i = 0; $i < $index; $i++) {
+                    if (empty($data[$fields[$i]])) {
+                        return "Data {$field} tidak boleh diisi sebelum data {$fields[$i]} diisi terlebih dahulu.";
+                    }
+                }
+            }
+        }
+        return null; // Validasi berhasil
     }
 }

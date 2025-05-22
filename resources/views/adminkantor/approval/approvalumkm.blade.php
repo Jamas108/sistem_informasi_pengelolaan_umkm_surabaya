@@ -122,7 +122,6 @@
                                         <th>NIK Pemilik</th>
                                         <th>Nama Pemilik</th>
                                         <th>Nama Usaha</th>
-                                        <th>Jenis Produk</th>
                                         <th>Status</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
@@ -134,7 +133,6 @@
                                             <td>{{ $dataumkm->pelakuUmkm->nik }}</td>
                                             <td>{{ $dataumkm->pelakuUmkm->nama_lengkap }}</td>
                                             <td>{{ $dataumkm->nama_usaha }}</td>
-                                            <td>{{ $dataumkm->jenis_produk }}</td>
                                             <td>
                                                 @switch($dataumkm->status)
                                                     @case('Menunggu Verifikasi')

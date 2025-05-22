@@ -265,12 +265,12 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            Legalitas Lengkap</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $umkmLegalitasLengkap }} UMKM
+                                            UMKM Perlu Disetujui</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalUmkmMenungguVerifikasi }} UMKM
                                         </div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-certificate fa-2x text-gray-300"></i>
+                                        <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
@@ -419,6 +419,14 @@
                                 <h6 class="m-0 font-weight-bold text-primary">Status Legalitas UMKM</h6>
                             </div>
                             <div class="card-body">
+                                <h4 class="small font-weight-bold">Surat Keterangan <span class="float-right">{{ $persentaseLegalitas['sk'] }}%</span></h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar bg-primary" role="progressbar"
+                                    style="width: {{ $persentaseLegalitas['sk'] }}%"
+                                    aria-valuenow="{{ $persentaseLegalitas['sk'] }}" aria-valuemin="0"
+                                    aria-valuemax="100"></div>
+                            </div>
+
                                 <h4 class="small font-weight-bold">NIB <span
                                         class="float-right">{{ $persentaseLegalitas['nib'] }}%</span></h4>
                                 <div class="progress mb-4">
@@ -437,6 +445,16 @@
                                         aria-valuemax="100"></div>
                                 </div>
 
+                                <h4 class="small font-weight-bold">TDP <span
+                                    class="float-right">{{ $persentaseLegalitas['tdp'] }}%</span></h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar bg-info" role="progressbar"
+                                    style="width: {{ $persentaseLegalitas['tdp'] }}%"
+                                    aria-valuenow="{{ $persentaseLegalitas['tdp'] }}" aria-valuemin="0"
+                                    aria-valuemax="100"></div>
+                            </div>
+
+
                                 <h4 class="small font-weight-bold">PIRT <span
                                         class="float-right">{{ $persentaseLegalitas['pirt'] }}%</span></h4>
                                 <div class="progress mb-4">
@@ -446,7 +464,16 @@
                                         aria-valuemax="100"></div>
                                 </div>
 
-                                <h4 class="small font-weight-bold">Sertifikat Halal <span
+                                <h4 class="small font-weight-bold">BPOM <span
+                                    class="float-right">{{ $persentaseLegalitas['bpom'] }}%</span></h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar bg-info" role="progressbar"
+                                    style="width: {{ $persentaseLegalitas['bpom'] }}%"
+                                    aria-valuenow="{{ $persentaseLegalitas['bpom'] }}" aria-valuemin="0"
+                                    aria-valuemax="100"></div>
+                            </div>
+
+                                <h4 class="small font-weight-bold">Halal <span
                                         class="float-right">{{ $persentaseLegalitas['halal'] }}%</span></h4>
                                 <div class="progress mb-4">
                                     <div class="progress-bar bg-warning" role="progressbar"
@@ -455,14 +482,25 @@
                                         aria-valuemax="100"></div>
                                 </div>
 
-                                <h4 class="small font-weight-bold">Sertifikat Merek <span
+                                <h4 class="small font-weight-bold">Merek <span
                                         class="float-right">{{ $persentaseLegalitas['merek'] }}%</span></h4>
-                                <div class="progress">
+                                <div class="progress mb-4">
                                     <div class="progress-bar bg-danger" role="progressbar"
                                         style="width: {{ $persentaseLegalitas['merek'] }}%"
                                         aria-valuenow="{{ $persentaseLegalitas['merek'] }}" aria-valuemin="0"
                                         aria-valuemax="100"></div>
                                 </div>
+
+                                <h4 class="small font-weight-bold">HAKI <span
+                                    class="float-right">{{ $persentaseLegalitas['haki'] }}%</span></h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar bg-warning" role="progressbar"
+                                    style="width: {{ $persentaseLegalitas['haki'] }}%"
+                                    aria-valuenow="{{ $persentaseLegalitas['haki'] }}" aria-valuemin="0"
+                                    aria-valuemax="100"></div>
+                            </div>
+
+
                             </div>
                         </div>
                     </div>

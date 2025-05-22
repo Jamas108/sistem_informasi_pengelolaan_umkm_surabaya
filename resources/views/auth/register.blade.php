@@ -62,17 +62,6 @@
                             @enderror
                         </div>
 
-                        <div class="mb-3">
-                            <input id="username" type="text"
-                                class="form-control @error('username') is-invalid @enderror" name="username"
-                                value="{{ old('username') }}"  autocomplete="username" placeholder="Username"
-                                autofocus>
-                            @error('username')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
 
                         <!-- NIK Field -->
                         <div class="mb-3">
@@ -151,9 +140,9 @@
 
                         <!-- Alamat Field -->
                         <div class="mb-3">
-                            <textarea id="alamat" class="form-control @error('alamat') is-invalid @enderror" name="alamat"
-                                placeholder="Alamat">{{ old('alamat') }}</textarea>
-                            @error('alamat')
+                            <textarea id="alamat_sesuai_ktp" class="form-control @error('alamat_sesuai_ktp') is-invalid @enderror" name="alamat_sesuai_ktp"
+                                placeholder="Masukan Alamat sesuai KTP">{{ old('alamat_sesuai_ktp') }}</textarea>
+                            @error('alamat_sesuai_ktp')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -199,20 +188,6 @@
                             </div>
                         </div>
 
-                        <!-- Alamat sesuai KTP Field -->
-                        <div class="mt-3">
-                            <select class="form-control @error('alamat_sesuai_ktp') is-invalid @enderror"
-                                name="alamat_sesuai_ktp">
-                                <option value="">Alamat Sesuai KTP?</option>
-                                <option value="Ya">Ya</option>
-                                <option value="Tidak">Tidak</option>
-                            </select>
-                            @error('alamat_sesuai_ktp')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
 
                         <!-- Status Hubungan Keluarga Field -->
                         <div class="mt-3">
